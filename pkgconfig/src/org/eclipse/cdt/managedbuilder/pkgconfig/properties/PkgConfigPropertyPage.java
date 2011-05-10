@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.managedbuilder.pkgconfig.util.OSDetector;
+import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -30,7 +27,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class PkgConfigPropertyPage extends PropertyPage {
 
-	private static final String LIST_ALL = "pkg-config --list-all";
 	private Table table;
 	private CheckboxTableViewer pkgConfigViewer;
 
@@ -52,7 +48,7 @@ public class PkgConfigPropertyPage extends PropertyPage {
 //		pkgConfigViewer.setContentProvider(new ViewContentProvider());
 //		pkgConfigViewer.setLabelProvider(new ViewLabelProvider());
 		
-		for (String pkg : parsePackageList(getAllPackages())) {
+		for (String pkg : parsePackageList(PkgConfigUtil.getAllPackages())) {
 			pkgConfigViewer.add(pkg);
 		}
 		
@@ -66,6 +62,8 @@ public class PkgConfigPropertyPage extends PropertyPage {
 				}
 			}
 		});
+		
+		System.out.println(PkgConfigUtil.pkgOutputLibs("gtk+-2.0"));
 	}
 
 	/**
@@ -101,40 +99,6 @@ public class PkgConfigPropertyPage extends PropertyPage {
 //
 //	}
 
-	/**
-	 * Get all packages that pkg-config utility finds (package name with description).
-	 * 
-	 * @return
-	 */
-	private ArrayList<String> getAllPackages() {
-		ProcessBuilder pb = null;
-		if (OSDetector.isUnix()) {
-			pb = new ProcessBuilder("bash", "-c", LIST_ALL);	//$NON-NLS-1$ //$NON-NLS-2$
-		} else if (OSDetector.isWindows()) {
-			pb = new ProcessBuilder("cmd", "/c", LIST_ALL);		//$NON-NLS-1$ //$NON-NLS-2$
-		} else if (OSDetector.isMac()) {
-			pb = new ProcessBuilder("bash", "-c", LIST_ALL);	//$NON-NLS-1$ //$NON-NLS-2$
-		}
-		try {
-			Process p = pb.start();
-			String line;
-			BufferedReader input = new BufferedReader
-					(new InputStreamReader(p.getInputStream()));
-			ArrayList<String> packageList = new ArrayList<String>();
-			do {
-				line = input.readLine();
-				if (line != null) {
-					packageList.add(line);
-				}
-			} while(line != null);
-			input.close();
-			return packageList;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	/**
 	 * Parse package list so that only package names are added to ArrayList.
 	 * 
