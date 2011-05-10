@@ -138,6 +138,7 @@ public class PkgConfigPropertyPage extends PropertyPage {
 	private ArrayList<String> parsePackageList(ArrayList<String> packages) {
 		ArrayList<String> operated = new ArrayList<String>();
 		for (String s : packages) {
+			//cut the string after the first white space
 			int end = s.indexOf(" ");
 			operated.add(s.substring(0, end));
 		}
@@ -152,10 +153,10 @@ public class PkgConfigPropertyPage extends PropertyPage {
 	 */
 	private ArrayList<String> parseDescription(ArrayList<String> packages) {
 		ArrayList<String> operated = new ArrayList<String>();
+		int ws, start = 0;
 		for (String s : packages) {
-			int ws = s.indexOf(" ");
+			ws = s.indexOf(" ");
 			//read as many characters forward that non white space is found
-			int start = 0;
 			find: for (int i=1; i+ws<s.length(); i++) {
 				if (s.charAt(ws+i) != ' ') {
 					start = ws+i;
