@@ -41,10 +41,10 @@ public class PkgConfigPropertyPage extends PropertyPage {
 		super();
 	}
 
-	private void addFirstSection(Composite parent) {
+	private void addPackageTable(Composite parent) {
 		Composite composite = createDefaultComposite(parent);
 
-		table = new Table(parent, SWT.CHECK);
+		table = new Table(composite, SWT.CHECK);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
@@ -53,7 +53,7 @@ public class PkgConfigPropertyPage extends PropertyPage {
 //		pkgConfigViewer.setLabelProvider(new ViewLabelProvider());
 		
 		for (String pkg : parsePackageList(getAllPackages())) {
-			pkgConfigViewer.add(pkg); 
+			pkgConfigViewer.add(pkg);
 		}
 		
 		pkgConfigViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -66,7 +66,6 @@ public class PkgConfigPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		
 	}
 
 	/**
@@ -80,7 +79,7 @@ public class PkgConfigPropertyPage extends PropertyPage {
 		data.grabExcessHorizontalSpace = true;
 		composite.setLayoutData(data);
 
-		addFirstSection(composite);
+		addPackageTable(composite);
 		return composite;
 	}
 
