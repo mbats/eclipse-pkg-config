@@ -13,9 +13,13 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -23,12 +27,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-public class PkgConfigPropertyPage extends PropertyPage {
+public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPropertyPage{
 
-	private Table table;
-	private CheckboxTableViewer pkgConfigViewer;
+	private Table tbl;
+	private CheckboxTableViewer pkgCfgViewer;
 
 	/**
 	 * Constructor.
@@ -40,21 +45,21 @@ public class PkgConfigPropertyPage extends PropertyPage {
 	private void addPackageTable(Composite parent) {
 		Composite composite = createDefaultComposite(parent);
 
-		table = new Table(composite, SWT.CHECK);
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
+		tbl = new Table(composite, SWT.CHECK);
+		tbl.setLinesVisible(true);
+		tbl.setHeaderVisible(true);
 
-		pkgConfigViewer = new CheckboxTableViewer(table);
+		pkgCfgViewer = new CheckboxTableViewer(tbl);
 //		pkgConfigViewer.setContentProvider(new ViewContentProvider());
 //		pkgConfigViewer.setLabelProvider(new ViewLabelProvider());
 		
 		for (String pkg : parsePackageList(PkgConfigUtil.getAllPackages())) {
-			pkgConfigViewer.add(pkg);
+			pkgCfgViewer.add(pkg);
 		}
 		
-		pkgConfigViewer.addDoubleClickListener(new IDoubleClickListener() {
+		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				TableItem itm = table.getSelection()[0];
+				TableItem itm = tbl.getSelection()[0];
 				if (itm.getChecked()) {
 					itm.setChecked(false);
 				} else {
@@ -63,7 +68,12 @@ public class PkgConfigPropertyPage extends PropertyPage {
 			}
 		});
 		
-		System.out.println(PkgConfigUtil.pkgOutputLibs("gtk+-2.0"));
+		pkgCfgViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChanged(event);
+			}
+		});
+		
 	}
 
 	/**
@@ -94,10 +104,6 @@ public class PkgConfigPropertyPage extends PropertyPage {
 
 		return composite;
 	}
-
-//	public boolean performOk() {
-//
-//	}
 
 	/**
 	 * Parse package list so that only package names are added to ArrayList.
@@ -139,12 +145,43 @@ public class PkgConfigPropertyPage extends PropertyPage {
 	}
 	
 	/**
-	 * Get selected TableItems.
+	 * Get selected item(s).
 	 * 
 	 * @return
 	 */
-	protected TableItem[] getSelected() {
-		return table.getSelection();
+	private Object[] getSelected() {
+		Object[] obs = ((IStructuredSelection)pkgCfgViewer.getSelection()).toArray();
+		return obs;
 	}
+	
+	/**
+	 * Get checked items.
+	 * @return
+	 */
+	private Object[] getCheckedItems() {
+		return pkgCfgViewer.getCheckedElements();
+	}
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	private void handleSelectionChanged(SelectionChangedEvent event){
+		
+	}
+	
+	private void storeValues() { //TODO: Find out how to save the state of checked checkboxes
+//	      resource.setPersistentProperty("pkg-config_property", String);
+	   }
+	
+	private void initializeValues() {
+	      IResource resource = (IResource) getElement();
+//	      pkgCfgViewer.setCheckedElements(resource.getPersistentProperty(QualifiedName));
+	}
+	
+//	public boolean performOk() {
+//		chkdItms = getCheckedItems();
+//		return super.performOk();
+//	}
 	
 }
