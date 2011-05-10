@@ -31,6 +31,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 public class PkgConfigPropertyPage extends PropertyPage {
 
 	private static final String LIST_ALL = "pkg-config --list-all";
+	private Table table;
 	private CheckboxTableViewer pkgConfigViewer;
 
 	/**
@@ -41,9 +42,9 @@ public class PkgConfigPropertyPage extends PropertyPage {
 	}
 
 	private void addFirstSection(Composite parent) {
-//		Composite composite = createDefaultComposite(parent);
+		Composite composite = createDefaultComposite(parent);
 
-		final Table table = new Table(parent,SWT.CHECK);
+		table = new Table(parent, SWT.CHECK);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
@@ -97,10 +98,6 @@ public class PkgConfigPropertyPage extends PropertyPage {
 		return composite;
 	}
 
-	protected void performDefaults() {
-		super.performDefaults();
-	}
-	
 //	public boolean performOk() {
 //
 //	}
@@ -176,6 +173,15 @@ public class PkgConfigPropertyPage extends PropertyPage {
 			operated.add(s.substring(start, s.length()));
 		}
 		return operated;
+	}
+	
+	/**
+	 * Get selected TableItems.
+	 * 
+	 * @return
+	 */
+	protected TableItem[] getSelected() {
+		return table.getSelection();
 	}
 	
 }
