@@ -115,7 +115,7 @@ public class PkgConfigPropertyPage extends PropertyPage {
 		if (OSDetector.isUnix()) {
 			pb = new ProcessBuilder("bash", "-c", LIST_ALL);	//$NON-NLS-1$ //$NON-NLS-2$
 		} else if (OSDetector.isWindows()) {
-			pb = new ProcessBuilder("cmd", "-c", LIST_ALL);		//$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("cmd", "/c", LIST_ALL);		//$NON-NLS-1$ //$NON-NLS-2$
 		} else if (OSDetector.isMac()) {
 			pb = new ProcessBuilder("bash", "-c", LIST_ALL);	//$NON-NLS-1$ //$NON-NLS-2$
 		}
