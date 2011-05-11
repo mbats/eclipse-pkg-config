@@ -12,6 +12,8 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
+import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -167,7 +169,28 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 	 * @param event
 	 */
 	private void handleSelectionChanged(SelectionChangedEvent event){
-		
+		//test
+		Object[] pkgs = getCheckedItems();
+		for (Object pkg : pkgs) {
+			//handle include paths
+			String incPaths = PkgConfigUtil.pkgOutputCflags(pkg.toString());
+			String[] incPathArray = Parser.parseIncPaths(incPaths);
+			for (String inc : incPathArray) {
+				PathToToolOption.addIncludePath(inc);
+			}
+			//handle library paths
+			String libPaths = PkgConfigUtil.pkgOutputLibs(pkg.toString());
+			String[] libPathArray = Parser.parseLibPaths(libPaths);
+			for (String libPath : libPathArray) {
+				PathToToolOption.addLibraryPath(libPath);
+			}
+			//handle libraries
+			String libs = PkgConfigUtil.pkgOutputLibs(pkg.toString());
+			String[] libArray = Parser.parseLibs(libs);
+			for (String lib : libArray) {
+				PathToToolOption.addLib(lib);
+			}
+		}
 	}
 	
 	private void storeValues() { //TODO: Find out how to save the state of checked checkboxes
