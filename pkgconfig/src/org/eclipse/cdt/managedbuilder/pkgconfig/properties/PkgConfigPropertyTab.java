@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
-import java.util.ArrayList;
-
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -29,10 +27,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 
-public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPropertyPage{
+public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 	private Table tbl;
 	private CheckboxTableViewer pkgCfgViewer;
@@ -40,8 +37,7 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 	/**
 	 * Constructor.
 	 */
-	public PkgConfigPropertyPage() {
-		super();
+	public PkgConfigPropertyTab() {
 	}
 
 	private void addPackageTable(Composite parent) {
@@ -55,7 +51,7 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 //		pkgConfigViewer.setContentProvider(new ViewContentProvider());
 //		pkgConfigViewer.setLabelProvider(new ViewLabelProvider());
 		
-		for (String pkg : parsePackageList(PkgConfigUtil.getAllPackages())) {
+		for (String pkg : Parser.parsePackageList(PkgConfigUtil.getAllPackages())) {
 			pkgCfgViewer.add(pkg);
 		}
 		
@@ -78,21 +74,20 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 		
 	}
 
-	/**
-	 * @see PreferencePage#createContents(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+	@Override
+	public void createControls(Composite parent) {
+		super.createControls(parent);
 		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
+		parent.setLayout(layout);
 		GridData data = new GridData(GridData.FILL);
-		data.grabExcessHorizontalSpace = true;
-		composite.setLayoutData(data);
-
-		addPackageTable(composite);
-		return composite;
+//		data.grabExcessHorizontalSpace = true;
+		parent.setLayoutData(data);
+		addPackageTable(parent);
 	}
-
+	
 	private Composite createDefaultComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -107,45 +102,6 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 		return composite;
 	}
 
-	/**
-	 * Parse package list so that only package names are added to ArrayList.
-	 * 
-	 * @param packages
-	 * @return
-	 */
-	private ArrayList<String> parsePackageList(ArrayList<String> packages) {
-		ArrayList<String> operated = new ArrayList<String>();
-		for (String s : packages) {
-			//cut the string after the first white space
-			int end = s.indexOf(" ");
-			operated.add(s.substring(0, end));
-		}
-		return operated;
-	}
-	
-	/**
-	 * Parse package list that only package descriptions are added to ArrayList.
-	 * 
-	 * @param packages
-	 * @return
-	 */
-	private ArrayList<String> parseDescription(ArrayList<String> packages) {
-		ArrayList<String> operated = new ArrayList<String>();
-		int ws, start = 0;
-		for (String s : packages) {
-			ws = s.indexOf(" ");
-			//read as many characters forward that non white space is found
-			find: for (int i=1; i+ws<s.length(); i++) {
-				if (s.charAt(ws+i) != ' ') {
-					start = ws+i;
-					break find;
-				}
-			}
-			operated.add(s.substring(start, s.length()));
-		}
-		return operated;
-	}
-	
 	/**
 	 * Get selected item(s).
 	 * 
@@ -200,10 +156,26 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 	private void initializeValues() {
 		
 	}
-	
-//	public boolean performOk() {
-//		chkdItms = getCheckedItems();
-//		return super.performOk();
-//	}
-	
+
+	@Override
+	protected void performApply(ICResourceDescription src,
+			ICResourceDescription dst) {
+		
+	}
+
+	@Override
+	protected void performDefaults() {
+		
+	}
+
+	@Override
+	protected void updateData(ICResourceDescription cfg) {
+		
+	}
+
+	@Override
+	protected void updateButtons() {
+		
+	}
+
 }

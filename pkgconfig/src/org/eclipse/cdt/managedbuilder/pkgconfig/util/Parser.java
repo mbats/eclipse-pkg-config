@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.util;
 
+import java.util.ArrayList;
+
 /**
  * Parses pkg-config utility output.
  *
@@ -119,6 +121,45 @@ public class Parser {
 		//insert libs to an array
 		String[] libs = s2.split(" ");
 		return libs;
+	}
+	
+	/**
+	 * Parse package list so that only package names are added to ArrayList.
+	 * 
+	 * @param packages
+	 * @return
+	 */
+	public static ArrayList<String> parsePackageList(ArrayList<String> packages) {
+		ArrayList<String> operated = new ArrayList<String>();
+		for (String s : packages) {
+			//cut the string after the first white space
+			int end = s.indexOf(" ");
+			operated.add(s.substring(0, end));
+		}
+		return operated;
+	}
+	
+	/**
+	 * Parse package list that only package descriptions are added to ArrayList.
+	 * 
+	 * @param packages
+	 * @return
+	 */
+	public static ArrayList<String> parseDescription(ArrayList<String> packages) {
+		ArrayList<String> operated = new ArrayList<String>();
+		int ws, start = 0;
+		for (String s : packages) {
+			ws = s.indexOf(" ");
+			//read as many characters forward that non white space is found
+			find: for (int i=1; i+ws<s.length(); i++) {
+				if (s.charAt(ws+i) != ' ') {
+					start = ws+i;
+					break find;
+				}
+			}
+			operated.add(s.substring(start, s.length()));
+		}
+		return operated;
 	}
 	
 }
