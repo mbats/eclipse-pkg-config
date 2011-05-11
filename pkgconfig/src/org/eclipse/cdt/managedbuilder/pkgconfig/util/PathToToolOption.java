@@ -724,35 +724,6 @@ public class PathToToolOption {
 	}
 
 	/**
-	 * Split paths to a String array.
-	 * 
-	 * @param str String of paths separated by a path separator.
-	 * @return String array containing multiple paths.
-	 */
-	public static String[] stringToArray(String str) {
-		return str.split(System.getProperty("path.separator")); //$NON-NLS-1$
-	}
-
-	/**
-	 * Append an array of Strings to a String separated by a path separator.
-	 * 
-	 * @param array An array of Strings.
-	 * @return string which contains all indexes of
-	 * a String array separated by a path separator.
-	 */
-	public static String arrayToString(String[] array) {
-		StringBuffer sB = new StringBuffer();
-		//if array isn't empty and doesn't contain an empty String 
-		if (array.length>0 /*&& !array[0].equals("")*/) {
-			for (String i : array) {
-				sB.append(i);
-				sB.append(System.getProperty("path.separator")); //$NON-NLS-1$
-			}			
-		}
-		return sB.toString();
-	}
-
-	/**
 	 * Checks if a file path exists.
 	 * 
 	 * @return boolean True if the file exists.
