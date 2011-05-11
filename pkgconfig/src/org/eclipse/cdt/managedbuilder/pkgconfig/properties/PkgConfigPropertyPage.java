@@ -171,12 +171,11 @@ public class PkgConfigPropertyPage extends PropertyPage implements IWorkbenchPro
 	}
 	
 	private void storeValues() { //TODO: Find out how to save the state of checked checkboxes
-//	      resource.setPersistentProperty("pkg-config_property", String);
+		
 	   }
 	
 	private void initializeValues() {
-	      IResource resource = (IResource) getElement();
-//	      pkgCfgViewer.setCheckedElements(resource.getPersistentProperty(QualifiedName));
+		
 	}
 	
 //	public boolean performOk() {
