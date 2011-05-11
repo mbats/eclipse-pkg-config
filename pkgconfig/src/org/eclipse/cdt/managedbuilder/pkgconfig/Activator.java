@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig;
 
+import java.io.IOException;
+import java.util.PropertyResourceBundle;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -25,10 +32,18 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
+	//Name for the properties file
+	private final static String PROPERTIES = "plugin.properties"; //$NON-NLS-1$
+	
+	//Property Resource bundle
+	private PropertyResourceBundle properties;
+	
 	/**
 	 * The constructor
 	 */
 	public Activator() {
+		super();
+		plugin = this;
 	}
 
 	/*
@@ -68,4 +83,42 @@ public class Activator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
+	
+	/**
+	 * Get plugin.properties
+	 * 
+	 * @return PropertyResourceBundle
+	 */
+	public PropertyResourceBundle getProperties(){
+		if (this.properties == null){
+			try {
+				this.properties = new PropertyResourceBundle(
+						FileLocator.openStream(this.getBundle(),
+								new Path(PROPERTIES),false));
+			} catch (IOException e) {
+				//log error
+				log(e);
+			}
+		}
+		return this.properties;
+	}	  
+	
+	/**
+	 * Log error.
+	 * 
+	 * @param e
+	 */
+	public void log(Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Log status.
+	 * 
+	 * @param status
+	 */
+	public void log(IStatus status) {
+		getLog().log(status);
+	}
+	
 }
