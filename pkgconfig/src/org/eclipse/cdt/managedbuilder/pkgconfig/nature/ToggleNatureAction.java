@@ -8,7 +8,7 @@
  * Contributors:
  * Petri Tuononen - Initial implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.pkgconfig.builder;
+package org.eclipse.cdt.managedbuilder.pkgconfig.nature;
 
 import java.util.Iterator;
 

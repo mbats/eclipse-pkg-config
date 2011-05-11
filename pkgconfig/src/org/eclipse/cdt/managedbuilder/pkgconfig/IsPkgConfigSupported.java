@@ -10,6 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig;
 
+/**
+ * See if the pkg-config utility is found from the system.
+ *
+ */
 public class IsPkgConfigSupported {
 
+//	private final boolean supported;
+	
+	public IsPkgConfigSupported() {
+		// Only supported if we can find pkg-config utility.
+//		this.supported = PkgConfigUtil.isFound() != null; //TODO: implement
+	}
+	
 }

@@ -8,8 +8,9 @@
  * Contributors:
  * Petri Tuononen - Initial implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.pkgconfig.builder;
+package org.eclipse.cdt.managedbuilder.pkgconfig.nature;
 
+import org.eclipse.cdt.managedbuilder.pkgconfig.builder.PkgConfigBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;

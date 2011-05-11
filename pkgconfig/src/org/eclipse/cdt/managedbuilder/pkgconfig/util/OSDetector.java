@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.util;
 
+/**
+ *	Detects the operating system of the machine. 
+ *
+ */
 public class OSDetector {
 
 	public static boolean isUnix() {

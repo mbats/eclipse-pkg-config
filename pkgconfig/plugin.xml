@@ -23,7 +23,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.cdt.managedbuilder.pkgconfig.builder.PkgConfigNature">
+               class="org.eclipse.cdt.managedbuilder.pkgconfig.nature.PkgConfigNature">
          </run>
       </runtime>
       <builder
@@ -39,7 +39,7 @@
             id="pkg-config-support.contribution1">
          <action
                label="Add/Remove Sample Nature"
-               class="org.eclipse.cdt.managedbuilder.pkgconfig.builder.ToggleNatureAction"
+               class="org.eclipse.cdt.managedbuilder.pkgconfig.nature.ToggleNatureAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.cdt.managedbuilder.pkgconfig.builder.addRemoveNatureAction">

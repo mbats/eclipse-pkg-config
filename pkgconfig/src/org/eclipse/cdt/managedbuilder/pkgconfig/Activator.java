@@ -26,10 +26,10 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
+	//Plug-in ID
 	public static final String PLUGIN_ID = "pkg-config-support"; //$NON-NLS-1$
 
-	// The shared instance
+	//Shared instance
 	private static Activator plugin;
 	
 	//Name for the properties file
