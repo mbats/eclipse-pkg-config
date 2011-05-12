@@ -28,13 +28,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 /**
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
  * 
- * TODO: Adding libraries not working.
  */
 public class PathToToolOption {
 
 	//tool input extensions
 	private static final String linkerInputType = "o"; //$NON-NLS-1$
-	private static final String[] inputTypes = {"c", "cpp"};  //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] inputTypes = {"cpp", "c"};  //$NON-NLS-1$ //$NON-NLS-2$
 	//tool option values
 	public static final int INCLUDE = 1;
 	public static final int LIB = 2;
@@ -45,8 +44,10 @@ public class PathToToolOption {
 	 * 
 	 * @param includePath Include path to be added to Compiler's Include Option 
 	 */
-	public static void addIncludePath(String includePath) {
-		addPathToToolOption(includePath, INCLUDE);
+	public static void addIncludePath(String includePath, IProject proj) {
+		if (proj != null) {
+			addPathToToolOption(includePath, INCLUDE, proj);
+		}
 	}
 
 	/**
@@ -54,8 +55,10 @@ public class PathToToolOption {
 	 * 
 	 * @param includePath Include path to be removed from Compiler's Include Option 
 	 */
-	public static void removeIncludePath(String includePath) {
-		removePathFromToolOption(includePath, INCLUDE);
+	public static void removeIncludePath(String includePath, IProject proj) {
+		if (proj != null) {
+			removePathFromToolOption(includePath, INCLUDE, proj);
+		}
 	}
 
 	/**
@@ -63,8 +66,10 @@ public class PathToToolOption {
 	 * 
 	 * @param lib Library name to be added to Linker's Libraries Option
 	 */
-	public static void addLib(String lib) {
-		addPathToToolOption(lib, LIB);
+	public static void addLib(String lib, IProject proj) {
+		if (proj != null) {
+			addPathToToolOption(lib, LIB, proj);	
+		}
 	}
 
 	/**
@@ -72,8 +77,10 @@ public class PathToToolOption {
 	 * 
 	 * @param lib Library name to be removed from Linker's Libraries Option
 	 */
-	public static void removeLib(String lib) {
-		removePathFromToolOption(lib, LIB);
+	public static void removeLib(String lib, IProject proj) {
+		if (proj != null) {
+			removePathFromToolOption(lib, LIB, proj);
+		}
 	}
 
 	/**
@@ -81,8 +88,10 @@ public class PathToToolOption {
 	 * 
 	 * @param libDir Library search path to be added to Linker's Library search path Option
 	 */
-	public static void addLibraryPath(String libDir) {
-		addPathToToolOption(libDir, LIB_PATH);
+	public static void addLibraryPath(String libDir, IProject proj) {
+		if (proj != null) {
+			addPathToToolOption(libDir, LIB_PATH, proj);
+		}
 	}
 
 	/**
@@ -90,8 +99,10 @@ public class PathToToolOption {
 	 * 
 	 * @param libDir Library search path to be removed from Linker's Library search path Option
 	 */	
-	public static void removeLibraryPath(String libDir) {
-		removePathFromToolOption(libDir, LIB_PATH);
+	public static void removeLibraryPath(String libDir, IProject proj) {
+		if (proj != null) {
+			removePathFromToolOption(libDir, LIB_PATH, proj);
+		}
 	}
 
 	/**
@@ -100,13 +111,10 @@ public class PathToToolOption {
 	 * @param path Path to be added to Tool's option
 	 * @param var Tool option's value
 	 */
-	private static void addPathToToolOption(String path, int var) {
+	private static void addPathToToolOption(String path, int var, IProject proj) {
 		//check if the given path exists
 		if (path.length()>0 && (pathExists(path) || var==LIB)) {
 			boolean success = false;
-			//get all projects in the workspace
-			IProject[] projects = getProjectsInWorkspace();
-			IProject proj = projects[0]; //TODO: Get current project
 			IConfiguration[] configs;
 			//get all build configurations of the IProject
 			configs = getAllBuildConfigs(proj);
@@ -135,13 +143,10 @@ public class PathToToolOption {
 	 * @param path Path to be removed from Tool's option
 	 * @param var Tool option's value
 	 */
-	private static void removePathFromToolOption(String path, int var) {
+	private static void removePathFromToolOption(String path, int var, IProject proj) {
 		//check if the given path exists
 		if (path.length()>0 && pathExists(path)) {
 			boolean success = false;
-			//get all projects in the workspace
-			IProject[] projects = getProjectsInWorkspace();
-			IProject proj = projects[0]; //TODO: Get current project
 			IConfiguration[] configs;
 			//get all build configurations of the IProject
 			configs = getAllBuildConfigs(proj);

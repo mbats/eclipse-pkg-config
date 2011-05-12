@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Property tab to select packages.
@@ -138,28 +139,28 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		return pkgCfgViewer.getCheckedElements();
 	}
 	
-	private void handleSelectionChanged(){
+	private void handleSelectionChanged() {
 		//test
 		Object[] pkgs = getCheckedItems();
+		IProject proj = page.getProject();
 		for (Object pkg : pkgs) {
 			//handle include paths
 			String incPaths = PkgConfigUtil.pkgOutputCflags(pkg.toString());
 			String[] incPathArray = Parser.parseIncPaths(incPaths);
 			for (String inc : incPathArray) {
-				PathToToolOption.addIncludePath(inc);
+				PathToToolOption.addIncludePath(inc, proj);
 			}
 			//handle library paths
 			String libPaths = PkgConfigUtil.pkgOutputLibs(pkg.toString());
 			String[] libPathArray = Parser.parseLibPaths(libPaths);
 			for (String libPath : libPathArray) {
-				PathToToolOption.addLibraryPath(libPath);
+				PathToToolOption.addLibraryPath(libPath, proj);
 			}
 			//handle libraries
-			//TODO: NOT WORKING
 			String libs = PkgConfigUtil.pkgOutputLibs(pkg.toString());
 			String[] libArray = Parser.parseLibs(libs);
 			for (String lib : libArray) {
-				PathToToolOption.addLib(lib);
+				PathToToolOption.addLib(lib, proj);
 			}
 		}
 	}
@@ -201,5 +202,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	protected void updateButtons() {
 		
 	}
-
+	
+	public IProject getProject() {
+		IProject proj = page.getProject();
+		return proj;
+	}
+	
 }
