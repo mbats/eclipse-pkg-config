@@ -14,47 +14,82 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
+import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
+/**
+ * Property tab to select packages.
+ * 
+ */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 	private Table tbl;
 	private CheckboxTableViewer pkgCfgViewer;
-
-	/**
-	 * Constructor.
+	private static final int DEFAULT_HEIGHT = 250;
+	
+	protected SashForm sashForm;
+	protected Composite parserGroup;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
 	 */
-	public PkgConfigPropertyTab() {
-	}
+	@Override
+	public void createControls(Composite parent) {
+		super.createControls(parent);
+		usercomp.setLayout(new GridLayout(2, false));
 
-	private void addPackageTable(Composite parent) {
-		Composite composite = createDefaultComposite(parent);
+		sashForm = new SashForm(usercomp, SWT.NONE);
+		sashForm.setBackground(sashForm.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		sashForm.setOrientation(SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		tbl = new Table(composite, SWT.CHECK);
-		tbl.setLinesVisible(true);
-		tbl.setHeaderVisible(true);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 5;
+		sashForm.setLayout(layout);
 
+		Composite c1 = new Composite(sashForm, SWT.NONE);
+		c1.setLayout(new GridLayout(2, false));
+		setupLabel(c1, PropertyConstants.PkgConfigTab, 2, GridData.FILL_HORIZONTAL); 
+		tbl = new Table(c1, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
+		tbl.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tbl.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+//				handleSelectionChanged();
+				updateButtons();
+			}});
 		pkgCfgViewer = new CheckboxTableViewer(tbl);
-//		pkgConfigViewer.setContentProvider(new ViewContentProvider());
-//		pkgConfigViewer.setLabelProvider(new ViewLabelProvider());
-		
-		for (String pkg : Parser.parsePackageList(PkgConfigUtil.getAllPackages())) {
-			pkgCfgViewer.add(pkg);
-		}
-		
+		pkgCfgViewer.setContentProvider(new IStructuredContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				return (Object[])inputElement;
+			}
+			public void dispose() {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		});
+
+		pkgCfgViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent e) {
+//				saveChecked();
+			}});
+
 		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				TableItem itm = tbl.getSelection()[0];
@@ -66,42 +101,26 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			}
 		});
 		
-		pkgCfgViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged(event);
-			}
-		});
-		
-	}
+		Composite c = new Composite(c1, SWT.NONE);
+		c.setLayoutData(new GridData(GridData.END));
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	public void createControls(Composite parent) {
-		super.createControls(parent);
-		GridLayout layout = new GridLayout();
-		parent.setLayout(layout);
-		GridData data = new GridData(GridData.FILL);
-//		data.grabExcessHorizontalSpace = true;
-		parent.setLayoutData(data);
-		addPackageTable(parent);
+		parserGroup = new Composite(sashForm, SWT.NULL);
+		GridData gd = new GridData();
+		parserGroup.setLayout(new TabFolderLayout());
+
+		PixelConverter converter = new PixelConverter(parent);
+		gd.heightHint = converter.convertHorizontalDLUsToPixels(DEFAULT_HEIGHT);
+
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessVerticalSpace = true;
+		gd.horizontalSpan = 2;
+		parserGroup.setLayoutData(gd);
+
+		sashForm.setWeights(new int[] {100, 100});
+		initializeValues();
 	}
 	
-	private Composite createDefaultComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
-
-		return composite;
-	}
-
 	/**
 	 * Get selected item(s).
 	 * 
@@ -120,11 +139,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		return pkgCfgViewer.getCheckedElements();
 	}
 	
-	/**
-	 * 
-	 * @param event
-	 */
-	private void handleSelectionChanged(SelectionChangedEvent event){
+	private void handleSelectionChanged(){
 		//test
 		Object[] pkgs = getCheckedItems();
 		for (Object pkg : pkgs) {
@@ -151,10 +166,15 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	
 	private void storeValues() { //TODO: Find out how to save the state of checked checkboxes
 		
-	   }
+	}
 	
+	/**
+	 * Initialize package list.
+	 */
 	private void initializeValues() {
-		
+		for (String pkg : Parser.parsePackageList(PkgConfigUtil.getAllPackages())) {
+			pkgCfgViewer.add(pkg);
+		}
 	}
 
 	@Override
