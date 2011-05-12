@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
-import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -43,7 +42,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 	private Table tbl;
 	private CheckboxTableViewer pkgCfgViewer;
-	private static final int DEFAULT_HEIGHT = 250;
 	
 	protected SashForm sashForm;
 	protected Composite parserGroup;
@@ -108,9 +106,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		GridData gd = new GridData();
 		parserGroup.setLayout(new TabFolderLayout());
 
-		PixelConverter converter = new PixelConverter(parent);
-		gd.heightHint = converter.convertHorizontalDLUsToPixels(DEFAULT_HEIGHT);
-
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
@@ -123,6 +118,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	
 	/**
 	 * Get selected item(s).
+	 * Only needed if multiselection with select/deselect button is implemented.
 	 * 
 	 * @return
 	 */
@@ -185,7 +181,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void performDefaults() {
-		
+		//uncheck every checkbox
+		Object[] elements = {};
+		pkgCfgViewer.setCheckedElements(elements);
 	}
 
 	@Override
