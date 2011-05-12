@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
@@ -152,6 +155,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				PathToToolOption.addLibraryPath(libPath);
 			}
 			//handle libraries
+			//TODO: NOT WORKING
 			String libs = PkgConfigUtil.pkgOutputLibs(pkg.toString());
 			String[] libArray = Parser.parseLibs(libs);
 			for (String lib : libArray) {
@@ -168,7 +172,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * Initialize package list.
 	 */
 	private void initializeValues() {
-		for (String pkg : Parser.parsePackageList(PkgConfigUtil.getAllPackages())) {
+		ArrayList<String> pkgs = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
+		Collections.sort(pkgs, String.CASE_INSENSITIVE_ORDER);
+		for (String pkg : pkgs) {
 			pkgCfgViewer.add(pkg);
 		}
 	}

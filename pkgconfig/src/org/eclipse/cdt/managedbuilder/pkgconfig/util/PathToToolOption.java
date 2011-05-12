@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 /**
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
  * 
+ * TODO: Adding libraries not working.
  */
 public class PathToToolOption {
 
@@ -525,8 +526,7 @@ public class PathToToolOption {
 			String[] newValues = addNewPathToExistingPathList(existingValues, newValue);
 			//set new values array for the option for the given build configuration
 			ManagedBuildManager.setOption(cf, cfTool, option, newValues);
-		}
-		else{
+		} else{
 			//log error
 		}
 	}
@@ -550,8 +550,7 @@ public class PathToToolOption {
 				//set new values array for the option for the given build configuration
 				ManagedBuildManager.setOption(cf, cfTool, option, newValues);
 			}
-		}
-		else{
+		} else{
 			//log error
 		}
 	}
@@ -630,7 +629,7 @@ public class PathToToolOption {
 	 */
 	private static IOption getLinkerLibrarySearchPathOption(IConfiguration cf) {
 		//get ITool associated with the input extension
-		ITool cfTool = cf.getToolFromInputExtension(linkerInputType);
+		ITool cfTool = getLinker(cf);
 		//get option id for library paths
 		String libDirOptionId = getOptionId(cfTool, IOption.LIBRARY_PATHS);
 		return getIToolPathOption(cfTool, libDirOptionId);

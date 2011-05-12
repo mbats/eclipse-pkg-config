@@ -11,6 +11,8 @@
 package org.eclipse.cdt.managedbuilder.pkgconfig.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Parses pkg-config utility output.
@@ -23,7 +25,7 @@ public class Parser {
 		System.out.println("Options\n######################");
 		
 		String options = PkgConfigUtil.pkgOutputCflags("gtk+-2.0");
-		String[] optionsArray = parseOptions(options);
+		String[] optionsArray = parseCflagOptions(options);
 		for (String l : optionsArray) {
 			System.out.println(l);
 		}
@@ -48,7 +50,9 @@ public class Parser {
 		
 		String libs = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
 		String[] libArray = parseLibs(libs);
-		for (String l : libArray) {
+		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
+		Collections.sort(sorted);
+		for (String l : sorted) {
 			System.out.println(l);
 		}
 	}
@@ -59,14 +63,29 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseOptions(String s) {
+	public static String[] parseCflagOptions(String s) {
 		//find the index where include list starts
 		int end = s.indexOf("-I");
-		//truncate include paths
-		s = s.substring(0, end-1);
-		//insert options to an array
-		String[] options = s.split(" ");
-		return options;
+		if (end != -1) {
+			//truncate include paths
+			s = s.substring(0, end-1);
+			//insert options to an array
+			String[] options = s.split(" ");
+			return options;
+		} else {
+			//check if any flags found
+			int flagStart = s.indexOf("-");
+			if (flagStart != -1) {
+				s = s.substring(flagStart, s.length()-1);
+				//insert options into an array
+				String[] options = s.split(" ");
+				return options;
+			} else {
+				String[] emptyList = {""};
+				return emptyList;
+			}
+		}
+
 	}
 	
 	/**
@@ -78,13 +97,19 @@ public class Parser {
 	public static String[] parseIncPaths(String s) {
 		//find the index where include list starts
 		int start = s.indexOf("-I");
-		//truncate other than include paths
-		s = s.substring(start, s.length());
-		//remove library search path flags
-		String s2 = s.replace("-I", "");
-		//insert include paths to an array
-		String[] incPaths = s2.split(" ");
-		return incPaths;
+		if (start != -1) { //if include paths found
+			//truncate other than include paths
+			s = s.substring(start, s.length()-1);
+			//remove library search path flags
+			String s2 = s.replace("-I", "");
+			//insert include paths into an array
+			String[] incPaths = s2.split(" ");
+			return incPaths;
+		} else {
+			String[] emptyList = {""};
+			return emptyList;
+		}
+
 	}
 	
 	/**
@@ -94,15 +119,23 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseLibPaths(String s) {
-		//find the index where library list starts
-		int end = s.indexOf("-l");
-		//truncate libraries
-		s = s.substring(0, end-1);
-		//remove library search path flags
-		String s2 = s.replace("-L", "");
-		//insert lib search paths to an array
-		String[] libPaths = s2.split(" ");
-		return libPaths;
+		//find the index where library path list starts
+		int start = s.indexOf("-L");
+		if (start != -1) { //if library paths found
+			//find the index where library list starts
+			int end = s.indexOf(" -l");
+			//truncate other than library paths
+			s = s.substring(start, end);
+			//remove library search path flags
+			String s2 = s.replace("-L", "");
+			//insert lib paths into an array
+			String[] libPaths = s2.split(" ");
+			return libPaths;
+		} else {
+			String[] emptyList = {""};
+			return emptyList;
+		}
+
 	}
 	
 	/**
@@ -112,15 +145,23 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseLibs(String s) {
-		//find the index where library list starts
+		//special case if pkg-config --libs output starts with -l
 		int start = s.indexOf("-l");
-		//truncate library search paths
-		s = s.substring(start, s.length());
-		//remove lib flags
-		String s2 = s.replace("-l", "");
-		//insert libs to an array
-		String[] libs = s2.split(" ");
-		return libs;
+		if (start != 0) {
+			start = s.indexOf(" -l");
+		}
+		if (start != -1) { //if libraries found
+			//truncate library search paths
+			s = s.substring(start+1, s.length()-1);
+			//remove lib flags
+			String s2 = s.replace("-l", "");
+			//insert libs into an array
+			String[] libs = s2.split(" ");
+			return libs;
+		} else {
+			String[] emptyList = {""};
+			return emptyList;
+		}
 	}
 	
 	/**
