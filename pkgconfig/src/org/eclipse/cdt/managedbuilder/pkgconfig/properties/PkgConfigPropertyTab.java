@@ -74,7 +74,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		tbl.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				handleSelectionChanged();
+				handleSelectionChanged();
 				updateButtons();
 			}});
 		pkgCfgViewer = new CheckboxTableViewer(tbl);

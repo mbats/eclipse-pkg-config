@@ -102,11 +102,11 @@ public class PathToToolOption {
 	 */
 	private static void addPathToToolOption(String path, int var) {
 		//check if the given path exists
-		if (path.length()>0 && pathExists(path)) {
+		if (path.length()>0 && (pathExists(path) || var==LIB)) {
 			boolean success = false;
 			//get all projects in the workspace
 			IProject[] projects = getProjectsInWorkspace();
-			IProject proj = projects[0]; //TODO: Get active project
+			IProject proj = projects[0]; //TODO: Get current project
 			IConfiguration[] configs;
 			//get all build configurations of the IProject
 			configs = getAllBuildConfigs(proj);
@@ -141,7 +141,7 @@ public class PathToToolOption {
 			boolean success = false;
 			//get all projects in the workspace
 			IProject[] projects = getProjectsInWorkspace();
-			IProject proj = projects[0]; //TODO: Get active project
+			IProject proj = projects[0]; //TODO: Get current project
 			IConfiguration[] configs;
 			//get all build configurations of the IProject
 			configs = getAllBuildConfigs(proj);

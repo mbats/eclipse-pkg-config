@@ -109,7 +109,6 @@ public class Parser {
 			String[] emptyList = {""};
 			return emptyList;
 		}
-
 	}
 	
 	/**
@@ -198,7 +197,7 @@ public class Parser {
 					break find;
 				}
 			}
-			operated.add(s.substring(start, s.length()));
+			operated.add(s.substring(start, s.length()-1));
 		}
 		return operated;
 	}
