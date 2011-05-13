@@ -27,6 +27,8 @@ public class PkgConfigUtil {
 	private static final String OUTPUT_LIBS = "pkg-config --libs ";
 	private static final String OUTPUT_CFLAGS = "pkg-config --cflags ";
 	private static final String OUTPUT_ALL = "pkg-config --cflags --libs ";
+	private static final String OUTPUT_ONLY_LIB_PATHS = "pkg-config --libs-only-L ";
+	private static final String OUTPUT_ONLY_LIB_FILES = "pkg-config --libs-only-l ";
 
 	/**
 	 * Get options needed to build the given package.
@@ -78,6 +80,26 @@ public class PkgConfigUtil {
 	 */
 	public static String pkgOutputLibs(String pkg) {
 		return pkgOutput(OUTPUT_LIBS, pkg);
+	}
+	
+	/**
+	 * Get library paths needed to build the given package.
+	 * 
+	 * @param pkg
+	 * @return
+	 */
+	public static String pkgOutputOnlyLibPaths(String pkg) {
+		return pkgOutput(OUTPUT_ONLY_LIB_PATHS, pkg);
+	}
+
+	/**
+	 * Get library files needed to build the given package.
+	 * 
+	 * @param pkg
+	 * @return
+	 */
+	public static String pkgOutputOnlyLibFiles(String pkg) {
+		return pkgOutput(OUTPUT_ONLY_LIB_FILES, pkg);
 	}
 	
 	/**

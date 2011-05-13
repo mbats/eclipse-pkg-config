@@ -38,18 +38,36 @@ public class Parser {
 			System.out.println(l);
 		}
 		
+//		System.out.println("\nLibrary search paths\n######################");
+//		
+//		String libsPaths = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
+//		String[] libPathArray = parseLibPaths(libsPaths);
+//		for (String l : libPathArray) {
+//			System.out.println(l);
+//		}
+//		
+//		System.out.println("\nLibraries\n######################");
+//		
+//		String libs = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
+//		String[] libArray = parseLibs(libs);
+//		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
+//		Collections.sort(sorted);
+//		for (String l : sorted) {
+//			System.out.println(l);
+//		}
+		
 		System.out.println("\nLibrary search paths\n######################");
 		
-		String libsPaths = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
-		String[] libPathArray = parseLibPaths(libsPaths);
+		String libsPaths = PkgConfigUtil.pkgOutputOnlyLibPaths("gtk+-2.0");
+		String[] libPathArray = parseLibPaths2(libsPaths);
 		for (String l : libPathArray) {
 			System.out.println(l);
 		}
 		
 		System.out.println("\nLibraries\n######################");
 		
-		String libs = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
-		String[] libArray = parseLibs(libs);
+		String libs = PkgConfigUtil.pkgOutputOnlyLibFiles("gtk+-2.0");
+		String[] libArray = parseLibs2(libs);
 		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
 		Collections.sort(sorted);
 		for (String l : sorted) {
@@ -58,7 +76,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses options from pkg-config --cflags output.
+	 * Parses options from "pkg-config --cflags" input.
 	 * 
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
@@ -88,7 +106,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses include paths from pkg-config --cflags output.
+	 * Parses include paths from "pkg-config --cflags" input.
 	 * 
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
@@ -111,7 +129,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses library search paths from pkg-config --libs output.
+	 * Parses library search paths from "pkg-config --libs-only-L" input.
 	 * 
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
@@ -136,7 +154,21 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses libraries from pkg-config --libs output.
+	 * Parses library search paths from "pkg-config --libs-only-l" input.
+	 * 
+	 * @param s Output from pkg-config.
+	 * @return Parsed String array.
+	 */
+	public static String[] parseLibPaths2(String s) {
+		//remove library search path flags
+		String s2 = s.replace("-L", "");
+		//insert lib paths into an array
+		String[] libPaths = s2.split(" ");
+		return libPaths;
+	}
+	
+	/**
+	 * Parses libraries from "pkg-config --libs" input.
 	 * 
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
@@ -159,6 +191,14 @@ public class Parser {
 			String[] emptyList = {""};
 			return emptyList;
 		}
+	}
+	
+	public static String[] parseLibs2(String s) {
+		//remove lib flags
+		String s2 = s.replace("-l", "");
+		//insert libs into an array
+		String[] libs = s2.split(" ");
+		return libs;
 	}
 	
 	/**
