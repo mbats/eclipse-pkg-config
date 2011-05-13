@@ -10,6 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
-public class PreferenceInitializer {
+import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+
+/**
+ * Class used to initialize the default preference values.
+ * 
+ */
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+	 */
+	@Override
+	public void initializeDefaultPreferences() {
+		IEclipsePreferences store = DefaultScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		store.put(PreferenceConstants.PKG_CONFIG_PATH, ""); //$NON-NLS-1$
+		store.put(PreferenceConstants.PKG_CONFIG_LIBDIR, ""); //$NON-NLS-1$
+	}
 
 }

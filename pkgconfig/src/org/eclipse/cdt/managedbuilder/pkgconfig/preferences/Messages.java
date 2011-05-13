@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
-public class PreferenceConstants {
+import org.eclipse.osgi.util.NLS;
 
-	public static final String PKG_CONFIG_PATH = "A colon-separated" +
-			" (on Windows, semicolon-separated) list of directories" +
-			" to search for .pc files."; //$NON-NLS-1$
-	public static final String PKG_CONFIG_LIBDIR = "Replaces the" +
-			" default pkg-config search directory."; //$NON-NLS-1$
-	
+public class Messages extends NLS {
+
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.pkgconfig.preferences.messages"; //$NON-NLS-1$
+	public static String PreferencePage_0;
+	public static String PreferencePage_1;
+	public static String PreferencePage_2;
+
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
+
+	private Messages() {
+	}
+
 }

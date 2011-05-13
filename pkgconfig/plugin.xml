@@ -51,7 +51,7 @@
          	<page
             	class="org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferencePage"
             	id="org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferencePage"
-            	name="%PrefPage.name">
+            	name="Pkg-config">
       		</page>
    </extension>
    <extension
