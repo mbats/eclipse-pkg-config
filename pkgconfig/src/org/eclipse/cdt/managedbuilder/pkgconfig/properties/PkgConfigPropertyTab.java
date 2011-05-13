@@ -39,8 +39,11 @@ import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Property tab to select packages.
+ * Property tab to select packages and add pkg-config output
+ * to compiler & linker from checked packages
  * 
+ * TODO: Save selected packages to .cproject
+ * TODO: Initialize selected packages from .cproject
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
@@ -48,7 +51,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private CheckboxTableViewer pkgCfgViewer;
 	
 	protected SashForm sashForm;
-	protected Composite parserGroup;
+	protected Composite comp;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
@@ -106,15 +109,15 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		Composite c = new Composite(c1, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.END));
 
-		parserGroup = new Composite(sashForm, SWT.NULL);
+		comp = new Composite(sashForm, SWT.NULL);
 		GridData gd = new GridData();
-		parserGroup.setLayout(new TabFolderLayout());
+		comp.setLayout(new TabFolderLayout());
 
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		gd.horizontalSpan = 2;
-		parserGroup.setLayoutData(gd);
+		comp.setLayoutData(gd);
 
 		sashForm.setWeights(new int[] {100, 100});
 		initializeValues();

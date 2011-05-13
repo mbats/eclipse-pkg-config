@@ -85,7 +85,6 @@ public class Parser {
 				return emptyList;
 			}
 		}
-
 	}
 	
 	/**
@@ -134,7 +133,6 @@ public class Parser {
 			String[] emptyList = {""};
 			return emptyList;
 		}
-
 	}
 	
 	/**
