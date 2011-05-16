@@ -58,9 +58,11 @@ implements IWorkbenchPreferencePage {
 	 * Creates field editors for the preference page.
 	 */
 	protected void createFieldEditors() {
-		//field PKG_CONFIG_PATH
-		addField(new DirectoryFieldEditor(PreferenceConstants.PKG_CONFIG_PATH, 
-				Messages.PreferencePage_1, getFieldEditorParent())); 
+		//list editor for PKG_CONFIG_PATH values
+		PkgConfigPathListEditor includePathListEditor = new PkgConfigPathListEditor(
+				PreferenceConstants.PKG_CONFIG_PATH, Messages.PreferencePage_1, 
+				getFieldEditorParent());
+		addField(includePathListEditor);
 		//field PKG_CONFIG_LIBDIR
 		addField(new DirectoryFieldEditor(PreferenceConstants.PKG_CONFIG_LIBDIR, 
 				Messages.PreferencePage_2, getFieldEditorParent())); 
