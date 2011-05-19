@@ -92,7 +92,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 		pkgCfgViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
-//				saveChecked();
+//				storeValues();
 			}});
 
 		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
