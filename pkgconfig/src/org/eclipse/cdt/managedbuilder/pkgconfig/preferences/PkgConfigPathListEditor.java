@@ -65,10 +65,6 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 			}
 			//add a new PKG_CONFIG_PATH to the preference store
 			PreferenceStore.appendPkgConfigPath(dir);
-			//add a new PKG_CONFIG_PATH to Tool's Option
-//			LlvmToolOptionPathUtil.addLlvmIncludePath(dir);
-			//inform environment variable supplier that there has been a change
-//			LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
 			return dir;
 		}
 		return null;
@@ -84,10 +80,6 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
         int index = incList.getSelectionIndex();
         //remove PKG_CONFIG_PATH from the preference store
         PreferenceStore.removePkgConfigPath(incList.getItem(index).toString());
-        //remove PKG_CONFIG_PATH Tool's Option
-//        LlvmToolOptionPathUtil.removeLlvmIncludePath(incList.getItem(index).toString());
-		//inform environment variable supplier that there has been a change
-//		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
         if (index >= 0) {
         	incList.remove(index);
             selectionChanged();
