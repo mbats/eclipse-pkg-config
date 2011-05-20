@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.ui.newui.MultiCfgContributedEnvironment;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -23,6 +26,10 @@ import org.eclipse.swt.widgets.Text;
  */
 public class PkgConfigPathListEditor extends PkgConfigListEditor {
 
+	private static final String SEPARATOR = System.getProperty("path.separator", ";"); //$NON-NLS-1$ //$NON-NLS-2$
+	private ICConfigurationDescription cfgd = null;
+	private final MultiCfgContributedEnvironment ce = new MultiCfgContributedEnvironment();
+	
 	/**
 	 * Constructor.
 	 * 
@@ -65,6 +72,18 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 			}
 			//add a new PKG_CONFIG_PATH to the preference store
 			PreferenceStore.appendPkgConfigPath(dir);
+			
+			/*
+			 * add a new PKG_CONFIG_PATH environment variable
+			 * to every project's every build configuration
+			 */
+			ICConfigurationDescription[] cfgs;
+			cfgs = new ICConfigurationDescription[] {cfgd};
+			for (ICConfigurationDescription cfg : cfgs) { 
+				ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
+						IEnvironmentVariable.ENVVAR_APPEND, 
+						SEPARATOR, cfg);
+			}
 			return dir;
 		}
 		return null;
@@ -80,6 +99,17 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
         int index = incList.getSelectionIndex();
         //remove PKG_CONFIG_PATH from the preference store
         PreferenceStore.removePkgConfigPath(incList.getItem(index).toString());
+		/*
+		 * remove one entry of PKG_CONFIG_PATH environment variable
+		 * from every project's every build configuration
+		 */
+		ICConfigurationDescription[] cfgs;
+		cfgs = new ICConfigurationDescription[] {cfgd};
+		for (ICConfigurationDescription cfg : cfgs) { 
+			ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
+					IEnvironmentVariable.ENVVAR_APPEND, 
+					SEPARATOR, cfg);
+		}
         if (index >= 0) {
         	incList.remove(index);
             selectionChanged();

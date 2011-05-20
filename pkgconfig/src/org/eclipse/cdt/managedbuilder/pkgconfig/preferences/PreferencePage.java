@@ -64,7 +64,7 @@ implements IWorkbenchPreferencePage {
 				getFieldEditorParent());
 		addField(includePathListEditor);
 		//field PKG_CONFIG_LIBDIR
-		addField(new DirectoryFieldEditor(PreferenceConstants.PKG_CONFIG_LIBDIR, 
+		addField(new LibDirFieldEditor(PreferenceConstants.PKG_CONFIG_LIBDIR, 
 				Messages.PreferencePage_2, getFieldEditorParent())); 
 	}
 
