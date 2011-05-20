@@ -12,6 +12,8 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
@@ -23,19 +25,20 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -49,6 +52,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 	private Table tbl;
 	private CheckboxTableViewer pkgCfgViewer;
+	private Object newChecked;
+	private Set<Object> set = new HashSet<Object>();
 	
 	protected SashForm sashForm;
 	protected Composite comp;
@@ -75,12 +80,12 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		setupLabel(c1, PropertyConstants.PkgConfigTab, 2, GridData.FILL_HORIZONTAL); 
 		tbl = new Table(c1, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		tbl.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tbl.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectionChanged();
-				updateButtons();
-			}});
+//		tbl.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				handleSelectionChanged();
+////				updateButtons();
+//			}});
 		pkgCfgViewer = new CheckboxTableViewer(tbl);
 		pkgCfgViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -93,6 +98,16 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		pkgCfgViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 //				storeValues();
+				//get checked items
+				Object[] checkedItems = getCheckedItems();
+				//compare to old set
+				for (Object o : checkedItems) {
+					if (!set.contains(o)) {
+						newChecked = o;
+						set.add(o); //populate set with new item
+					}
+				}
+				handleCheckStateChanged();
 			}});
 
 		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -124,17 +139,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 	
 	/**
-	 * Get selected item(s).
-	 * Only needed if multiselection with select/deselect button is implemented.
-	 * 
-	 * @return
-	 */
-	private Object[] getSelected() {
-		Object[] obs = ((IStructuredSelection)pkgCfgViewer.getSelection()).toArray();
-		return obs;
-	}
-	
-	/**
 	 * Get checked items.
 	 * @return
 	 */
@@ -142,34 +146,54 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		return pkgCfgViewer.getCheckedElements();
 	}
 	
-	private void handleSelectionChanged() {
-		//test
-		Object[] pkgs = getCheckedItems();
+	private void handleCheckStateChanged() {
 		IProject proj = page.getProject();
-		for (Object pkg : pkgs) {
-			//handle include paths
-			String incPaths = PkgConfigUtil.pkgOutputCflags(pkg.toString());
-			String[] incPathArray = Parser.parseIncPaths(incPaths);
-			for (String inc : incPathArray) {
-				PathToToolOption.addIncludePath(inc, proj);
-			}
-			//handle library paths
-			String libPaths = PkgConfigUtil.pkgOutputLibs(pkg.toString());
-			String[] libPathArray = Parser.parseLibPaths(libPaths);
-			for (String libPath : libPathArray) {
-				PathToToolOption.addLibraryPath(libPath, proj);
-			}
-			//handle libraries
-			String libs = PkgConfigUtil.pkgOutputLibs(pkg.toString());
-			String[] libArray = Parser.parseLibs(libs);
-			for (String lib : libArray) {
-				PathToToolOption.addLib(lib, proj);
-			}
+		//handle include paths
+		String incPaths = PkgConfigUtil.pkgOutputCflags(newChecked.toString());
+		String[] incPathArray = Parser.parseIncPaths(incPaths);
+		for (String inc : incPathArray) {
+			PathToToolOption.addIncludePath(inc, proj);
+		}
+		//handle library paths
+		String libPaths = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
+		String[] libPathArray = Parser.parseLibPaths(libPaths);
+		for (String libPath : libPathArray) {
+			PathToToolOption.addLibraryPath(libPath, proj);
+		}
+		//handle libraries
+		String libs = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
+		String[] libArray = Parser.parseLibs(libs);
+		for (String lib : libArray) {
+			PathToToolOption.addLib(lib, proj);
 		}
 	}
 	
-	private void storeValues() { //TODO: Find out how to save the state of checked checkboxes
-		
+	/**
+	 * Get selected table item.
+	 * @return
+	 */
+	private TableItem getSelectedItem() {
+		TableItem itm = tbl.getSelection()[0];
+		return itm;
+	}
+	
+	private void handleSelectionChanged() {
+	}
+	
+//	/**
+//	 * Get selected item(s).
+//	 * Only needed if multiselection with select/deselect button is implemented.
+//	 * 
+//	 * @return
+//	 */
+//	private Object[] getSelected() {
+//		Object[] obs = ((IStructuredSelection)pkgCfgViewer.getSelection()).toArray();
+//		return obs;
+//	}
+	
+	private void storeValues() { 
+		//TODO: Find out how to save the state of checked checkboxes
+		//TODO: Save to .cproject
 	}
 	
 	/**
@@ -186,7 +210,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	@Override
 	protected void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
-		
 	}
 
 	@Override
@@ -198,17 +221,26 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void updateData(ICResourceDescription cfg) {
-		
 	}
 
 	@Override
 	protected void updateButtons() {
-		
 	}
 	
 	public IProject getProject() {
 		IProject proj = page.getProject();
 		return proj;
+	}
+	
+	public IProject getSelectedProject() {
+		IEditorPart ed = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		if(ed  != null) {
+		    IFileEditorInput input = (IFileEditorInput)ed.getEditorInput() ;
+		    IFile file = input.getFile();
+		    IProject activeProject = file.getProject();
+		    return activeProject;
+		}
+		return null;
 	}
 	
 }
