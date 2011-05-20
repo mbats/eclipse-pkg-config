@@ -11,8 +11,10 @@
 package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -53,6 +55,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private Table tbl;
 	private CheckboxTableViewer pkgCfgViewer;
 	private Object newChecked;
+	private Object removedItem;
+	private boolean newItemToggle;
 	private Set<Object> set = new HashSet<Object>();
 	
 	protected SashForm sashForm;
@@ -97,15 +101,34 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 		pkgCfgViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
-//				storeValues();
+//				storeValues(); //TODO: uncomment when implemented
+				newItemToggle = false;
 				//get checked items
 				Object[] checkedItems = getCheckedItems();
-				//compare to old set
-				for (Object o : checkedItems) {
-					if (!set.contains(o)) {
-						newChecked = o;
-						set.add(o); //populate set with new item
+				
+				//check for added item
+				if (checkedItems.length > set.size()) {
+					//compare to old set
+					for (Object o : checkedItems) {
+						if (!set.contains(o)) {
+							newChecked = o;
+							set.add(o); //populate set with new item
+							newItemToggle = true;
+						}
 					}
+				}
+				
+				//check for removed item
+				if (checkedItems.length < set.size()) {
+					List<Object> list = Arrays.asList(checkedItems);
+				    Set<Object> newSet = new HashSet<Object>(list);
+				    Object[] oldCheckedItems = set.toArray();
+				    for (Object o : oldCheckedItems) {
+				    	if(!newSet.contains(o)) {
+				    		removedItem = o;
+				    		newItemToggle = false;
+				    	}
+				    }
 				}
 				handleCheckStateChanged();
 			}});
@@ -146,25 +169,52 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		return pkgCfgViewer.getCheckedElements();
 	}
 	
+	/**
+	 * Add or remove include paths, library paths and libraries of the checked package.
+	 */
 	private void handleCheckStateChanged() {
 		IProject proj = page.getProject();
 		//handle include paths
-		String incPaths = PkgConfigUtil.pkgOutputCflags(newChecked.toString());
-		String[] incPathArray = Parser.parseIncPaths(incPaths);
-		for (String inc : incPathArray) {
-			PathToToolOption.addIncludePath(inc, proj);
+		if (newItemToggle) {
+			String incPaths = PkgConfigUtil.pkgOutputCflags(newChecked.toString());
+			String[] incPathArray = Parser.parseIncPaths(incPaths);
+			for (String inc : incPathArray) {
+				PathToToolOption.addIncludePath(inc, proj);
+			}
+		} else {
+			String incPaths = PkgConfigUtil.pkgOutputCflags(removedItem.toString());
+			String[] incPathArray = Parser.parseIncPaths(incPaths);
+			for (String inc : incPathArray) {
+				PathToToolOption.removeIncludePath(inc, proj);
+			}
 		}
 		//handle library paths
-		String libPaths = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
-		String[] libPathArray = Parser.parseLibPaths(libPaths);
-		for (String libPath : libPathArray) {
-			PathToToolOption.addLibraryPath(libPath, proj);
+		if (newItemToggle) {
+			String libPaths = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
+			String[] libPathArray = Parser.parseLibPaths(libPaths);
+			for (String libPath : libPathArray) {
+				PathToToolOption.addLibraryPath(libPath, proj);
+			}
+		} else {
+			String libPaths = PkgConfigUtil.pkgOutputLibs(removedItem.toString());
+			String[] libPathArray = Parser.parseLibPaths(libPaths);
+			for (String libPath : libPathArray) {
+				PathToToolOption.removeLibraryPath(libPath, proj);
+			}
 		}
 		//handle libraries
-		String libs = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
-		String[] libArray = Parser.parseLibs(libs);
-		for (String lib : libArray) {
-			PathToToolOption.addLib(lib, proj);
+		if (newItemToggle) {
+			String libs = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
+			String[] libArray = Parser.parseLibs(libs);
+			for (String lib : libArray) {
+				PathToToolOption.addLib(lib, proj);
+			}
+		} else {
+			String libs = PkgConfigUtil.pkgOutputLibs(removedItem.toString());
+			String[] libArray = Parser.parseLibs(libs);
+			for (String lib : libArray) {
+				PathToToolOption.removeLib(lib, proj);
+			}
 		}
 	}
 	
