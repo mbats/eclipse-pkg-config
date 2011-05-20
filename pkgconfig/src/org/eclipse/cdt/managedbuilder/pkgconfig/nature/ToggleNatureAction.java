@@ -33,7 +33,8 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 	 */
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator it = ((IStructuredSelection) selection).iterator(); 
+			for (@SuppressWarnings("unchecked")
+			Iterator<IStructuredSelection> it = ((IStructuredSelection) selection).iterator(); 
 				it.hasNext();) {
 				Object element = it.next();
 				IProject project = null;
