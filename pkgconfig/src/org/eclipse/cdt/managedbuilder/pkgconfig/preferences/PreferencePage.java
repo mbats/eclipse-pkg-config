@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
-
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
