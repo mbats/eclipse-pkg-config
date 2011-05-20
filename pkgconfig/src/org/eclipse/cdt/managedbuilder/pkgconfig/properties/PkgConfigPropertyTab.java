@@ -45,7 +45,7 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * Property tab to select packages and add pkg-config output
- * to compiler & linker from checked packages
+ * of checked packages to compiler and linker.
  * 
  * TODO: Save selected packages to .cproject
  * TODO: Initialize selected packages from .cproject
