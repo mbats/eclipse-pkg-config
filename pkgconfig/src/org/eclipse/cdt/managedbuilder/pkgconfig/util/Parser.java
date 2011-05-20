@@ -58,7 +58,7 @@ public class Parser {
 		
 		System.out.println("\nLibrary search paths\n######################");
 		
-		String libsPaths = PkgConfigUtil.pkgOutputOnlyLibPaths("gtk+-2.0");
+		String libsPaths = PkgConfigUtil.pkgOutputLibPathsOnly("gtk+-2.0");
 		String[] libPathArray = parseLibPaths2(libsPaths);
 		for (String l : libPathArray) {
 			System.out.println(l);
@@ -66,12 +66,20 @@ public class Parser {
 		
 		System.out.println("\nLibraries\n######################");
 		
-		String libs = PkgConfigUtil.pkgOutputOnlyLibFiles("gtk+-2.0");
+		String libs = PkgConfigUtil.pkgOutputLibFilesOnly("gtk+-2.0");
 		String[] libArray = parseLibs2(libs);
 		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
 		Collections.sort(sorted);
 		for (String l : sorted) {
 			System.out.println(l);
+		}
+		
+		System.out.println("\nDescriptions\n######################");
+		
+		ArrayList<String> pkgs = PkgConfigUtil.getAllPackages();
+		ArrayList<String> parsedDesc = parseDescription(pkgs);
+		for (String s : parsedDesc) {
+			System.out.println(s);
 		}
 	}
 	
@@ -129,7 +137,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses library search paths from "pkg-config --libs-only-L" input.
+	 * Parses library search paths from "pkg-config --libs" input.
 	 * 
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
@@ -154,7 +162,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses library search paths from "pkg-config --libs-only-l" input.
+	 * Parses library search paths from "pkg-config --libs-only-L" input.
 	 * 
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
@@ -193,6 +201,12 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * Parses libraries from "pkg-config --libs-only-l" input.
+	 * 
+	 * @param s Output from pkg-config.
+	 * @return Parsed String array.
+	 */
 	public static String[] parseLibs2(String s) {
 		//remove lib flags
 		String s2 = s.replace("-l", "");
@@ -235,7 +249,7 @@ public class Parser {
 					break find;
 				}
 			}
-			operated.add(s.substring(start, s.length()-1));
+			operated.add(s.substring(start, s.length()));
 		}
 		return operated;
 	}

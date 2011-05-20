@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,13 +22,12 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
@@ -91,48 +91,12 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 ////				updateButtons();
 //			}});
 		pkgCfgViewer = new CheckboxTableViewer(tbl);
-		pkgCfgViewer.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				return (Object[])inputElement;
-			}
-			public void dispose() {}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-		});
+		pkgCfgViewer.setContentProvider(new ArrayContentProvider());
+		PackageModel[] pkgModel = createPackageModel();
+		pkgCfgViewer.setInput(pkgModel);
 
-		pkgCfgViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent e) {
-//				storeValues(); //TODO: uncomment when implemented
-				newItemToggle = false;
-				//get checked items
-				Object[] checkedItems = getCheckedItems();
-				
-				//check for added item
-				if (checkedItems.length > set.size()) {
-					//compare to old set
-					for (Object o : checkedItems) {
-						if (!set.contains(o)) {
-							newChecked = o;
-							set.add(o); //populate set with new item
-							newItemToggle = true;
-						}
-					}
-				}
-				
-				//check for removed item
-				if (checkedItems.length < set.size()) {
-					List<Object> list = Arrays.asList(checkedItems);
-				    Set<Object> newSet = new HashSet<Object>(list);
-				    Object[] oldCheckedItems = set.toArray();
-				    for (Object o : oldCheckedItems) {
-				    	if(!newSet.contains(o)) {
-				    		removedItem = o;
-				    		newItemToggle = false;
-				    	}
-				    }
-				}
-				handleCheckStateChanged();
-			}});
-
+		pkgCfgViewer.addCheckStateListener(new PkgListener());
+		
 		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				TableItem itm = tbl.getSelection()[0];
@@ -158,7 +122,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		comp.setLayoutData(gd);
 
 		sashForm.setWeights(new int[] {100, 100});
-		initializeValues();
 	}
 	
 	/**
@@ -190,73 +153,39 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 		//handle library paths
 		if (newItemToggle) {
-			String libPaths = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
-			String[] libPathArray = Parser.parseLibPaths(libPaths);
+			String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(newChecked.toString());
+			String[] libPathArray = Parser.parseLibPaths2(libPaths);
 			for (String libPath : libPathArray) {
 				PathToToolOption.addLibraryPath(libPath, proj);
 			}
 		} else {
-			String libPaths = PkgConfigUtil.pkgOutputLibs(removedItem.toString());
-			String[] libPathArray = Parser.parseLibPaths(libPaths);
+			String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(removedItem.toString());
+			String[] libPathArray = Parser.parseLibPaths2(libPaths);
 			for (String libPath : libPathArray) {
 				PathToToolOption.removeLibraryPath(libPath, proj);
 			}
 		}
 		//handle libraries
 		if (newItemToggle) {
-			String libs = PkgConfigUtil.pkgOutputLibs(newChecked.toString());
-			String[] libArray = Parser.parseLibs(libs);
+			String libs = PkgConfigUtil.pkgOutputLibFilesOnly(newChecked.toString());
+			String[] libArray = Parser.parseLibs2(libs);
 			for (String lib : libArray) {
 				PathToToolOption.addLib(lib, proj);
 			}
 		} else {
-			String libs = PkgConfigUtil.pkgOutputLibs(removedItem.toString());
-			String[] libArray = Parser.parseLibs(libs);
+			String libs = PkgConfigUtil.pkgOutputLibFilesOnly(removedItem.toString());
+			String[] libArray = Parser.parseLibs2(libs);
 			for (String lib : libArray) {
 				PathToToolOption.removeLib(lib, proj);
 			}
 		}
 	}
 	
-	/**
-	 * Get selected table item.
-	 * @return
-	 */
-	private TableItem getSelectedItem() {
-		TableItem itm = tbl.getSelection()[0];
-		return itm;
-	}
-	
-	private void handleSelectionChanged() {
-	}
-	
-//	/**
-//	 * Get selected item(s).
-//	 * Only needed if multiselection with select/deselect button is implemented.
-//	 * 
-//	 * @return
-//	 */
-//	private Object[] getSelected() {
-//		Object[] obs = ((IStructuredSelection)pkgCfgViewer.getSelection()).toArray();
-//		return obs;
-//	}
-	
 	private void storeValues() { 
 		//TODO: Find out how to save the state of checked checkboxes
 		//TODO: Save to .cproject
 	}
 	
-	/**
-	 * Initialize package list.
-	 */
-	private void initializeValues() {
-		ArrayList<String> pkgs = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
-		Collections.sort(pkgs, String.CASE_INSENSITIVE_ORDER);
-		for (String pkg : pkgs) {
-			pkgCfgViewer.add(pkg);
-		}
-	}
-
 	@Override
 	protected void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
@@ -292,5 +221,133 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 		return null;
 	}
+	
+	public class PackageModel {
+		
+		public String pkg;
+
+		public PackageModel(String pkg) {
+			this.pkg = pkg;
+		}
+
+		public String toString() {
+			return this.pkg;
+		}
+	}
+
+	private PackageModel[] createPackageModel() {
+		ArrayList<String> pkgList = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
+		Collections.sort(pkgList, String.CASE_INSENSITIVE_ORDER);
+		PackageModel[] elements = new PackageModel[pkgList.size()];
+		int i=0;
+		for (String pkg : pkgList) {
+			elements[i] = new PackageModel(pkg);
+			i++;
+		}
+
+		return elements;
+	}
+	
+	public class DescriptionModel {
+		
+		public String desc;
+
+		public DescriptionModel(String desc) {
+			this.desc = desc;
+		}
+
+		public String toString() {
+			return this.desc;
+		}
+	}
+	
+	private DescriptionModel[] createDescriptionModel() {
+		ArrayList<String> pkgs = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
+		ArrayList<String> nonSortedPkgList = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
+		HashMap<Integer, Integer> origSortedIdx = new HashMap<Integer, Integer>();
+		Collections.sort(pkgs, String.CASE_INSENSITIVE_ORDER);
+		int sortedIdx;
+		for (int i=0; i<pkgs.size(); i++) {
+			//get the index of sorted value
+			sortedIdx = pkgs.indexOf(nonSortedPkgList.get(i));
+			origSortedIdx.put(i, sortedIdx); //map sorting
+		}
+		
+		//get descriptions and sort according to package names
+		ArrayList<String> descs = Parser.parseDescription(PkgConfigUtil.getAllPackages());
+		int cellPlace;
+		String[] sortedArray = new String[descs.size()];
+		for (int i=0; i<descs.size(); i++) {
+			cellPlace = origSortedIdx.get(i);
+			sortedArray[cellPlace] = descs.get(i);
+		}
+		
+		DescriptionModel[] elements = new DescriptionModel[sortedArray.length];
+		for (int i=0; i<elements.length; i++) {
+			elements[i] = new DescriptionModel(sortedArray[i]);
+		}
+
+		return elements;
+	}
+	
+	public class PkgListener implements ICheckStateListener {
+
+		@Override
+		public void checkStateChanged(CheckStateChangedEvent e) {
+//			storeValues(); //TODO: uncomment when implemented
+			newItemToggle = false;
+			//get checked items
+			Object[] checkedItems = getCheckedItems();
+			
+			//check for added item
+			if (checkedItems.length > set.size()) {
+				//compare to old set
+				for (Object o : checkedItems) {
+					if (!set.contains(o)) {
+						newChecked = o;
+						set.add(o); //populate set with new item
+						newItemToggle = true;
+					}
+				}
+			}
+			
+			//check for removed item
+			if (checkedItems.length < set.size()) {
+				List<Object> list = Arrays.asList(checkedItems);
+			    Set<Object> newSet = new HashSet<Object>(list);
+			    Object[] oldCheckedItems = set.toArray();
+			    for (Object o : oldCheckedItems) {
+			    	if(!newSet.contains(o)) {
+			    		removedItem = o;
+			    		newItemToggle = false;
+			    	}
+			    }
+			}
+			handleCheckStateChanged();
+		}
+	}
+	
+//	/**
+//	 * Get selected table item.
+//	 * @return
+//	 */
+//	private TableItem getSelectedItem() {
+//		TableItem itm = tbl.getSelection()[0];
+//		return itm;
+//	}
+//	
+//	private void handleSelectionChanged() {
+//	}
+	
+//	/**
+//	 * Get selected item(s).
+//	 * Only needed if multiselection with select/deselect button is implemented.
+//	 * 
+//	 * @return
+//	 */
+//	private Object[] getSelected() {
+//		Object[] obs = ((IStructuredSelection)pkgCfgViewer.getSelection()).toArray();
+//		return obs;
+//	}
 	
 }

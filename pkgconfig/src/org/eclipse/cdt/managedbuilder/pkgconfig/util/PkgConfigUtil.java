@@ -88,7 +88,7 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputOnlyLibPaths(String pkg) {
+	public static String pkgOutputLibPathsOnly(String pkg) {
 		return pkgOutput(OUTPUT_ONLY_LIB_PATHS, pkg);
 	}
 
@@ -98,7 +98,7 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputOnlyLibFiles(String pkg) {
+	public static String pkgOutputLibFilesOnly(String pkg) {
 		return pkgOutput(OUTPUT_ONLY_LIB_FILES, pkg);
 	}
 	
