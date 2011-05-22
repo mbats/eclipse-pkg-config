@@ -47,8 +47,8 @@ import org.eclipse.core.resources.IProject;
  * Property tab to select packages and add pkg-config output
  * of checked packages to compiler and linker.
  * 
- * TODO: Save selected packages to .cproject
- * TODO: Initialize selected packages from .cproject
+ * TODO: Save checked packages to .cproject
+ * TODO: Initialize checked packages from .cproject
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
