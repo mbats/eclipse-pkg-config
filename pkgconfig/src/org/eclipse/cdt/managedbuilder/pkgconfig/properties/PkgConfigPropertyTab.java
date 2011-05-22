@@ -123,20 +123,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		//buttons
 		Composite compositeButtons = new Composite(c1, SWT.NONE);
 		initButtons(compositeButtons, BUTTONS);
-		
-//		Composite c = new Composite(sashForm, SWT.NONE);
-//		c.setLayoutData(new GridData(GridData.END));
-
-//		comp = new Composite(sashForm, SWT.NULL);
-//		GridData gd = new GridData();
-//
-//		gd.horizontalAlignment = GridData.FILL;
-//		gd.grabExcessHorizontalSpace = true;
-//		gd.grabExcessVerticalSpace = true;
-//		gd.horizontalSpan = 2;
-//		comp.setLayoutData(gd);
-
-//		sashForm.setWeights(new int[] {100, 100});
 	}
 	
 	/**
@@ -242,10 +228,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 	}
 	
-//	private void saveChecked() { 
+	protected void saveChecked() { 
 		//TODO: Find out how to save the state of checked checkboxes
 		//TODO: Save to .cproject
-//	}
+	}
 	
 	@Override
 	protected void performApply(ICResourceDescription src,
@@ -296,7 +282,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 	
 	protected void handleCheckStateChange() {
-//		saveChecked(); //TODO: uncomment when implemented
+		saveChecked();
 		newItemToggle = false;
 		//get checked items
 		Object[] checkedItems = getCheckedItems();
