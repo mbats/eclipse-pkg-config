@@ -78,7 +78,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
 		sashForm = new SashForm(usercomp, SWT.NONE);
 		sashForm.setBackground(sashForm.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-		sashForm.setOrientation(SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		GridLayout layout = new GridLayout(1, false);
@@ -86,7 +85,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		sashForm.setLayout(layout);
 
 		Composite c1 = new Composite(sashForm, SWT.NONE);
-		c1.setLayout(new GridLayout(2, false));
+		GridLayout layout2 = new GridLayout(2, false);
+		layout2.marginHeight = 15;
+		c1.setLayout(layout2);
 		
 		pkgCfgViewer = CheckboxTableViewer.newCheckList(c1, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -123,13 +124,11 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		Composite compositeButtons = new Composite(c1, SWT.NONE);
 		initButtons(compositeButtons, BUTTONS);
 		
-		//end line
-		Composite c = new Composite(sashForm, SWT.NONE);
-		c.setLayoutData(new GridData(GridData.END));
-//
+//		Composite c = new Composite(sashForm, SWT.NONE);
+//		c.setLayoutData(new GridData(GridData.END));
+
 //		comp = new Composite(sashForm, SWT.NULL);
 //		GridData gd = new GridData();
-//		comp.setLayout(new TabFolderLayout());
 //
 //		gd.horizontalAlignment = GridData.FILL;
 //		gd.grabExcessHorizontalSpace = true;
