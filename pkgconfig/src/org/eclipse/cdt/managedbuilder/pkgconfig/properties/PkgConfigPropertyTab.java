@@ -99,15 +99,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		pkgCfgViewer.setContentProvider(new ArrayContentProvider());
 		pkgCfgViewer.setInput(DataModelProvider.INSTANCE.getEntries());
 		
-//		tbl.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				handleSelectionChanged();
-////				updateButtons();
-//			}});
-		
 		pkgCfgViewer.addCheckStateListener(new PkgListener());
-//		
+
 		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				TableItem itm = tbl.getSelection()[0];
