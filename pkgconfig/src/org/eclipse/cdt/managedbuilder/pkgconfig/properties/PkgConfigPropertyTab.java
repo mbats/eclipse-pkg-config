@@ -58,9 +58,16 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private Object removedItem;
 	private boolean newItemToggle;
 	private Set<Object> checkedSet = new HashSet<Object>();
+	private static final int BUTTON_SELECT = 0;
+	private static final int BUTTON_DESELECT = 1;
 	
 	protected SashForm sashForm;
 	protected Composite comp;
+	
+	private static final String[] BUTTONS = new String[] {
+		"Select",
+		"Deselect"
+	};
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
@@ -80,7 +87,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		sashForm.setLayout(layout);
 
 		Composite c1 = new Composite(sashForm, SWT.NONE);
-		c1.setLayout(new GridLayout(1, false));
+		c1.setLayout(new GridLayout(2, false));
 		
 		pkgCfgViewer = CheckboxTableViewer.newCheckList(c1, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -113,8 +120,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			}
 		});
 		
-//		Composite c = new Composite(c1, SWT.NONE);
-//		c.setLayoutData(new GridData(GridData.END));
+		//buttons
+		Composite compositeButtons = new Composite(c1, SWT.NONE);
+		initButtons(compositeButtons, BUTTONS);
+		
+		//end line
+		Composite c = new Composite(sashForm, SWT.NONE);
+		c.setLayoutData(new GridData(GridData.END));
 //
 //		comp = new Composite(sashForm, SWT.NULL);
 //		GridData gd = new GridData();
@@ -183,7 +195,56 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 	}
 	
-//	private void storeValues() { 
+	/**
+	 * Add or remove include paths, library paths and libraries of the checked package.
+	 */
+	private void handleAddRemoveAllPackages() {
+		IProject proj = page.getProject();
+		Object[] checkedPkgs = getCheckedItems();
+		for (Object o : checkedPkgs) {
+			if (newItemToggle) { //add
+				//handle include paths
+				String incPaths = PkgConfigUtil.pkgOutputCflags(o.toString());
+				String[] incPathArray = Parser.parseIncPaths(incPaths);
+				for (String inc : incPathArray) {
+					PathToToolOption.addIncludePath(inc, proj);
+				}
+				//handle library paths
+				String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(o.toString());
+				String[] libPathArray = Parser.parseLibPaths2(libPaths);
+				for (String libPath : libPathArray) {
+					PathToToolOption.addLibraryPath(libPath, proj);
+				}
+				//handle libraries
+				String libs = PkgConfigUtil.pkgOutputLibFilesOnly(o.toString());
+				String[] libArray = Parser.parseLibs2(libs);
+				for (String lib : libArray) {
+					PathToToolOption.addLib(lib, proj);
+				}
+			} else { //remove
+				//handle include paths
+				String incPaths = PkgConfigUtil.pkgOutputCflags(o.toString());
+				String[] incPathArray = Parser.parseIncPaths(incPaths);
+				for (String inc : incPathArray) {
+					PathToToolOption.removeIncludePath(inc, proj);
+				}
+				//handle library paths
+				String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(o.toString());
+				String[] libPathArray = Parser.parseLibPaths2(libPaths);
+				for (String libPath : libPathArray) {
+					PathToToolOption.removeLibraryPath(libPath, proj);
+				}
+				//handle libraries
+				String libs = PkgConfigUtil.pkgOutputLibFilesOnly(o.toString());
+				String[] libArray = Parser.parseLibs2(libs);
+				for (String lib : libArray) {
+					PathToToolOption.removeLib(lib, proj);
+				}
+			}
+		}
+	}
+	
+//	private void saveChecked() { 
 		//TODO: Find out how to save the state of checked checkboxes
 		//TODO: Save to .cproject
 //	}
@@ -224,6 +285,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		return null;
 	}
 	
+	/**
+	 * Check state listener for the table viwer.
+	 *
+	 */
 	public class PkgListener implements ICheckStateListener {
 
 		@Override
@@ -233,7 +298,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 	
 	protected void handleCheckStateChange() {
-//		storeValues(); //TODO: uncomment when implemented
+//		saveChecked(); //TODO: uncomment when implemented
 		newItemToggle = false;
 		//get checked items
 		Object[] checkedItems = getCheckedItems();
@@ -297,6 +362,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		});
 	}
 
+	/**
+	 * Creates a column for the table viewer.
+	 * 
+	 * @param title
+	 * @param bound
+	 * @return
+	 */
 	private TableViewerColumn createTableViewerColumn(String title, int bound) {
 
 		final TableViewerColumn viewerColumn = new TableViewerColumn(pkgCfgViewer,
@@ -316,9 +388,49 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * 
 	 * @return
 	 */
-	private Object[] getSelected() {
-		Object[] obs = ((IStructuredSelection)pkgCfgViewer.getSelection()).toArray();
-		return obs;
+	private TableItem[] getSelected() {
+		TableItem[] selected = pkgCfgViewer.getTable().getSelection();
+		return selected;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#buttonPressed(int)
+	 */
+	@Override
+	public void buttonPressed (int n) {
+		switch (n) {
+		case BUTTON_SELECT:
+			selectedButtonPressed();
+			break;
+		case BUTTON_DESELECT:
+			deselectedButtonPressed();
+			break;
+		default:
+			break;
+		}
+		updateButtons();
+	}
+	
+	private void selectedButtonPressed() {
+		TableItem[] selected = getSelected();
+		if (selected.length>0) {
+			newItemToggle = true;
+		}
+		for (TableItem itm : selected) {
+			itm.setChecked(true);
+		}
+		handleAddRemoveAllPackages();
+	}
+	
+	private void deselectedButtonPressed() {
+		TableItem[] selected = getSelected();
+		if (selected.length>0) {
+			newItemToggle = false;
+		}
+		for (TableItem itm : selected) {
+			itm.setChecked(false);
+		}
+		handleAddRemoveAllPackages();
 	}
 	
 }
