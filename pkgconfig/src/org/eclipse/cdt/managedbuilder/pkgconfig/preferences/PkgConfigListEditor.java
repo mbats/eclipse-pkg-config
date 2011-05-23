@@ -61,16 +61,6 @@ public abstract class PkgConfigListEditor extends ListEditor {
     Button removeButton;
 
     /**
-     * The Up button.
-     */
-    Button upButton;
-
-    /**
-     * The Down button.
-     */
-    Button downButton;
-
-    /**
 	 * The selection listener.
 	 */
     private SelectionListener selectionListener;
