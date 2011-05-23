@@ -132,23 +132,23 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 	protected void removePressed() {
 		List incList = getList();
         setPresentsDefaultValue(false);
-        int index = incList.getSelectionIndex();
-        //remove PKG_CONFIG_PATH from the preference store
-        PreferenceStore.removePkgConfigPath(incList.getItem(index).toString());
-		/*
-		 * remove one entry of PKG_CONFIG_PATH environment variable
-		 * from every project's every build configuration
-		 */
-		ICConfigurationDescription[] cfgs;
-		cfgs = new ICConfigurationDescription[] {cfgd};
-		for (ICConfigurationDescription cfg : cfgs) { 
-			ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
-					IEnvironmentVariable.ENVVAR_APPEND, 
-					SEPARATOR, cfg);
-		}
-        if (index >= 0) {
-        	incList.remove(index);
-            selectionChanged();
+        String[] selected = incList.getSelection();
+        for (String s : selected) {
+            //remove PKG_CONFIG_PATH from the preference store
+            PreferenceStore.removePkgConfigPath(s);
+    		/*
+    		 * remove one entry of PKG_CONFIG_PATH environment variable
+    		 * from every project's every build configuration
+    		 */
+    		ICConfigurationDescription[] cfgs;
+    		cfgs = new ICConfigurationDescription[] {cfgd};
+    		for (ICConfigurationDescription cfg : cfgs) { 
+    			ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
+    					IEnvironmentVariable.ENVVAR_APPEND, 
+    					SEPARATOR, cfg);
+    		}
+    		incList.remove(s);
+    		selectionChanged();
         }
 	}
 	

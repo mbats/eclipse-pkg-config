@@ -27,7 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -45,19 +44,13 @@ public abstract class PkgConfigListEditor extends ListEditor {
     List list;
 
     /**
-     * The button box containing the Add, Remove, Up, and Down buttons;
+     * The button box containing the Add and Remove buttons;
      * <code>null</code> if none (before creation or after disposal).
      */
     Composite buttonBox;
 
-    /**
-     * The Add button.
-     */
     Button addButton;
 
-    /**
-     * The Remove button.
-     */
     Button removeButton;
 
     /**
@@ -194,7 +187,7 @@ public abstract class PkgConfigListEditor extends ListEditor {
     @Override
 	public List getListControl(Composite parent) {
         if (this.list == null) {
-            this.list = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL
+            this.list = new List(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
                     | SWT.H_SCROLL);
             this.list.setFont(parent.getFont());
             this.list.addSelectionListener(getSelectionListener());
@@ -237,26 +230,9 @@ public abstract class PkgConfigListEditor extends ListEditor {
     }
 
     /**
-     * Returns this field editor's shell.
-     * <p>
-     * This method is internal to the framework; subclasses should not call
-     * this method.
-     * </p>
-     *
-     * @return the shell
-     */
-    @Override
-	protected Shell getShell() {
-        if (this.addButton == null) {
-			return null;
-		}
-        return this.addButton.getShell();
-    }
-    
-    /**
      * Notifies that the Add button has been pressed.
      */
-    void addPressed() {
+    private void addPressed() {
         setPresentsDefaultValue(false);
         String input = getNewInputObject();
 
