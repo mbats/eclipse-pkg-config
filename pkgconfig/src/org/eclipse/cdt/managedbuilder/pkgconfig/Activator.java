@@ -27,7 +27,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	//Plug-in ID
-	public static final String PLUGIN_ID = "pkg-config-support"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.pkgconfig"; //$NON-NLS-1$
 
 	//Shared instance
 	private static Activator plugin;
