@@ -111,6 +111,7 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 							IEnvironmentVariable.ENVVAR_APPEND, ";", cfg);
 					try {	
 						CoreModel.getDefault().setProjectDescription(proj, projDesc);
+//						CCorePlugin.getDefault().setProjectDescription(proj, projDesc);
 					} catch (CoreException e) {
 					}
 				}

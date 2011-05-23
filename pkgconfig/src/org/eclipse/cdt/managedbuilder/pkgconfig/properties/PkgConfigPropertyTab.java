@@ -224,6 +224,30 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	protected void saveChecked() { 
 		//TODO: Find out how to save the state of checked checkboxes
 		//TODO: Save to .cproject
+
+//		IProject project = getProject();
+//		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, true);
+//		if (des != null) {
+//			try {
+//				CCorePlugin.getDefault().setProjectDescription(project, des);
+//			} catch (CoreException e) {
+//				e.printStackTrace();
+//			}
+//		}
+        
+//		Map<String, String> refs = new LinkedHashMap<String, String>();
+//		TableItem[] items = pkgCfgViewer.getTable().getItems();
+//		for (int i = 0; i < items.length; i++) {
+//			TableItem item = items[i];
+//			Object data = item.getData();
+//			if (data != null) {
+//				if (item.getChecked()) {
+//					refs.put(item.getText(), "true");
+//					getResDesc().getConfiguration().setReferenceInfo(refs);
+//				}
+//			}
+//		}
+		
 	}
 	
 	@Override
