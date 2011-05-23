@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.IContributedEnvironment;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.ui.newui.MultiCfgContributedEnvironment;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -22,6 +29,8 @@ import org.eclipse.swt.widgets.Text;
 /**
  * New implementation of PkgConfigListEditor.
  * Used to select PKG_CONFIG_PATH values from the dialog.
+ * 
+ * TODO: Fix issue: Environment variables disappear when the workspace is restarted
  * 
  */
 public class PkgConfigPathListEditor extends PkgConfigListEditor {
@@ -77,13 +86,39 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 			 * add a new PKG_CONFIG_PATH environment variable
 			 * to every project's every build configuration
 			 */
-			ICConfigurationDescription[] cfgs;
-			cfgs = new ICConfigurationDescription[] {cfgd};
-			for (ICConfigurationDescription cfg : cfgs) { 
-				ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
-						IEnvironmentVariable.ENVVAR_APPEND, 
-						SEPARATOR, cfg);
+//			ICConfigurationDescription[] cfgs;
+//			cfgs = new ICConfigurationDescription[] {cfgd};
+//			for (ICConfigurationDescription cfg : cfgs) { 
+//				ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
+//						IEnvironmentVariable.ENVVAR_APPEND, 
+//						SEPARATOR, cfg);
+//			}
+			
+			//get all project in the workspace
+			IProject[] projects = PathToToolOption.getProjectsInWorkspace();
+			
+			IContributedEnvironment ice = CCorePlugin.getDefault()
+					.getBuildEnvironmentManager().getContributedEnvironment();
+
+			for (IProject proj : projects) {
+				ICProjectDescription projDesc = CoreModel.getDefault()
+						.getProjectDescription(proj, true);
+
+				ICConfigurationDescription[] cfgs;
+				cfgs = new ICConfigurationDescription[] {cfgd};
+				for (ICConfigurationDescription cfg : cfgs) { 
+					ice.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(),
+							IEnvironmentVariable.ENVVAR_APPEND, ";", cfg);
+					try {	
+						CoreModel.getDefault().setProjectDescription(proj, projDesc);
+					} catch (CoreException e) {
+					}
+				}
 			}
+	
+//			if (cfgd != null) {
+//				ce.appendEnvironment(cfgd);
+//			} 
 			return dir;
 		}
 		return null;
