@@ -85,8 +85,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		sashForm.setLayout(layout);
 
 		Composite c1 = new Composite(sashForm, SWT.NONE);
-		GridLayout layout2 = new GridLayout(2, false);
-		layout2.marginHeight = 15;
+		GridLayout layout2 = new GridLayout(3, false);
 		c1.setLayout(layout2);
 		
 		pkgCfgViewer = CheckboxTableViewer.newCheckList(c1, SWT.MULTI | SWT.H_SCROLL
@@ -94,6 +93,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		final Table tbl = pkgCfgViewer.getTable();
 		tbl.setHeaderVisible(true);
 		tbl.setLinesVisible(true);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		tbl.setLayoutData(gd);
 
 		createColumns(c1, pkgCfgViewer);
 		pkgCfgViewer.setContentProvider(new ArrayContentProvider());
@@ -340,7 +343,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 */
 	private void createColumns(final Composite parent, final TableViewer viewer) {
 		String[] titles = { "Packages", "Description" };
-		int[] bounds = { 200, 500 };
+		int[] bounds = { 200, 450 };
 
 		//first column is for the package
 		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0]);
