@@ -356,8 +356,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				}
 			}
 		}
-		saveChecked();
 		handleAddRemove();
+		saveChecked();
+		updateData(getResDesc());
 	}
 	
 	/**
