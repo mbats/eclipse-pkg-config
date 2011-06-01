@@ -304,11 +304,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	protected void updateButtons() {
 	}
 	
-	public IProject getProject() {
-		IProject proj = page.getProject();
-		return proj;
-	}
-	
 	public IProject getSelectedProject() {
 		IEditorPart ed = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if(ed  != null) {
