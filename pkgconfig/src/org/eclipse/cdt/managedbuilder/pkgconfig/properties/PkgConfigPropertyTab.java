@@ -15,7 +15,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
@@ -42,13 +44,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Property tab to select packages and add pkg-config output
  * of checked packages to compiler and linker.
  * 
- * TODO: Save checked packages to .cproject
- * TODO: Initialize checked packages from .cproject
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
@@ -59,6 +60,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private Set<Object> checkedSet = new HashSet<Object>();
 	private static final int BUTTON_SELECT = 0;
 	private static final int BUTTON_DESELECT = 1;
+	private final String PACKAGES = "packages";
 	
 	protected SashForm sashForm;
 	protected Composite comp;
@@ -119,6 +121,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		//buttons
 		Composite compositeButtons = new Composite(c1, SWT.NONE);
 		initButtons(compositeButtons, BUTTONS);
+		
+		initializePackageStates();
 	}
 	
 	/**
@@ -224,33 +228,60 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 	}
 	
-	protected void saveChecked() { 
-		//TODO: Find out how to save the state of checked checkboxes
-		//TODO: Save to .cproject
-
-//		IProject project = getProject();
-//		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, true);
-//		if (des != null) {
-//			try {
-//				CCorePlugin.getDefault().setProjectDescription(project, des);
-//			} catch (CoreException e) {
-//				e.printStackTrace();
-//			}
-//		}
-        
-//		Map<String, String> refs = new LinkedHashMap<String, String>();
-//		TableItem[] items = pkgCfgViewer.getTable().getItems();
-//		for (int i = 0; i < items.length; i++) {
-//			TableItem item = items[i];
-//			Object data = item.getData();
-//			if (data != null) {
-//				if (item.getChecked()) {
-//					refs.put(item.getText(), "true");
-//					getResDesc().getConfiguration().setReferenceInfo(refs);
-//				}
-//			}
-//		}
+	/**
+	 * Initializes the check state of the packages from the storage.
+	 */
+	private void initializePackageStates() {
+		ICConfigurationDescription desc = getResDesc().getConfiguration();
+		ICStorageElement strgElem = null;
+		try {
+			strgElem = desc.getStorage(PACKAGES, true);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		TableItem[] items = pkgCfgViewer.getTable().getItems();
+		for(TableItem item : items) {
+			String value = strgElem.getAttribute(item.getText());
+			if(value!=null) {
+				if(value.equals("true")) {
+					item.setChecked(true);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Saves checked state of the packages.
+	 */
+	private void saveChecked() { 
+		ICConfigurationDescription desc = getResDesc().getConfiguration();
+		ICStorageElement strgElem = null;
+		try {
+			strgElem = desc.getStorage(PACKAGES, true);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 		
+		TableItem[] items = pkgCfgViewer.getTable().getItems();
+		for(TableItem item : items) {
+			if(item != null) {
+				String chkd;
+				if(item.getChecked()) {
+					chkd = "true";
+				} else {
+					chkd = "false";
+				}
+				try {  
+					String pkgName = item.getText();
+					strgElem.setAttribute(pkgName, chkd);
+				} catch (Exception e) {
+					/*
+					 * INVALID_CHARACTER_ERR: An invalid or
+					 * illegal XML character is specified. 
+					 */
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -302,7 +333,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 	
 	protected void handleCheckStateChange() {
-		saveChecked();
 		newItemToggle = false;
 		//get checked items
 		Object[] checkedItems = getCheckedItems();
@@ -331,7 +361,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				}
 			}
 		}
-
+		saveChecked();
 		handleAddRemove();
 	}
 	
