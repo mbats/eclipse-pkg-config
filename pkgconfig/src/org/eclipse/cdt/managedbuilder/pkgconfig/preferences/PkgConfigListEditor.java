@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -230,9 +231,26 @@ public abstract class PkgConfigListEditor extends ListEditor {
     }
 
     /**
+     * Returns this field editor's shell.
+     * <p>
+     * This method is internal to the framework; subclasses should not call
+     * this method.
+     * </p>
+     *
+     * @return the shell
+     */
+    @Override
+	protected Shell getShell() {
+        if (this.addButton == null) {
+			return null;
+		}
+        return this.addButton.getShell();
+    }
+    
+    /**
      * Notifies that the Add button has been pressed.
      */
-    private void addPressed() {
+    void addPressed() {
         setPresentsDefaultValue(false);
         String input = getNewInputObject();
 

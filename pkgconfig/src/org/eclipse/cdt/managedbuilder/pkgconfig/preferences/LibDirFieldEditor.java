@@ -12,9 +12,9 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
 import java.io.File;
 
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.ui.newui.MultiCfgContributedEnvironment;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
+import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -23,11 +23,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 
 public class LibDirFieldEditor extends StringButtonFieldEditor {
 
-	private static final String SEPARATOR = System.getProperty("path.separator", ";"); //$NON-NLS-1$ //$NON-NLS-2$
-	private ICConfigurationDescription cfgd = null;
-	private final MultiCfgContributedEnvironment ce = new MultiCfgContributedEnvironment();
-	
-    /**
+	/**
      * Initial path for the Browse dialog.
      */
     private File filterPath = null;
@@ -75,17 +71,10 @@ public class LibDirFieldEditor extends StringButtonFieldEditor {
             if (dir.length() > 0) {
     			//set PKG_CONFIG_LIBDIR to the preference store
     			PreferenceStore.setPkgConfigLibDir(dir);
-            	/*
-        		 * add a new PKG_CONFIG_LIBDIR environment variable
-        		 * to every project's every build configuration
-        		 */
-        		ICConfigurationDescription[] cfgs;
-        		cfgs = new ICConfigurationDescription[] {cfgd};
-        		for (ICConfigurationDescription cfg : cfgs) { 
-        			ce.addVariable("PKG_CONFIG_LIBDIR", dir, 
-        					IEnvironmentVariable.ENVVAR_APPEND, 
-        					SEPARATOR, cfg);
-        		}
+    			UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
+    			StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
+    			vars.createVariable("PKG_CONFIG_LIBDIR", dir);
+    			fUserSupplier.setWorkspaceEnvironment(vars);
 				return new File(dir);
 			}
         }

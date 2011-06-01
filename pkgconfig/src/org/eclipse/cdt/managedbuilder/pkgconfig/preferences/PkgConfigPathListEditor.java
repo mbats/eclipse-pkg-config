@@ -10,16 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.envvar.IContributedEnvironment;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
-import org.eclipse.cdt.ui.newui.MultiCfgContributedEnvironment;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
+import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -35,10 +28,6 @@ import org.eclipse.swt.widgets.Text;
  */
 public class PkgConfigPathListEditor extends PkgConfigListEditor {
 
-	private static final String SEPARATOR = System.getProperty("path.separator", ";"); //$NON-NLS-1$ //$NON-NLS-2$
-	private ICConfigurationDescription cfgd = null;
-	private final MultiCfgContributedEnvironment ce = new MultiCfgContributedEnvironment();
-	
 	/**
 	 * Constructor.
 	 * 
@@ -81,45 +70,10 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 			}
 			//add a new PKG_CONFIG_PATH to the preference store
 			PreferenceStore.appendPkgConfigPath(dir);
-			
-			/*
-			 * add a new PKG_CONFIG_PATH environment variable
-			 * to every project's every build configuration
-			 */
-//			ICConfigurationDescription[] cfgs;
-//			cfgs = new ICConfigurationDescription[] {cfgd};
-//			for (ICConfigurationDescription cfg : cfgs) { 
-//				ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
-//						IEnvironmentVariable.ENVVAR_APPEND, 
-//						SEPARATOR, cfg);
-//			}
-			
-			//get all project in the workspace
-			IProject[] projects = PathToToolOption.getProjectsInWorkspace();
-			
-			IContributedEnvironment ice = CCorePlugin.getDefault()
-					.getBuildEnvironmentManager().getContributedEnvironment();
-
-			for (IProject proj : projects) {
-				ICProjectDescription projDesc = CoreModel.getDefault()
-						.getProjectDescription(proj, true);
-
-				ICConfigurationDescription[] cfgs;
-				cfgs = new ICConfigurationDescription[] {cfgd};
-				for (ICConfigurationDescription cfg : cfgs) { 
-					ice.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(),
-							IEnvironmentVariable.ENVVAR_APPEND, ";", cfg);
-					try {	
-						CoreModel.getDefault().setProjectDescription(proj, projDesc);
-//						CCorePlugin.getDefault().setProjectDescription(proj, projDesc);
-					} catch (CoreException e) {
-					}
-				}
-			}
-	
-//			if (cfgd != null) {
-//				ce.appendEnvironment(cfgd);
-//			} 
+			UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
+			StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
+			vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
+			fUserSupplier.setWorkspaceEnvironment(vars);
 			return dir;
 		}
 		return null;
@@ -136,17 +90,10 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
         for (String s : selected) {
             //remove PKG_CONFIG_PATH from the preference store
             PreferenceStore.removePkgConfigPath(s);
-    		/*
-    		 * remove one entry of PKG_CONFIG_PATH environment variable
-    		 * from every project's every build configuration
-    		 */
-    		ICConfigurationDescription[] cfgs;
-    		cfgs = new ICConfigurationDescription[] {cfgd};
-    		for (ICConfigurationDescription cfg : cfgs) { 
-    			ce.addVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath(), 
-    					IEnvironmentVariable.ENVVAR_APPEND, 
-    					SEPARATOR, cfg);
-    		}
+			UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
+			StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
+			vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
+			fUserSupplier.setWorkspaceEnvironment(vars);
     		incList.remove(s);
     		selectionChanged();
         }
