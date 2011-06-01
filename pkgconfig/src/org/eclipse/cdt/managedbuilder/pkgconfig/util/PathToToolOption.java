@@ -28,6 +28,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 /**
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
  * 
+ * TODO: Modify so that the Tool Options are added to the selected build configuration.
+ * 		 IF all configurations is selected then add Tool Options to all configurations.
  */
 public class PathToToolOption {
 
@@ -115,25 +117,28 @@ public class PathToToolOption {
 		//check if the given path exists
 		if (path.length()>0 && (pathExists(path) || var==LIB)) {
 			boolean success = false;
-			IConfiguration[] configs;
+//			IConfiguration[] configs;
 			//get all build configurations of the IProject
-			configs = getAllBuildConfigs(proj);
+//			configs = getAllBuildConfigs(proj);
 			//if build configurations found
-			if (configs.length>0) {
-				for (IConfiguration cf : configs) {
-					//Add path for the Tool's option
-					if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
-						success = true;
-					} else {
-						success = false;
-					}
-				}
-				//if the path was added successfully
-				if (success) {
-					//save project build info
-					ManagedBuildManager.saveBuildInfo(proj, true);
-				}
+//			if (configs.length>0) {
+//				for (IConfiguration cf : configs) {
+			IConfiguration cf = getCurrentBuildConf(proj);
+			if (cf != null) {
+				//Add path for the Tool's option
+				if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
+					success = true;
+				} else {
+					success = false;
+				}						
 			}
+//				}
+				//if the path was added successfully
+			if (success) {
+				//save project build info
+				ManagedBuildManager.saveBuildInfo(proj, true);
+			}
+//			}
 		}
 	}
 
@@ -147,25 +152,26 @@ public class PathToToolOption {
 		//check if the given path exists
 		if (path.length()>0 && pathExists(path)) {
 			boolean success = false;
-			IConfiguration[] configs;
+//			IConfiguration[] configs;
 			//get all build configurations of the IProject
-			configs = getAllBuildConfigs(proj);
+//			configs = getAllBuildConfigs(proj);
 			//if build configurations found
-			if (configs.length>0) {
-				for (IConfiguration cf : configs) {
-					//remove a path from the Tool's option
-					if (removePathFromSelectedToolOptionBuildConf(cf, path, var)) {
-						success = true;
-					} else {
-						success = false;
-					}
-				}
-				//if the path was removed successfully
-				if (success) {
-					//save project build info
-					ManagedBuildManager.saveBuildInfo(proj, true);
-				}
+//			if (configs.length>0) {
+//				for (IConfiguration cf : configs) {
+			IConfiguration cf = getCurrentBuildConf(proj);
+			//remove a path from the Tool's option
+			if (removePathFromSelectedToolOptionBuildConf(cf, path, var)) {
+				success = true;
+			} else {
+				success = false;
 			}
+//				}
+			//if the path was removed successfully
+			if (success) {
+				//save project build info
+				ManagedBuildManager.saveBuildInfo(proj, true);
+			}
+//			}
 		}
 	}
 
@@ -737,4 +743,25 @@ public class PathToToolOption {
 		return new File(path).exists();
 	}
 
+	//TODO: FIX. Currently always returns Debug config.
+	private static IConfiguration getCurrentBuildConf(IProject proj) {
+		IConfiguration conf = null;
+		IManagedBuildInfo info = null;
+		//try to get Managed build info
+		try {
+			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
+		} catch (Exception e) { //if not a managed build project
+			//print error
+			e.printStackTrace();
+			return conf;
+		}
+		//info can be null for projects without build info. For example, when creating a project
+		//from Import -> C/C++ Executable
+		if(info == null) {
+			return conf;
+		}
+		conf = info.getDefaultConfiguration();
+		return conf;
+	}
+	
 }
