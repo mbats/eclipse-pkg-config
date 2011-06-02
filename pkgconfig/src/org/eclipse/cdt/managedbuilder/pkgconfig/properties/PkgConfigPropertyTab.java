@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.CoreException;
  * Property tab to select packages and add pkg-config output
  * of checked packages to compiler and linker.
  * 
+ * TODO: Speed up adding/removing packages
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
@@ -182,7 +183,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	/**
 	 * Add or remove include paths, library paths and libraries of the checked package.
 	 */
-	private void handleAddRemoveAllPackages() {
+	private void handleAddRemoveCheckedPackages() {
 		IProject proj = page.getProject();
 		Object[] checkedPkgs = getCheckedItems();
 		for (Object o : checkedPkgs) {
@@ -327,7 +328,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 	}
 	
-	protected void handleCheckStateChange() {
+	private void handleCheckStateChange() {
 		newItemToggle = false;
 		//get checked items
 		Object[] checkedItems = getCheckedItems();
@@ -449,7 +450,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		for (TableItem itm : selected) {
 			itm.setChecked(true);
 		}
-		handleAddRemoveAllPackages();
+		handleAddRemoveCheckedPackages();
 	}
 	
 	private void deselectedButtonPressed() {
@@ -460,7 +461,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		for (TableItem itm : selected) {
 			itm.setChecked(false);
 		}
-		handleAddRemoveAllPackages();
+		handleAddRemoveCheckedPackages();
 	}
 	
 }
