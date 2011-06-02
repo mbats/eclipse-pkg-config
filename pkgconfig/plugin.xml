@@ -70,6 +70,7 @@
          point="org.eclipse.cdt.ui.cPropertyTab">
       <tab
             class="org.eclipse.cdt.managedbuilder.pkgconfig.properties.PkgConfigPropertyTab"
+            icon="icons/icon.png"
             name="Pkg-config"
             parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
             weight="080">
