@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.CoreException;
  * Property tab to select packages and add pkg-config output
  * of checked packages to compiler and linker.
  * 
- * TODO: Speed up adding/removing packages
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
@@ -124,7 +123,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		initButtons(compositeButtons, BUTTONS);
 		
 		initializePackageStates();
-		
 		previouslyChecked = new HashSet<Object>(Arrays.asList(getCheckedItems()));
 	}
 	
@@ -214,6 +212,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private void saveChecked() { 
 		ICConfigurationDescription desc = getResDesc().getConfiguration();
 		ICStorageElement strgElem = null;
+		//get storage or create one if it doesn't exist
 		try {
 			strgElem = desc.getStorage(PACKAGES, true);
 		} catch (CoreException e) {
@@ -224,11 +223,16 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		for(TableItem item : items) {
 			if(item != null) {
 				String chkd;
+				//form literal form of boolean state
 				if(item.getChecked()) {
 					chkd = "true";
 				} else {
 					chkd = "false";
 				}
+				/*
+				 * add package name and the checkbox state
+				 * to the storage
+				 */
 				try {  
 					String pkgName = item.getText();
 					strgElem.setAttribute(pkgName, chkd);
@@ -262,6 +266,11 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	protected void updateButtons() {
 	}
 	
+	/**
+	 * Get the selected project.
+	 * 
+	 * @return
+	 */
 	public IProject getSelectedProject() {
 		IEditorPart ed = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if(ed  != null) {
@@ -285,6 +294,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 	}
 	
+	/**
+	 * Action for the check state change.
+	 */
 	private void handleCheckStateChange() {
 		newItemToggle = false;
 		//get checked items
@@ -373,7 +385,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	
 	/**
 	 * Get selected item(s).
-	 * Only needed if multiselection with select/deselect button is implemented.
 	 * 
 	 * @return
 	 */
@@ -400,6 +411,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 	
+	/**
+	 * Action for the Select button.
+	 */
 	private void selectedButtonPressed() {
 		TableItem[] selected = getSelected();
 		if (selected.length>0) {
@@ -411,6 +425,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		handleCheckStateChange();
 	}
 	
+	/**
+	 * Action for the Deselect button.
+	 */
 	private void deselectedButtonPressed() {
 		TableItem[] selected = getSelected();
 		if (selected.length>0) {
