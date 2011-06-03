@@ -136,7 +136,7 @@ public class PathToToolOption {
 				//if the path was added successfully
 			if (success) {
 				//save project build info
-				ManagedBuildManager.saveBuildInfo(proj, true);
+//				ManagedBuildManager.saveBuildInfo(proj, true); //call moved to property ptab class to reduce overhead
 			}
 //			}
 		}
@@ -169,7 +169,7 @@ public class PathToToolOption {
 			//if the path was removed successfully
 			if (success) {
 				//save project build info
-				ManagedBuildManager.saveBuildInfo(proj, true);
+//				ManagedBuildManager.saveBuildInfo(proj, true); //call moved to property ptab class to reduce overhead
 			}
 //			}
 		}
@@ -521,6 +521,24 @@ public class PathToToolOption {
 		}
 	}
 
+	public static void addOtherFlag(IProject proj, String otherFlag) {
+		IConfiguration cf = getCurrentBuildConf(proj);
+		if (cf != null) {
+			ITool frontEnd = getCompiler(cf);
+			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
+
+			String flags = (String) option.getValue();
+			if (flags == null) {
+				flags = "";
+			}
+			
+			//append the new flag to existing flags
+			flags = flags+" "+otherFlag;
+			
+			ManagedBuildManager.setOption(cf, frontEnd, option, flags);
+		}
+	}
+	
 	/**
 	 * Adds a new value to specific Option.
 	 * 
@@ -615,7 +633,7 @@ public class PathToToolOption {
 		ITool cfTool = getCompiler(cf);
 		//get option id for include paths
 		String includeOptionId = getOptionId(cfTool, IOption.INCLUDE_PATH);
-		return getIToolPathOption(cfTool, includeOptionId);
+		return getToolOptionType(cfTool, includeOptionId);
 	}
 
 	/**
@@ -629,7 +647,7 @@ public class PathToToolOption {
 		ITool cfTool = getLinker(cf);
 		//get option id for libraries
 		String libOptionId = getOptionId(cfTool, IOption.LIBRARIES);
-		return getIToolPathOption(cfTool, libOptionId);
+		return getToolOptionType(cfTool, libOptionId);
 	}
 
 	/**
@@ -643,7 +661,7 @@ public class PathToToolOption {
 		ITool cfTool = getLinker(cf);
 		//get option id for library paths
 		String libDirOptionId = getOptionId(cfTool, IOption.LIBRARY_PATHS);
-		return getIToolPathOption(cfTool, libDirOptionId);
+		return getToolOptionType(cfTool, libDirOptionId);
 	}
 
 	/**
@@ -679,8 +697,8 @@ public class PathToToolOption {
 	 * @param optionId String Tool option type id
 	 * @return IOption Tool option type
 	 */
-	private static IOption getIToolPathOption(ITool cfTool, String optionId) {
-		//get path option with specific id for the ITool
+	private static IOption getToolOptionType(ITool cfTool, String optionId) {
+		//get option type with specific id for the ITool
 		return cfTool.getOptionById(optionId);
 	}
 

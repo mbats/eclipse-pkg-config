@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
@@ -182,6 +183,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				}
 			}
 		}
+		ManagedBuildManager.saveBuildInfo(proj, true);
 	}
 	
 	/**
