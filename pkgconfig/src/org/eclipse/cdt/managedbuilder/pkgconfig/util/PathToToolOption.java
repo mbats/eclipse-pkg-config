@@ -523,6 +523,7 @@ public class PathToToolOption {
 
 	/**
 	 * Add other flag to compiler Option.
+	 * TODO: Fix the issue preventing to add other flags consecutive times.
 	 * 
 	 * @param otherFlag String
 	 * @param proj IProject
