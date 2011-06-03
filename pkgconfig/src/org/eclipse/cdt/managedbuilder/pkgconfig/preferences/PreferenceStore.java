@@ -216,7 +216,7 @@ public class PreferenceStore {
 	/**
 	 * Remove pkg-config path from the preference store.
 	 * 
-	 * @param path The include path to be removed from the LLVM preference store.
+	 * @param path The include path to be removed from the preference store.
 	 */
 	public static void removePkgConfigPath(String path) {
 		removeValue(PreferenceConstants.PKG_CONFIG_PATH, path);
