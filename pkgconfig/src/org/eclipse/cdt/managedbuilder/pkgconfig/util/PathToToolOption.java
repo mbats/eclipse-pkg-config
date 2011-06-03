@@ -521,7 +521,13 @@ public class PathToToolOption {
 		}
 	}
 
-	public static void addOtherFlag(IProject proj, String otherFlag) {
+	/**
+	 * Add other flag to compiler Option.
+	 * 
+	 * @param otherFlag String
+	 * @param proj IProject
+	 */
+	public static void addOtherFlag(String otherFlag, IProject proj) {
 		IConfiguration cf = getCurrentBuildConf(proj);
 		if (cf != null) {
 			ITool frontEnd = getCompiler(cf);
@@ -534,6 +540,32 @@ public class PathToToolOption {
 			
 			//append the new flag to existing flags
 			flags = flags+" "+otherFlag;
+			
+			ManagedBuildManager.setOption(cf, frontEnd, option, flags);
+		}
+	}
+	
+	/**
+	 * Remove other flag from compiler Option.
+	 * 
+	 * @param otherFlag String
+	 * @param proj IProject
+	 */
+	public static void removeOtherFlag(String otherFlag, IProject proj) {
+		IConfiguration cf = getCurrentBuildConf(proj);
+		if (cf != null) {
+			ITool frontEnd = getCompiler(cf);
+			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
+
+			String flags = (String) option.getValue();
+			if (flags == null) {
+				flags = "";
+			}
+
+			//remove otherFlag String if found
+			if (flags.contains(otherFlag)) {
+				flags.replace(otherFlag, "");
+			}
 			
 			ManagedBuildManager.setOption(cf, frontEnd, option, flags);
 		}

@@ -142,6 +142,12 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		IProject proj = page.getProject();
 		if (newItemToggle) { //add
 			for (Object item : newItems) {
+				//handle options
+				String options = PkgConfigUtil.pkgOutputCflags(item.toString());
+				String[] optionsArray = Parser.parseCflagOptions(options);
+				for (String option : optionsArray) {
+					PathToToolOption.addOtherFlag(option, proj);
+				}
 				//handle include paths
 				String incPaths = PkgConfigUtil.pkgOutputCflags(item.toString());
 				String[] incPathArray = Parser.parseIncPaths(incPaths);
@@ -163,6 +169,12 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			}
 		} else { //remove
 			for (Object item : removedItems) {
+				//handle options
+				String options = PkgConfigUtil.pkgOutputCflags(item.toString());
+				String[] optionsArray = Parser.parseCflagOptions(options);
+				for (String option : optionsArray) {
+					PathToToolOption.removeOtherFlag(option, proj);
+				}
 				//handle include paths
 				String incPaths = PkgConfigUtil.pkgOutputCflags(item.toString());
 				String[] incPathArray = Parser.parseIncPaths(incPaths);
