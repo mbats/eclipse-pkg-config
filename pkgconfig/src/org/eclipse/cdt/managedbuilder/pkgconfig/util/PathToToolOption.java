@@ -523,7 +523,7 @@ public class PathToToolOption {
 
 	/**
 	 * Add other flag to compiler Option.
-	 * TODO: Fix the issue preventing to add other flags consecutive times.
+	 * TODO: Added flags vanish after a restart,
 	 * 
 	 * @param otherFlag String
 	 * @param proj IProject
@@ -534,15 +534,23 @@ public class PathToToolOption {
 			ITool frontEnd = getCompiler(cf);
 			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
 
-			String flags = (String) option.getValue();
-			if (flags == null) {
-				flags = "";
+			//if option type for other flags found from the compiler
+			if (option!=null) {
+				String flags = (String) option.getValue();
+				if (flags == null) {
+					flags = "";
+				}
+				
+				//append the new flag to existing flags
+				flags = flags+" "+otherFlag;
+				
+				try {
+					option.setValue(flags);
+				} catch (BuildException e) {
+					e.printStackTrace();
+				}
+				ManagedBuildManager.setOption(cf, frontEnd, option, flags);
 			}
-			
-			//append the new flag to existing flags
-			flags = flags+" "+otherFlag;
-			
-			ManagedBuildManager.setOption(cf, frontEnd, option, flags);
 		}
 	}
 	
@@ -565,9 +573,14 @@ public class PathToToolOption {
 
 			//remove otherFlag String if found
 			if (flags.contains(otherFlag)) {
-				flags.replace(otherFlag, "");
+				flags = flags.replace(" "+otherFlag, "");
 			}
 			
+			try {
+				option.setValue(flags);
+			} catch (BuildException e) {
+				e.printStackTrace();
+			}
 			ManagedBuildManager.setOption(cf, frontEnd, option, flags);
 		}
 	}

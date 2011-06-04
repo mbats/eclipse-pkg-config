@@ -340,7 +340,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		
 		handleAddRemove();
 		saveChecked();
-		updateData(getResDesc());
 		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
 	}
 	
