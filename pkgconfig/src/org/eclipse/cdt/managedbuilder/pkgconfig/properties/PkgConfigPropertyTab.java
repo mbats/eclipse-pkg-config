@@ -143,14 +143,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		if (newItemToggle) { //add
 			for (Object item : newItems) {
 				//handle options
-				String options = PkgConfigUtil.pkgOutputCflags(item.toString());
-				String[] optionsArray = Parser.parseCflagOptions(options);
+				String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
+				String[] optionsArray = Parser.parseCflagOptions(cflags);
 				for (String option : optionsArray) {
 					PathToToolOption.addOtherFlag(option, proj);
 				}
 				//handle include paths
-				String incPaths = PkgConfigUtil.pkgOutputCflags(item.toString());
-				String[] incPathArray = Parser.parseIncPaths(incPaths);
+				String[] incPathArray = Parser.parseIncPaths(cflags);
 				for (String inc : incPathArray) {
 					PathToToolOption.addIncludePath(inc, proj);
 				}
@@ -170,14 +169,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		} else { //remove
 			for (Object item : removedItems) {
 				//handle options
-				String options = PkgConfigUtil.pkgOutputCflags(item.toString());
-				String[] optionsArray = Parser.parseCflagOptions(options);
+				String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
+				String[] optionsArray = Parser.parseCflagOptions(cflags);
 				for (String option : optionsArray) {
 					PathToToolOption.removeOtherFlag(option, proj);
 				}
 				//handle include paths
-				String incPaths = PkgConfigUtil.pkgOutputCflags(item.toString());
-				String[] incPathArray = Parser.parseIncPaths(incPaths);
+				String[] incPathArray = Parser.parseIncPaths(cflags);
 				for (String inc : incPathArray) {
 					PathToToolOption.removeIncludePath(inc, proj);
 				}
