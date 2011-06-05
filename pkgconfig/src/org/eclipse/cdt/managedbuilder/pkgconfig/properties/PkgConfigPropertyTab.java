@@ -63,8 +63,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private static final int BUTTON_DESELECT = 1;
 	private final String PACKAGES = "packages";
 	
-	protected SashForm sashForm;
-	protected Composite comp;
+	private SashForm sashForm;
 	
 	private static final String[] BUTTONS = new String[] {
 		"Select",
