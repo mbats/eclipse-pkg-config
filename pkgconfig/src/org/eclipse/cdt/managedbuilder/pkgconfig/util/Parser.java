@@ -92,16 +92,21 @@ public class Parser {
 	public static String[] parseCflagOptions(String s) {
 		//find the index where include list starts
 		int end = s.indexOf("-I");
-		if (end != -1) {
-			//truncate include paths
-			s = s.substring(0, end-1);
-			//insert options to an array
-			String[] options = s.split(" ");
-			return options;
-		} else {
+		if (end != -1) { //includes found
+			if (end != 0) { //options found
+				//truncate include paths
+				s = s.substring(0, end-1);
+				//insert options to an array
+				String[] options = s.split(" ");
+				return options;
+			} else if (end == 0) { //no options found
+				String[] emptyList = {""};
+				return emptyList;
+			}
+		} else { //if no includes found
 			//check if any flags found
 			int flagStart = s.indexOf("-");
-			if (flagStart != -1) {
+			if (flagStart != -1) { //options found
 				s = s.substring(flagStart, s.length()-1);
 				//insert options into an array
 				String[] options = s.split(" ");
@@ -111,6 +116,9 @@ public class Parser {
 				return emptyList;
 			}
 		}
+		//should not reach here
+		String[] emptyList = {""};
+		return emptyList;
 	}
 	
 	/**
