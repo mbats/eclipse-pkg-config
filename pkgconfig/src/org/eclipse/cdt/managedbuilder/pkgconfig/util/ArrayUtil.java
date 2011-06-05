@@ -22,7 +22,7 @@ public class ArrayUtil {
 	 * @return String array containing multiple paths.
 	 */
 	public static String[] stringToArray(String str) {
-		return str.split(System.getProperty("path.separator")); //$NON-NLS-1$
+		return str.split(Separators.getPathSeparator()); //$NON-NLS-1$
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class ArrayUtil {
 		if (array.length>0 /*&& !array[0].equals("")*/) {
 			for (String i : array) {
 				sB.append(i);
-				sB.append(System.getProperty("path.separator")); //$NON-NLS-1$
+				sB.append(Separators.getPathSeparator()); //$NON-NLS-1$
 			}			
 		}
 		return sB.toString();
