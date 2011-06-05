@@ -155,7 +155,7 @@ public class PathToToolOption {
 	 */
 	private static void removePathFromToolOption(String path, int var, IProject proj) {
 		//check if the given path exists
-		if (path.length()>0 && pathExists(path)) {
+		if (path.length()>0 && pathExists(path) || var==LIB) {
 			boolean success = false;
 //			IConfiguration[] configs;
 			//get all build configurations of the IProject
