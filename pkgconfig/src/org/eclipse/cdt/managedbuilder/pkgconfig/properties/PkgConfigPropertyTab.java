@@ -15,7 +15,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -39,11 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
@@ -166,6 +164,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				}
 			}
 		} else { //remove
+			//TODO: Make sure that values that are still needed by other packages are not removed
 			for (Object item : removedItems) {
 				//handle options
 				String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
@@ -260,6 +259,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	@Override
 	protected void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
+		updateData(getResDesc());
 	}
 
 	@Override
@@ -267,30 +267,25 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		//uncheck every checkbox
 		Object[] elements = {};
 		pkgCfgViewer.setCheckedElements(elements);
+		
+		//remove values from Tools Options
+		handleCheckStateChange();
 	}
 
 	@Override
 	protected void updateData(ICResourceDescription cfg) {
+		ICConfigurationDescription confDesc = cfg.getConfiguration();
+		ICProjectDescription projDesc = confDesc.getProjectDescription();
+		try {
+			CoreModel.getDefault().setProjectDescription(page.getProject(), projDesc);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		saveChecked();
 	}
 
 	@Override
 	protected void updateButtons() {
-	}
-	
-	/**
-	 * Get the selected project.
-	 * 
-	 * @return
-	 */
-	public IProject getSelectedProject() {
-		IEditorPart ed = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if(ed  != null) {
-		    IFileEditorInput input = (IFileEditorInput)ed.getEditorInput() ;
-		    IFile file = input.getFile();
-		    IProject activeProject = file.getProject();
-		    return activeProject;
-		}
-		return null;
 	}
 	
 	/**
@@ -338,8 +333,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 		
 		handleAddRemove();
-		saveChecked();
+		updateData(getResDesc());
 		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
+		newItems.clear();
+		removedItems.clear();
 	}
 	
 	/**

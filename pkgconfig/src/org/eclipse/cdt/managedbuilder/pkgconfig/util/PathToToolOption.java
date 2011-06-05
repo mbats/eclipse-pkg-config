@@ -546,16 +546,18 @@ public class PathToToolOption {
 					flags = "";
 				}
 				
-				//append the new flag to existing flags
-				flags = flags+" "+otherFlag;
-				
-				try {
-					option.setValue(flags);
-				} catch (BuildException e) {
-					e.printStackTrace();
+				if (!flags.contains(otherFlag)) {
+					//append the new flag to existing flags
+					flags = flags+" "+otherFlag;
+					
+					try {
+						option.setValue(flags);
+					} catch (BuildException e) {
+						e.printStackTrace();
+					}
+					ManagedBuildManager.setOption(cf, frontEnd, option, flags);
+					ManagedBuildManager.saveBuildInfo(proj, true);
 				}
-				ManagedBuildManager.setOption(cf, frontEnd, option, flags);
-				ManagedBuildManager.saveBuildInfo(proj, true);
 			}
 		}
 	}
@@ -581,26 +583,28 @@ public class PathToToolOption {
 					flags = "";
 				}
 				
-				//append the new flag to existing flags
-				flags = flags+" "+otherFlag;
-				
-				try {
-					option.setValue(flags);
-				} catch (BuildException e) {
-					e.printStackTrace();
-				}
-				ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(proj);
-				IConfiguration configuration = ManagedBuildManager.getConfigurationForDescription(desc.getActiveConfiguration());
-				IHoldsOptions optionsHolder = category.getOptionHolder();
-				try {
-					configuration.setOption(optionsHolder, option, flags);
-				} catch (BuildException e1) {
-					e1.printStackTrace();
-				}
-				try {
-					CoreModel.getDefault().setProjectDescription(proj, desc);
-				} catch (CoreException e) {
-					e.printStackTrace();
+				if (!flags.contains(otherFlag)) {
+					//append the new flag to existing flags
+					flags = flags+" "+otherFlag;
+					
+					try {
+						option.setValue(flags);
+					} catch (BuildException e) {
+						e.printStackTrace();
+					}
+					ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(proj);
+					IConfiguration configuration = ManagedBuildManager.getConfigurationForDescription(desc.getActiveConfiguration());
+					IHoldsOptions optionsHolder = category.getOptionHolder();
+					try {
+						configuration.setOption(optionsHolder, option, flags);
+					} catch (BuildException e1) {
+						e1.printStackTrace();
+					}
+					try {
+						CoreModel.getDefault().setProjectDescription(proj, desc);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -625,7 +629,7 @@ public class PathToToolOption {
 
 			//remove otherFlag String if found
 			if (flags.contains(otherFlag)) {
-				flags = flags.replace(" "+otherFlag, "");
+				flags = flags.replace(otherFlag, "");
 			}
 			
 			try {
