@@ -14,16 +14,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
@@ -533,7 +538,7 @@ public class PathToToolOption {
 		if (cf != null) {
 			ITool frontEnd = getCompiler(cf);
 			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
-
+		
 			//if option type for other flags found from the compiler
 			if (option!=null) {
 				String flags = (String) option.getValue();
@@ -550,6 +555,53 @@ public class PathToToolOption {
 					e.printStackTrace();
 				}
 				ManagedBuildManager.setOption(cf, frontEnd, option, flags);
+				ManagedBuildManager.saveBuildInfo(proj, true);
+			}
+		}
+	}
+	
+	/**
+	 * Add other flag to compiler Option.
+	 * TODO: Added flags vanish after a restart,
+	 * 
+	 * @param otherFlag String
+	 * @param proj IProject
+	 */
+	public static void addOtherFlag2(String otherFlag, IProject proj) {
+		IConfiguration cf = getCurrentBuildConf(proj);
+		if (cf != null) {
+			ITool frontEnd = getCompiler(cf);
+			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
+			IOptionCategory category = frontEnd.getOptionCategory("gnu.c.compiler.category.other");
+		
+			//if option type for other flags found from the compiler
+			if (option!=null) {
+				String flags = (String) option.getValue();
+				if (flags == null) {
+					flags = "";
+				}
+				
+				//append the new flag to existing flags
+				flags = flags+" "+otherFlag;
+				
+				try {
+					option.setValue(flags);
+				} catch (BuildException e) {
+					e.printStackTrace();
+				}
+				ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(proj);
+				IConfiguration configuration = ManagedBuildManager.getConfigurationForDescription(desc.getActiveConfiguration());
+				IHoldsOptions optionsHolder = category.getOptionHolder();
+				try {
+					configuration.setOption(optionsHolder, option, flags);
+				} catch (BuildException e1) {
+					e1.printStackTrace();
+				}
+				try {
+					CoreModel.getDefault().setProjectDescription(proj, desc);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
