@@ -12,7 +12,10 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -138,60 +141,179 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private void handleAddRemove() {
 		IProject proj = page.getProject();
 		if (newItemToggle) { //add
-			for (Object item : newItems) {
-				//handle options
-				String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
-				String[] optionsArray = Parser.parseCflagOptions(cflags);
-				for (String option : optionsArray) {
-					PathToToolOption.addOtherFlag(option, proj);
-				}
-				//handle include paths
-				String[] incPathArray = Parser.parseIncPaths(cflags);
-				for (String inc : incPathArray) {
-					PathToToolOption.addIncludePath(inc, proj);
-				}
-				//handle library paths
-				String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(item.toString());
-				String[] libPathArray = Parser.parseLibPaths2(libPaths);
-				for (String libPath : libPathArray) {
-					PathToToolOption.addLibraryPath(libPath, proj);
-				}
-				//handle libraries
-				String libs = PkgConfigUtil.pkgOutputLibFilesOnly(item.toString());
-				String[] libArray = Parser.parseLibs2(libs);
-				for (String lib : libArray) {
-					PathToToolOption.addLib(lib, proj);
-				}
-			}
+			addPackageValues(newItems.toArray(), proj);
 		} else { //remove
-			//TODO: Make sure that values that are still needed by other packages are not removed
-			for (Object item : removedItems) {
-				//handle options
-				String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
-				String[] optionsArray = Parser.parseCflagOptions(cflags);
-				for (String option : optionsArray) {
-					PathToToolOption.removeOtherFlag(option, proj);
-				}
-				//handle include paths
-				String[] incPathArray = Parser.parseIncPaths(cflags);
-				for (String inc : incPathArray) {
-					PathToToolOption.removeIncludePath(inc, proj);
-				}
-				//handle library paths
-				String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(item.toString());
-				String[] libPathArray = Parser.parseLibPaths2(libPaths);
-				for (String libPath : libPathArray) {
-					PathToToolOption.removeLibraryPath(libPath, proj);
-				}
-				//handle libraries
-				String libs = PkgConfigUtil.pkgOutputLibFilesOnly(item.toString());
-				String[] libArray = Parser.parseLibs2(libs);
-				for (String lib : libArray) {
-					PathToToolOption.removeLib(lib, proj);
-				}
-			}
+			removePackageValues(removedItems.toArray(), proj);
 		}
 		ManagedBuildManager.saveBuildInfo(proj, true);
+	}
+	
+	/**
+	 * Add new flags that the packages need to Tools' Options
+	 * 
+	 * @param addedItems Object[]
+	 * @param proj IProject
+	 */
+	private void addPackageValues(Object[] addedItems, IProject proj) {
+		for (Object item : addedItems) {
+			//handle options
+			String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
+			String[] optionsArray = Parser.parseCflagOptions(cflags);
+			for (String option : optionsArray) {
+				PathToToolOption.addOtherFlag(option, proj);
+			}
+			//handle include paths
+			String[] incPathArray = Parser.parseIncPaths(cflags);
+			for (String inc : incPathArray) {
+				PathToToolOption.addIncludePath(inc, proj);
+			}
+			//handle library paths
+			String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(item.toString());
+			String[] libPathArray = Parser.parseLibPaths2(libPaths);
+			for (String libPath : libPathArray) {
+				PathToToolOption.addLibraryPath(libPath, proj);
+			}
+			//handle libraries
+			String libs = PkgConfigUtil.pkgOutputLibFilesOnly(item.toString());
+			String[] libArray = Parser.parseLibs2(libs);
+			for (String lib : libArray) {
+				PathToToolOption.addLib(lib, proj);
+			}
+		}
+	}
+	
+	/**
+	 * Makes sure that only the flags that are not needed by other packages 
+	 * are removed.
+	 * 
+	 * @param removedItems Object[]
+	 */
+	private void removePackageValues(Object[] removedItems, IProject proj) {
+		String rCflags, rLibPaths, rLibs;
+		String cCflags, cLibPaths, cLibs;
+		String[] rOptionArray, rIncPathArray, rLibPathArray, rLibFileArray;
+		String[] cOptionArray, cIncPathArray, cLibPathArray, cLibFileArray;
+		HashMap<String, Boolean> optionMap;
+		HashMap<String, Boolean> includeMap;
+		HashMap<String, Boolean> libPathMap;
+		HashMap<String, Boolean> libFileMap;
+		
+		Object[] checkedItems = getCheckedItems();
+		//make sure that the checked items don't contain removed items
+		List<Object> checkedList = Arrays.asList(checkedItems);
+		for (Object removedItem : removedItems) {
+			if (checkedList.contains(removedItem)) {
+				checkedList.remove(removedItem);
+			}
+		}
+		
+		for (Object removedPkg : removedItems) {
+			//get arrays of removed package flags
+			rCflags = PkgConfigUtil.pkgOutputCflags(removedPkg.toString());
+			rLibPaths = PkgConfigUtil.pkgOutputLibPathsOnly(removedPkg.toString());
+			rLibs = PkgConfigUtil.pkgOutputLibFilesOnly(removedPkg.toString());
+			rOptionArray = Parser.parseCflagOptions(rCflags);
+			rIncPathArray = Parser.parseIncPaths(rCflags);
+			rLibPathArray = Parser.parseLibPaths2(rLibPaths);
+			rLibFileArray = Parser.parseLibs2(rLibs);
+			
+			//load HashMaps
+			optionMap = new HashMap<String, Boolean>();
+			includeMap = new HashMap<String, Boolean>();
+			libPathMap = new HashMap<String, Boolean>();
+			libFileMap = new HashMap<String, Boolean>();
+			for (String rO : rOptionArray) {
+				optionMap.put(rO, true);
+			}
+			for (String rI : rIncPathArray) {
+				includeMap.put(rI, true);
+			}
+			for (String rLP : rLibPathArray) {
+				libPathMap.put(rLP, true);
+			}
+			for (String rLF : rLibFileArray) {
+				libFileMap.put(rLF, true);
+			}
+			
+			/*
+			 * flag is free to be removed only if none of the remaining
+			 * checked packages have the flag.
+			 */
+			for (Object checked : checkedList) {
+				//get arrays of checked package flags
+				cCflags = PkgConfigUtil.pkgOutputCflags(checked.toString());
+				cLibPaths = PkgConfigUtil.pkgOutputLibPathsOnly(checked.toString());
+				cLibs = PkgConfigUtil.pkgOutputLibFilesOnly(checked.toString());
+				cOptionArray = Parser.parseCflagOptions(cCflags);
+				cIncPathArray = Parser.parseIncPaths(cCflags);
+				cLibPathArray = Parser.parseLibPaths2(cLibPaths);
+				cLibFileArray = Parser.parseLibs2(cLibs);
+
+				//check options 
+				List<String> optionsList = Arrays.asList(cOptionArray);
+				for (String option : rOptionArray) {
+					if (optionsList.contains(option)) {
+						optionMap.put(option, false);
+					} else {
+						optionMap.put(option, true);
+					}
+				}
+				
+				//check includes
+				List<String> includesList = Arrays.asList(cIncPathArray);
+				for (String option : rIncPathArray) {
+					if (includesList.contains(option)) {
+						includeMap.put(option, false);
+					} else {
+						includeMap.put(option, true);
+					}
+				}
+				
+				//check library paths 
+				List<String> libPathList = Arrays.asList(cLibPathArray);
+				for (String option : rLibPathArray) {
+					if (libPathList.contains(option)) {
+						libPathMap.put(option, false);
+					} else {
+						libPathMap.put(option, true);
+					}
+				}
+				
+				//check library files
+				List<String> libFileList = Arrays.asList(cLibFileArray);
+				for (String option : rLibFileArray) {
+					if (libFileList.contains(option)) {
+						libFileMap.put(option, false);
+					} else {
+						libFileMap.put(option, true);
+					}
+				}
+			} //end of checked items loop
+			//remove unneeded options
+			for (Entry<String, Boolean> entry : optionMap.entrySet()) {
+				if (entry.getValue() == true) {
+					PathToToolOption.removeOtherFlag(entry.getKey(), proj);
+				}
+			}
+			//remove unneeded includes
+			for (Entry<String, Boolean> entry : includeMap.entrySet()) {
+				if (entry.getValue() == true) {
+					PathToToolOption.removeIncludePath(entry.getKey(), proj);
+				}
+			}
+			//remove unneeded library paths
+			for (Entry<String, Boolean> entry : libPathMap.entrySet()) {
+				if (entry.getValue() == true) {
+					PathToToolOption.removeLibraryPath(entry.getKey(), proj);
+				}
+			}
+			//remove unneeded library files
+			for (Entry<String, Boolean> entry : libFileMap.entrySet()) {
+				if (entry.getValue() == true) {
+					PathToToolOption.removeLib(entry.getKey(), proj);
+				}
+			}
+		} //end of removed items loop
 	}
 	
 	/**
