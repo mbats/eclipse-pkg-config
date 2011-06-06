@@ -90,30 +90,33 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseCflagOptions(String s) {
-		//find the index where include list starts
-		int end = s.indexOf("-I");
-		if (end != -1) { //includes found
-			if (end != 0) { //options found
-				//truncate include paths
-				s = s.substring(0, end-1);
-				//insert options to an array
-				String[] options = s.split(" ");
-				return options;
-			} else if (end == 0) { //no options found
-				String[] emptyList = {""};
-				return emptyList;
-			}
-		} else { //if no includes found
-			//check if any flags found
-			int flagStart = s.indexOf("-");
-			if (flagStart != -1) { //options found
-				s = s.substring(flagStart, s.length()-1);
-				//insert options into an array
-				String[] options = s.split(" ");
-				return options;
-			} else {
-				String[] emptyList = {""};
-				return emptyList;
+		if (s != null) {
+			//find the index where include list starts
+			int end = s.indexOf("-I");
+			System.out.println();
+			if (end != -1) { //includes found
+				if (end != 0) { //options found
+					//truncate include paths
+					s = s.substring(0, end-1);
+					//insert options to an array
+					String[] options = s.split(" ");
+					return options;
+				} else if (end == 0) { //no options found
+					String[] emptyList = {""};
+					return emptyList;
+				}
+			} else { //if no includes found
+				//check if any flags found
+				int flagStart = s.indexOf("-");
+				if (flagStart != -1) { //options found
+					s = s.substring(flagStart, s.length()-1);
+					//insert options into an array
+					String[] options = s.split(" ");
+					return options;
+				} else {
+					String[] emptyList = {""};
+					return emptyList;
+				}
 			}
 		}
 		//should not reach here
@@ -128,16 +131,21 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseIncPaths(String s) {
-		//find the index where include list starts
-		int start = s.indexOf("-I");
-		if (start != -1) { //if include paths found
-			//truncate other than include paths
-			s = s.substring(start, s.length()-1);
-			//remove library search path flags
-			String s2 = s.replace("-I", "");
-			//insert include paths into an array
-			String[] incPaths = s2.split(" ");
-			return incPaths;
+		if (s != null) {
+			//find the index where include list starts
+			int start = s.indexOf("-I");
+			if (start != -1) { //if include paths found
+				//truncate other than include paths
+				s = s.substring(start, s.length()-1);
+				//remove library search path flags
+				String s2 = s.replace("-I", "");
+				//insert include paths into an array
+				String[] incPaths = s2.split(" ");
+				return incPaths;
+			} else {
+				String[] emptyList = {""};
+				return emptyList;
+			}
 		} else {
 			String[] emptyList = {""};
 			return emptyList;
@@ -176,11 +184,16 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseLibPaths2(String s) {
-		//remove library search path flags
-		String s2 = s.replace("-L", "");
-		//insert lib paths into an array
-		String[] libPaths = s2.split(" ");
-		return libPaths;
+		if (s != null) {
+			//remove library search path flags
+			String s2 = s.replace("-L", "");
+			//insert lib paths into an ar lray
+			String[] libPaths = s2.split(" ");
+			return libPaths;
+		} else {
+			String[] emptyList  = {""};
+			return emptyList;
+		}
 	}
 	
 	/**
@@ -190,23 +203,28 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseLibs(String s) {
-		//special case if pkg-config --libs output starts with -l
-		int start = s.indexOf("-l");
-		if (start != 0) {
-			start = s.indexOf(" -l");
-		}
-		if (start != -1) { //if libraries found
-			//truncate library search paths
-			s = s.substring(start+1, s.length()-1);
-			//remove lib flags
-			String s2 = s.replace("-l", "");
-			//insert libs into an array
-			String[] libs = s2.split(" ");
-			return libs;
+		if (s != null) {
+			//special case if pkg-config --libs output starts with -l
+			int start = s.indexOf("-l");
+			if (start != 0) {
+				start = s.indexOf(" -l");
+			}
+			if (start != -1) { //if libraries found
+				//truncate library search paths
+				s = s.substring(start+1, s.length()-1);
+				//remove lib flags
+				String s2 = s.replace("-l", "");
+				//insert libs into an array
+				String[] libs = s2.split(" ");
+				return libs;
+			} else {
+				String[] emptyList = {""};
+				return emptyList;
+			}			
 		} else {
 			String[] emptyList = {""};
 			return emptyList;
-		}
+		}	
 	}
 	
 	/**
@@ -216,11 +234,16 @@ public class Parser {
 	 * @return Parsed String array.
 	 */
 	public static String[] parseLibs2(String s) {
-		//remove lib flags
-		String s2 = s.replace("-l", "");
-		//insert libs into an array
-		String[] libs = s2.split(" ");
-		return libs;
+		if (s != null) {
+			//remove lib flags
+			String s2 = s.replace("-l", "");
+			//insert libs into an array
+			String[] libs = s2.split(" ");
+			return libs;
+		} else  {
+			String[] emptyList = {""};
+			return emptyList;
+		}
 	}
 	
 	/**
