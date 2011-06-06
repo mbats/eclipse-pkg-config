@@ -28,7 +28,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
@@ -128,7 +127,7 @@ public class PathToToolOption {
 			//if build configurations found
 //			if (configs.length>0) {
 //				for (IConfiguration cf : configs) {
-			IConfiguration cf = getCurrentBuildConf(proj);
+			IConfiguration cf = getActiveBuildConf(proj);
 			if (cf != null) {
 				//Add path for the Tool's option
 				if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
@@ -163,7 +162,7 @@ public class PathToToolOption {
 			//if build configurations found
 //			if (configs.length>0) {
 //				for (IConfiguration cf : configs) {
-			IConfiguration cf = getCurrentBuildConf(proj);
+			IConfiguration cf = getActiveBuildConf(proj);
 			//remove a path from the Tool's option
 			if (removePathFromSelectedToolOptionBuildConf(cf, path, var)) {
 				success = true;
@@ -232,36 +231,6 @@ public class PathToToolOption {
 		IWorkspace root = ResourcesPlugin.getWorkspace();
 		//get all projects in the workspace
 		return root.getRoot().getProjects();
-	}
-
-	/**
-	 * Returns all build configurations of the project.
-	 * 
-	 * @param proj IProject Project
-	 * @return IConfiguration[] Build configurations
-	 */
-	private static IConfiguration[] getAllBuildConfigs(IProject proj) {
-		IConfiguration[] configurations = new IConfiguration[] {};
-		IManagedBuildInfo info = null;
-		//try to get Managed build info
-		try {
-			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
-		} catch (Exception e) { //if not a managed build project
-			//print error
-			e.printStackTrace();
-			return configurations;
-		}
-		//info can be null for projects without build info. For example, when creating a project
-		//from Import -> C/C++ Executable
-		if(info == null) {
-			return configurations;
-		}
-		//get ManagedProject associated with build info
-		IManagedProject mProj = info.getManagedProject();
-
-		//get all build configurations of the project
-		configurations = mProj.getConfigurations();
-		return configurations;
 	}
 
 	/**
@@ -534,7 +503,7 @@ public class PathToToolOption {
 	 * @param proj IProject
 	 */
 	public static void addOtherFlag(String otherFlag, IProject proj) {
-		IConfiguration cf = getCurrentBuildConf(proj);
+		IConfiguration cf = getActiveBuildConf(proj);
 		if (cf != null) {
 			ITool frontEnd = getCompiler(cf);
 			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
@@ -570,7 +539,7 @@ public class PathToToolOption {
 	 * @param proj IProject
 	 */
 	public static void addOtherFlag2(String otherFlag, IProject proj) {
-		IConfiguration cf = getCurrentBuildConf(proj);
+		IConfiguration cf = getActiveBuildConf(proj);
 		if (cf != null) {
 			ITool frontEnd = getCompiler(cf);
 			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
@@ -600,11 +569,6 @@ public class PathToToolOption {
 					} catch (BuildException e1) {
 						e1.printStackTrace();
 					}
-					try {
-						CoreModel.getDefault().setProjectDescription(proj, desc);
-					} catch (CoreException e) {
-						e.printStackTrace();
-					}
 				}
 			}
 		}
@@ -617,7 +581,7 @@ public class PathToToolOption {
 	 * @param proj IProject
 	 */
 	public static void removeOtherFlag(String otherFlag, IProject proj) {
-		IConfiguration cf = getCurrentBuildConf(proj);
+		IConfiguration cf = getActiveBuildConf(proj);
 		if (cf != null) {
 			ITool frontEnd = getCompiler(cf);
 			IOption option = frontEnd.getOptionById("gnu.c.compiler.option.misc.other");
@@ -863,8 +827,13 @@ public class PathToToolOption {
 		return new File(path).exists();
 	}
 
-	//TODO: FIX. Currently always returns Debug config.
-	private static IConfiguration getCurrentBuildConf(IProject proj) {
+	/**
+	 * Get the active build configuration.
+	 * 
+	 * @param proj IProject
+	 * @return IConfiguration
+	 */
+	private static IConfiguration getActiveBuildConf(IProject proj) {
 		IConfiguration conf = null;
 		IManagedBuildInfo info = null;
 		//try to get Managed build info
@@ -883,5 +852,35 @@ public class PathToToolOption {
 		conf = info.getDefaultConfiguration();
 		return conf;
 	}
+	
+//	/**
+//	 * Returns all build configurations of the project.
+//	 * 
+//	 * @param proj IProject Project
+//	 * @return IConfiguration[] Build configurations
+//	 */
+//	private static IConfiguration[] getAllBuildConfigs(IProject proj) {
+//		IConfiguration[] configurations = new IConfiguration[] {};
+//		IManagedBuildInfo info = null;
+//		//try to get Managed build info
+//		try {
+//			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
+//		} catch (Exception e) { //if not a managed build project
+//			//print error
+//			e.printStackTrace();
+//			return configurations;
+//		}
+//		//info can be null for projects without build info. For example, when creating a project
+//		//from Import -> C/C++ Executable
+//		if(info == null) {
+//			return configurations;
+//		}
+//		//get ManagedProject associated with build info
+//		IManagedProject mProj = info.getManagedProject();
+//
+//		//get all build configurations of the project
+//		configurations = mProj.getConfigurations();
+//		return configurations;
+//	}
 	
 }
