@@ -509,7 +509,7 @@ public class PathToToolOption {
 		
 			//if option type for other flags found from the compiler
 			if (option!=null) {
-				String flags = (String) option.getValue();
+				String flags = option.getValue().toString();
 				if (flags == null) {
 					flags = "";
 				}
@@ -524,7 +524,6 @@ public class PathToToolOption {
 						e.printStackTrace();
 					}
 					ManagedBuildManager.setOption(cf, frontEnd, option, flags);
-					ManagedBuildManager.saveBuildInfo(proj, true);
 				}
 			}
 		}
