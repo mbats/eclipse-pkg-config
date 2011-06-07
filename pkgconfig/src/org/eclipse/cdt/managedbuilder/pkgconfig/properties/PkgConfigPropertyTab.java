@@ -404,6 +404,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			e.printStackTrace();
 		}
 		saveChecked();
+		//TODO: Call Indexer: Refresh all files
 	}
 
 	@Override
