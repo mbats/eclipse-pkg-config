@@ -360,10 +360,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		TableItem[] items = pkgCfgViewer.getTable().getItems();
 		String value = null;
 		for(TableItem item : items) {
-			if (item.getText().equalsIgnoreCase("gtk+-2.0")) {
-				value = strgElem.getAttribute("gtkplus-2.0");
-			} else if (item.getText().equalsIgnoreCase("gtk+-win32-2.0")) {
-				value = strgElem.getAttribute("gtkplus-win32-2.0");
+			if (item.getText().contains("+")) {
+				String newItemName = item.getText().replace("+", "plus");
+				value = strgElem.getAttribute(newItemName);
 			} else {
 				value = strgElem.getAttribute(item.getText());
 			}
@@ -404,10 +403,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				 */
 				try {  
 					String pkgName = item.getText();
-					if (pkgName.equalsIgnoreCase("gtk+-2.0")) {
-						strgElem.setAttribute("gtkplus-2.0", chkd);
-					} else if (pkgName.equalsIgnoreCase("gtk+-win32-2.0")) {
-						strgElem.setAttribute("gtkplus-win32-2.0", chkd);
+					//need to convert + symbols to "plus"
+					if (pkgName.contains("+")) {
+						String newPkgName = pkgName.replace("+", "plus");
+						strgElem.setAttribute(newPkgName, chkd);
 					} else {
 						strgElem.setAttribute(pkgName, chkd);
 					}
@@ -417,7 +416,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 					 * INVALID_CHARACTER_ERR: An invalid or
 					 * illegal XML character is specified. 
 					 */
-					//TODO: Fix
 				}
 			}
 		}
