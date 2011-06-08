@@ -54,6 +54,7 @@ import org.eclipse.core.runtime.CoreException;
  * Property tab to select packages and add pkg-config output
  * of checked packages to compiler and linker.
  * 
+ * TODO: Gtk+-2.0 package check state not saved.
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
@@ -61,10 +62,10 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private ArrayList<Object> newItems = new ArrayList<Object>();
 	private ArrayList<Object> removedItems = new ArrayList<Object>();
 	private Set<Object> previouslyChecked;
-	private boolean newItemToggle;
 	private static final int BUTTON_SELECT = 0;
 	private static final int BUTTON_DESELECT = 1;
 	private final String PACKAGES = "packages";
+	private boolean reindexToggle = false;
 	
 	private SashForm sashForm;
 	
@@ -138,16 +139,42 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 	
 	/**
-	 * Add or remove include paths, library paths and libraries of the checked package.
+	 * Action for the check state change.
 	 */
-	private void handleAddRemove() {
-		IProject proj = page.getProject();
-		if (newItemToggle) { //add
-			addPackageValues(newItems.toArray(), proj);
-		} else { //remove
-			removePackageValues(removedItems.toArray(), proj);
+	private void handleCheckStateChange() {
+		//get checked items
+		Object[] checkedItems = getCheckedItems();
+		
+		//check if new items checked
+		if(checkedItems.length > previouslyChecked.size()) {
+			//add checked items to an array list
+			for (Object o : checkedItems) {
+				//if new item
+				if (!previouslyChecked.contains(o)) {
+					newItems.add(o);
+				}
+			}
+			addPackageValues(newItems.toArray(), page.getProject());
+			reindexToggle = true;
+		} else if (checkedItems.length < previouslyChecked.size()) { //check if new items removed
+			Set<Object> checkedItemsSet;
+			//add removed items to an array list
+			for (Object o : previouslyChecked) {
+				//convert array to a set
+				checkedItemsSet = new HashSet<Object>(Arrays.asList(checkedItems));
+				//if item removed
+				if (!checkedItemsSet.contains(o)) {
+					removedItems.add(o);
+				}
+			}
+			removePackageValues(removedItems.toArray(), page.getProject());
+			reindexToggle = false;
 		}
-		ManagedBuildManager.saveBuildInfo(proj, true);
+		saveChecked();
+		updateData(getResDesc());
+		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
+		newItems.clear();
+		removedItems.clear();
 	}
 	
 	/**
@@ -182,6 +209,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				PathToToolOption.addLib(lib, proj);
 			}
 		}
+		ManagedBuildManager.saveBuildInfo(proj, true);
 	}
 	
 	/**
@@ -316,6 +344,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				}
 			}
 		} //end of removed items loop
+		ManagedBuildManager.saveBuildInfo(proj, true);
 	}
 	
 	/**
@@ -405,11 +434,14 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-		saveChecked();
 	}
 
 	protected void performOK() {
-		freshenIndex();
+		//freshen index if new packages have been selected
+		if (reindexToggle) {
+			freshenIndex();
+		}
+		reindexToggle = false;
 	}
 	
 	@Override
@@ -426,45 +458,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		public void checkStateChanged(CheckStateChangedEvent e) {
 			handleCheckStateChange();
 		}
-	}
-	
-	/**
-	 * Action for the check state change.
-	 */
-	private void handleCheckStateChange() {
-		newItemToggle = false;
-		//get checked items
-		Object[] checkedItems = getCheckedItems();
-		
-		//check if new items checked
-		if(checkedItems.length > previouslyChecked.size()) {
-			//add checked items to an array list
-			for (Object o : checkedItems) {
-				//if new item
-				if (!previouslyChecked.contains(o)) {
-					newItems.add(o);
-					newItemToggle = true;
-				}
-			}
-		} else if (checkedItems.length < previouslyChecked.size()) { //check if new items removed
-			Set<Object> checkedItemsSet;
-			//add removed items to an array list
-			for (Object o : previouslyChecked) {
-				//convert array to a set
-				checkedItemsSet = new HashSet<Object>(Arrays.asList(checkedItems));
-				//if item removed
-				if (!checkedItemsSet.contains(o)) {
-					removedItems.add(o);
-					newItemToggle = false;
-				}
-			}
-		}
-		
-		handleAddRemove();
-		updateData(getResDesc());
-		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
-		newItems.clear();
-		removedItems.clear();
 	}
 	
 	/**
@@ -551,9 +544,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 */
 	private void selectedButtonPressed() {
 		TableItem[] selected = getSelected();
-		if (selected.length>0) {
-			newItemToggle = true;
-		}
 		for (TableItem itm : selected) {
 			itm.setChecked(true);
 		}
@@ -565,9 +555,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 */
 	private void deselectedButtonPressed() {
 		TableItem[] selected = getSelected();
-		if (selected.length>0) {
-			newItemToggle = false;
-		}
 		for (TableItem itm : selected) {
 			itm.setChecked(false);
 		}
