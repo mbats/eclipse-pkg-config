@@ -54,7 +54,6 @@ import org.eclipse.core.runtime.CoreException;
  * Property tab to select packages and add pkg-config output
  * of checked packages to compiler and linker.
  * 
- * TODO: Gtk+-2.0 package check state not saved.
  */
 public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 
@@ -359,8 +358,15 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			e.printStackTrace();
 		}
 		TableItem[] items = pkgCfgViewer.getTable().getItems();
+		String value = null;
 		for(TableItem item : items) {
-			String value = strgElem.getAttribute(item.getText());
+			if (item.getText().equalsIgnoreCase("gtk+-2.0")) {
+				value = strgElem.getAttribute("gtkplus-2.0");
+			} else if (item.getText().equalsIgnoreCase("gtk+-win32-2.0")) {
+				value = strgElem.getAttribute("gtkplus-win32-2.0");
+			} else {
+				value = strgElem.getAttribute(item.getText());
+			}
 			if(value!=null) {
 				if(value.equals("true")) {
 					item.setChecked(true);
@@ -398,12 +404,20 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				 */
 				try {  
 					String pkgName = item.getText();
-					strgElem.setAttribute(pkgName, chkd);
+					if (pkgName.equalsIgnoreCase("gtk+-2.0")) {
+						strgElem.setAttribute("gtkplus-2.0", chkd);
+					} else if (pkgName.equalsIgnoreCase("gtk+-win32-2.0")) {
+						strgElem.setAttribute("gtkplus-win32-2.0", chkd);
+					} else {
+						strgElem.setAttribute(pkgName, chkd);
+					}
 				} catch (Exception e) {
+					//Seems like ICStorageElement cannot store Strings with +
 					/*
 					 * INVALID_CHARACTER_ERR: An invalid or
 					 * illegal XML character is specified. 
 					 */
+					//TODO: Fix
 				}
 			}
 		}
