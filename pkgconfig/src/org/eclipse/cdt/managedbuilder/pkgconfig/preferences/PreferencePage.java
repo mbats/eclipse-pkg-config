@@ -11,9 +11,9 @@
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * This class represents a preference page that
@@ -39,6 +39,7 @@ implements IWorkbenchPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

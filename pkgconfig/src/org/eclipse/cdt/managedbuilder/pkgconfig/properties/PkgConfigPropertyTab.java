@@ -29,6 +29,9 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -46,9 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Property tab to select packages and add pkg-config output
@@ -110,6 +110,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		pkgCfgViewer.addCheckStateListener(new PkgListener());
 
 		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				TableItem itm = tbl.getSelection()[0];
 				if (itm.getChecked()) {
@@ -448,6 +449,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		}
 	}
 
+	@Override
 	protected void performOK() {
 		//freshen index if new packages have been selected
 		if (reindexToggle) {
@@ -578,7 +580,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 */
 	private void rebuiltIndex() {
 		ICProject cproject = CoreModel.getDefault().getCModel().getCProject(page.getProject().getName());
-		CCorePlugin.getIndexManager().reindex((ICProject) cproject);
+		CCorePlugin.getIndexManager().reindex(cproject);
 	}
 	
 }

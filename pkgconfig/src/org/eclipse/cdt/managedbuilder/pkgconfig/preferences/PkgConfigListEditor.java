@@ -12,10 +12,10 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.managedbuilder.pkgconfig.util.Separators;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.cdt.managedbuilder.pkgconfig.util.Separators;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -164,7 +164,8 @@ public abstract class PkgConfigListEditor extends ListEditor {
             this.buttonBox.setLayout(layout);
             createButtons(this.buttonBox);
             this.buttonBox.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+				public void widgetDisposed(DisposeEvent event) {
                     PkgConfigListEditor.this.addButton = null;
                     PkgConfigListEditor.this.removeButton = null;
                     PkgConfigListEditor.this.buttonBox = null;
@@ -193,7 +194,8 @@ public abstract class PkgConfigListEditor extends ListEditor {
             this.list.setFont(parent.getFont());
             this.list.addSelectionListener(getSelectionListener());
             this.list.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+				public void widgetDisposed(DisposeEvent event) {
                     PkgConfigListEditor.this.list = null;
                 }
             });
