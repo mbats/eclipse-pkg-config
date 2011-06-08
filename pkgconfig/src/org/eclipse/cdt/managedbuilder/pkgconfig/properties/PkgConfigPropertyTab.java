@@ -451,7 +451,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	protected void performOK() {
 		//freshen index if new packages have been selected
 		if (reindexToggle) {
-			freshenIndex();
+			rebuiltIndex();
 		}
 		reindexToggle = false;
 	}
@@ -576,7 +576,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	/**
 	 * Rebuilts the index of the selected project in the workspace.
 	 */
-	private void freshenIndex() {
+	private void rebuiltIndex() {
 		ICProject cproject = CoreModel.getDefault().getCModel().getCProject(page.getProject().getName());
 		CCorePlugin.getIndexManager().reindex((ICProject) cproject);
 	}
