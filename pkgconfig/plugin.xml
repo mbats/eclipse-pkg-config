@@ -50,18 +50,6 @@
       		</page>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.templateAssociations">
-      <template
-            id="org.eclipse.cdt.build.core.templates.EmptyProject">
-      </template>
-      <template
-            id="org.eclipse.cdt.build.core.templates.HelloWorldCAnsiProject">
-      </template>
-      <template
-            id="org.eclipse.cdt.build.core.templates.HelloWorldCCProject">
-      </template>
-   </extension>
-   <extension
          point="org.eclipse.cdt.ui.cPropertyTab">
       <tab
             class="org.eclipse.cdt.managedbuilder.pkgconfig.properties.PkgConfigPropertyTab"
