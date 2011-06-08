@@ -190,13 +190,6 @@
       <y="1252"/>
    </type>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
-      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PkgConfigPathListEditor.java[PkgConfigPathListEditor"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PkgConfigListEditor.java[PkgConfigListEditor"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
       <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
       <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.builder{PkgConfigBuilder.java[PkgConfigBuilder"/>
       <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.builder{PkgConfigBuilder.java[PkgConfigBuilder[XMLErrorHandler"/>
@@ -204,16 +197,9 @@
       </bendpoints>
    </relationship>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
+      <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
       <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PreferencePage.java[PreferencePage"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{LibDirFieldEditor.java[LibDirFieldEditor"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
-      <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
-      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.builder{PkgConfigBuilder.java[PkgConfigBuilder"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.builder{PkgConfigBuilder.java[PkgConfigBuilder[SampleDeltaVisitor"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PkgConfigPathListEditor.java[PkgConfigPathListEditor"/>
       <bendpoints>
       </bendpoints>
    </relationship>
@@ -226,13 +212,13 @@
    </relationship>
    <relationship>
       <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
-      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
+      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.builder{PkgConfigBuilder.java[PkgConfigBuilder"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.builder{PkgConfigBuilder.java[PkgConfigBuilder[SampleDeltaVisitor"/>
       <bendpoints>
       </bendpoints>
    </relationship>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
+      <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
       <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
       <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
       <bendpoints>
@@ -246,9 +232,23 @@
       </bendpoints>
    </relationship>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
+      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
+      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PkgConfigPathListEditor.java[PkgConfigPathListEditor"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PkgConfigListEditor.java[PkgConfigListEditor"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
+      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
       <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PreferencePage.java[PreferencePage"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PkgConfigPathListEditor.java[PkgConfigPathListEditor"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{LibDirFieldEditor.java[LibDirFieldEditor"/>
       <bendpoints>
       </bendpoints>
    </relationship>
