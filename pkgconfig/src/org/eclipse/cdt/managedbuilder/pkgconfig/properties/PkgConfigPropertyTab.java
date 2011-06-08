@@ -19,17 +19,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
@@ -41,8 +36,6 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -53,8 +46,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -415,9 +406,12 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			e.printStackTrace();
 		}
 		saveChecked();
-		freshenIndex();
 	}
 
+	protected void performOK() {
+		freshenIndex();
+	}
+	
 	@Override
 	protected void updateButtons() {
 	}
@@ -581,32 +575,11 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 	
 	/**
-	 * Refreshes the index of the selected project in the workspace.
+	 * Rebuilts the index of the selected project in the workspace.
 	 */
 	private void freshenIndex() {
-		ISelection fSelection =
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
-		
-		if (!(fSelection instanceof IStructuredSelection))
-			return;
-		
-		IStructuredSelection cElements = SelectionConverter.convertSelectionToCElements(fSelection);
-		Object[] cElementsArray = cElements.toArray();
-		ArrayList<ICElement> tuSelection = new ArrayList<ICElement>();
-		for (Object o : cElementsArray) {
-			if (o instanceof ICProject || o instanceof ICContainer || o instanceof ITranslationUnit) {
-				tuSelection.add((ICElement) o);
-			}
-		}
-		ICElement[] tuArray = tuSelection.toArray(new ICElement[tuSelection.size()]);
-		
-		try {
-			CCorePlugin.getIndexManager().update(tuArray,
-					IIndexManager.UPDATE_ALL | IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT);
-		}
-		catch (CoreException e) {
-			CUIPlugin.log(e);
-		}	
+		ICProject cproject = CoreModel.getDefault().getCModel().getCProject(page.getProject().getName());
+		CCorePlugin.getIndexManager().reindex((ICProject) cproject);
 	}
 	
 }
