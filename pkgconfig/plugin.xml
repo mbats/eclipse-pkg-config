@@ -26,16 +26,6 @@
       </builder>
    </extension>
    <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="toc.xml">
-      </toc>
-      <toc
-            file="testToc.xml"
-            primary="true">
-      </toc>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
                <initializer
             class="org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferenceInitializer">
@@ -67,5 +57,12 @@
             location="templates/projecttemplates/HelloWorldGTK+Project/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
       </template>
+   </extension>
+      <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="help/toc.xml"
+            primary="true">
+      </toc>
    </extension>
 </plugin>

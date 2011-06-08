@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc label="Pkg-config support" link_to="Petri Tuononen" topic="help/toc.html">
+	<topic label="User manual" href="help/user_manual.html">
+		<topic label="General information" href="help/general.html"/>
+		<topic label="How to use" href="help/howto.html"/>
+	</topic>
+</toc>
