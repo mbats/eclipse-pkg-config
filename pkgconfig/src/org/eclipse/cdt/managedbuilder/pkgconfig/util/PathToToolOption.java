@@ -32,7 +32,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
  * 
  * TODO: Modify so that the Tool Options are added to the selected build configuration.
- * 		 IF all configurations is selected then add Tool Options to all configurations.
+ * 		 IF all configurations are selected then add Tool Options to all configurations.
  */
 public class PathToToolOption {
 
@@ -475,7 +475,7 @@ public class PathToToolOption {
 		return true;
 	}
 
-	//Works only if Eclipse Bugzilla Bug 321040 fix is applied (since CDT 8.0)
+	
 	/**
 	 * Removes a Library search path from the Linker's Library search path Option.
 	 * 
@@ -483,6 +483,7 @@ public class PathToToolOption {
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
 	 * @param removeSearchPath Library search path
+	 * @since 8.0
 	 */
 	private static void removeLibrarySearchPathFromToolOption(IConfiguration cf, ITool cfTool, IOption option, String removeSearchPath) {
 		try {
