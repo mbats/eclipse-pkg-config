@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Text;
  * New implementation of PkgConfigListEditor.
  * Used to select PKG_CONFIG_PATH values from the dialog.
  * 
- * TODO: Fix issue: Environment variables disappear when the workspace is restarted
- * 
  */
 public class PkgConfigPathListEditor extends PkgConfigListEditor {
 
