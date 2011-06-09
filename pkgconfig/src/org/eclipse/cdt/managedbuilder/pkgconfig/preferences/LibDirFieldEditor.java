@@ -12,9 +12,6 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
 import java.io.File;
 
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
-import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -69,12 +66,6 @@ public class LibDirFieldEditor extends StringButtonFieldEditor {
         if (dir != null) {
             dir = dir.trim();
             if (dir.length() > 0) {
-    			//set PKG_CONFIG_LIBDIR to the preference store
-    			PreferenceStore.setPkgConfigLibDir(dir);
-    			UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
-    			StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
-    			vars.createVariable("PKG_CONFIG_LIBDIR", dir);
-    			fUserSupplier.setWorkspaceEnvironment(vars);
 				return new File(dir);
 			}
         }

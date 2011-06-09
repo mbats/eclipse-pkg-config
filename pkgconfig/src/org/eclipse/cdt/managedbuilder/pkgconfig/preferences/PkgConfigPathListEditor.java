@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
-import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -68,10 +65,6 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 			}
 			//add a new PKG_CONFIG_PATH to the preference store
 			PreferenceStore.appendPkgConfigPath(dir);
-			UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
-			StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
-			vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
-			fUserSupplier.setWorkspaceEnvironment(vars);
 			return dir;
 		}
 		return null;
@@ -88,10 +81,6 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
         for (String s : selected) {
             //remove PKG_CONFIG_PATH from the preference store
             PreferenceStore.removePkgConfigPath(s);
-			UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
-			StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
-			vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
-			fUserSupplier.setWorkspaceEnvironment(vars);
     		incList.remove(s);
     		selectionChanged();
         }
