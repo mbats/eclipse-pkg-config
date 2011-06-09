@@ -33,7 +33,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 public class PathToToolOption {
 
 	//tool input extensions
-	private static final String linkerInputType = "o"; //$NON-NLS-1$
+//	private static final String linkerInputType = "o"; //$NON-NLS-1$
 	private static final String[] inputTypes = {"cpp", "c"};  //$NON-NLS-1$ //$NON-NLS-2$
 	
 	//tool option values
@@ -711,13 +711,37 @@ public class PathToToolOption {
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @return ITool linker
+	 * TODO: Rewrite
 	 */
 	private static ITool getLinker(IConfiguration cf) {
-		return getIToolByInputType(cf, linkerInputType);
+		ITool[] tools = cf.getTools();
+		/*
+		 * Search for the right tool.
+		 * Trying to achieve better support for custom toolchains.
+		 */
+		//see if c++ or c project
+		ITool compiler = getIToolByInputType(cf, "cpp");
+		boolean cppProject = false;
+		if (compiler != null) {
+			cppProject = true;
+		}
+		for (ITool tool : tools) {
+			String name = tool.getBaseId();
+			if (cppProject) {
+				if (name.contains("cpp.linker")) {
+					return tool;
+				}
+			} else {
+				if (name.contains("c.linker")) {
+					return tool;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
-	 * Returns ITool associated with the input extension.
+	 * Returns ITool associated based on the input extension.
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @param ext input extension associated with ITool
