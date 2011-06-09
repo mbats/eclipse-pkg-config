@@ -72,7 +72,7 @@ implements IWorkbenchPreferencePage {
 		vars.createVariable("PKG_CONFIG_LIBDIR", libEditorValue);
 		fUserSupplier.setWorkspaceEnvironment(vars);
 		
-		//add a new PKG_CONFIG_PATH to the preference store
+		//set PKG_CONFIG_PATH to the preference store
 		fUserSupplier = EnvironmentVariableManager.fUserSupplier;
 		vars = fUserSupplier.getWorkspaceEnvironmentCopy();
 		vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
