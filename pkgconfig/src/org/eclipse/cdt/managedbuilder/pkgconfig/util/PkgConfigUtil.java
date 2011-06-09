@@ -39,12 +39,10 @@ public class PkgConfigUtil {
 	 */
 	private static String pkgOutput(String command, String pkg) {
 		ProcessBuilder pb = null;
-		if (OSDetector.isUnix()) {
+		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			pb = new ProcessBuilder("bash", "-c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
 		} else if (OSDetector.isWindows()) {
 			pb = new ProcessBuilder("cmd", "/c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
-		} else if (OSDetector.isMac()) {
-			pb = new ProcessBuilder("bash", "-c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		try {
 			Process p = pb.start();
