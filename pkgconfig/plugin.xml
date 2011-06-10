@@ -2,30 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="org.eclipse.cdt.managedbuilder.pkgconfig.builder.PkgConfigBuilder"
-         name="Pkg-config builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="org.eclipse.cdt.managedbuilder.pkgconfig.builder.PkgConfigBuilder">
-         </run>
-      </builder>
-   </extension>
-   <extension
-         id="PkgConfigNature"
-         name="Pkg-config nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.eclipse.cdt.managedbuilder.pkgconfig.nature.PkgConfigNature">
-         </run>
-      </runtime>
-      <builder
-            id="org.eclipse.cdt.managedbuilder.pkgconfig.builder.PkgConfigBuilder">
-      </builder>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
                <initializer
             class="org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferenceInitializer">
