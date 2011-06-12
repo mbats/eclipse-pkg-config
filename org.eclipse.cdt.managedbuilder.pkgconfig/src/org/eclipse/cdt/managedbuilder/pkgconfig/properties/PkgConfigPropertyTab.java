@@ -190,7 +190,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private void addPackageValues(Object[] addedItems, IProject proj) {
 		for (Object item : addedItems) {
 			//handle options
-			String cflags = PkgConfigUtil.pkgOutputCflags(item.toString());
+			String cflags = PkgConfigUtil.getCflags(item.toString());
 			String[] optionsArray = Parser.parseCflagOptions(cflags);
 			for (String option : optionsArray) {
 				PathToToolOption.addOtherFlag(option, proj);
@@ -201,13 +201,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				PathToToolOption.addIncludePath(inc, proj);
 			}
 			//handle library paths
-			String libPaths = PkgConfigUtil.pkgOutputLibPathsOnly(item.toString());
+			String libPaths = PkgConfigUtil.getLibPathsOnly(item.toString());
 			String[] libPathArray = Parser.parseLibPaths2(libPaths);
 			for (String libPath : libPathArray) {
 				PathToToolOption.addLibraryPath(libPath, proj);
 			}
 			//handle libraries
-			String libs = PkgConfigUtil.pkgOutputLibFilesOnly(item.toString());
+			String libs = PkgConfigUtil.getLibFilesOnly(item.toString());
 			String[] libArray = Parser.parseLibs2(libs);
 			for (String lib : libArray) {
 				PathToToolOption.addLib(lib, proj);
@@ -243,9 +243,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		
 		for (Object removedPkg : removedItems) {
 			//get arrays of removed package flags
-			rCflags = PkgConfigUtil.pkgOutputCflags(removedPkg.toString());
-			rLibPaths = PkgConfigUtil.pkgOutputLibPathsOnly(removedPkg.toString());
-			rLibs = PkgConfigUtil.pkgOutputLibFilesOnly(removedPkg.toString());
+			rCflags = PkgConfigUtil.getCflags(removedPkg.toString());
+			rLibPaths = PkgConfigUtil.getLibPathsOnly(removedPkg.toString());
+			rLibs = PkgConfigUtil.getLibFilesOnly(removedPkg.toString());
 			rOptionArray = Parser.parseCflagOptions(rCflags);
 			rIncPathArray = Parser.parseIncPaths(rCflags);
 			rLibPathArray = Parser.parseLibPaths2(rLibPaths);
@@ -275,9 +275,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			 */
 			for (Object checked : checkedList) {
 				//get arrays of checked package flags
-				cCflags = PkgConfigUtil.pkgOutputCflags(checked.toString());
-				cLibPaths = PkgConfigUtil.pkgOutputLibPathsOnly(checked.toString());
-				cLibs = PkgConfigUtil.pkgOutputLibFilesOnly(checked.toString());
+				cCflags = PkgConfigUtil.getCflags(checked.toString());
+				cLibPaths = PkgConfigUtil.getLibPathsOnly(checked.toString());
+				cLibs = PkgConfigUtil.getLibFilesOnly(checked.toString());
 				cOptionArray = Parser.parseCflagOptions(cCflags);
 				cIncPathArray = Parser.parseIncPaths(cCflags);
 				cLibPathArray = Parser.parseLibPaths2(cLibPaths);

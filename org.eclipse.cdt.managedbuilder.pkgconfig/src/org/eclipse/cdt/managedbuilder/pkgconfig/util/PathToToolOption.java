@@ -934,7 +934,7 @@ public class PathToToolOption {
 		try {
 			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
 		} catch (Exception e) { //if not a managed build project
-			Activator.getDefault().log(IStatus.INFO, e, "Not a manged build project.");
+			Activator.getDefault().log(IStatus.INFO, e, "Not a managed build project.");
 			return conf;
 		}
 		//info can be null for projects without build info. For example, when creating a project
@@ -959,7 +959,7 @@ public class PathToToolOption {
 //		try {
 //			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
 //		} catch (Exception e) { //if not a managed build project
-//			Activator.getDefault().log(IStatus.INFO, e, "Not a manged build project.");
+//			Activator.getDefault().log(IStatus.INFO, e, "Not a managed build project.");
 //			return configurations;
 //		}
 //		//info can be null for projects without build info. For example, when creating a project

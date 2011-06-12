@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferenceStore;
 
 /**
  * Runs pkg-config utility in the command line and outputs necessary
@@ -40,12 +40,14 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	private static String pkgOutput(String command, String pkg) {
+	private static String getPkgOutput(String command, String pkg) {
 		ProcessBuilder pb = null;
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
-			pb = new ProcessBuilder("bash", "-c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
+					Separators.getFileSeparator()+command + pkg); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (OSDetector.isWindows()) {
-			pb = new ProcessBuilder("cmd", "/c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
+					Separators.getFileSeparator()+command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		Process p = null;
 		try {
@@ -76,8 +78,8 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputAll(String pkg) {
-		return pkgOutput(OUTPUT_ALL, pkg);
+	public static String getAll(String pkg) {
+		return getPkgOutput(OUTPUT_ALL, pkg);
 	}
 	
 	/**
@@ -86,8 +88,8 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputLibs(String pkg) {
-		return pkgOutput(OUTPUT_LIBS, pkg);
+	public static String getLibs(String pkg) {
+		return getPkgOutput(OUTPUT_LIBS, pkg);
 	}
 	
 	/**
@@ -96,8 +98,8 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputLibPathsOnly(String pkg) {
-		return pkgOutput(OUTPUT_ONLY_LIB_PATHS, pkg);
+	public static String getLibPathsOnly(String pkg) {
+		return getPkgOutput(OUTPUT_ONLY_LIB_PATHS, pkg);
 	}
 
 	/**
@@ -106,8 +108,8 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputLibFilesOnly(String pkg) {
-		return pkgOutput(OUTPUT_ONLY_LIB_FILES, pkg);
+	public static String getLibFilesOnly(String pkg) {
+		return getPkgOutput(OUTPUT_ONLY_LIB_FILES, pkg);
 	}
 	
 	/**
@@ -116,8 +118,8 @@ public class PkgConfigUtil {
 	 * @param pkg
 	 * @return
 	 */
-	public static String pkgOutputCflags(String pkg) {
-		return pkgOutput(OUTPUT_CFLAGS, pkg);
+	public static String getCflags(String pkg) {
+		return getPkgOutput(OUTPUT_CFLAGS, pkg);
 	}
 	
 	/**
@@ -128,11 +130,16 @@ public class PkgConfigUtil {
 	public static ArrayList<String> getAllPackages() {
 		ProcessBuilder pb = null;
 		if (OSDetector.isUnix()) {
-			pb = new ProcessBuilder("bash", "-c", LIST_PACKAGES);	//$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
+					Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (OSDetector.isWindows()) {
-			pb = new ProcessBuilder("cmd", "/c", LIST_PACKAGES);		//$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
+					Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(PreferenceStore.getPkgConfigPath()+
+					Separators.getFileSeparator()+LIST_PACKAGES);
 		} else if (OSDetector.isMac()) {
-			pb = new ProcessBuilder("bash", "-c", LIST_PACKAGES);	//$NON-NLS-1$ //$NON-NLS-2$
+			pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
+					Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		try {
 			Process p = pb.start();

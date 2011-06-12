@@ -24,7 +24,7 @@ public class Parser {
 	public static void main(String[] args) {
 		System.out.println("Options\n######################");
 		
-		String options = PkgConfigUtil.pkgOutputCflags("gtk+-2.0");
+		String options = PkgConfigUtil.getCflags("gtk+-2.0");
 		String[] optionsArray = parseCflagOptions(options);
 		for (String l : optionsArray) {
 			System.out.println(l);
@@ -32,7 +32,7 @@ public class Parser {
 		
 		System.out.println("\nInclude paths\n######################");
 		
-		String incPaths = PkgConfigUtil.pkgOutputCflags("gtk+-2.0");
+		String incPaths = PkgConfigUtil.getCflags("gtk+-2.0");
 		String[] incPathArray = parseIncPaths(incPaths);
 		for (String l : incPathArray) {
 			System.out.println(l);
@@ -58,7 +58,7 @@ public class Parser {
 		
 		System.out.println("\nLibrary search paths\n######################");
 		
-		String libsPaths = PkgConfigUtil.pkgOutputLibPathsOnly("gtk+-2.0");
+		String libsPaths = PkgConfigUtil.getLibPathsOnly("gtk+-2.0");
 		String[] libPathArray = parseLibPaths2(libsPaths);
 		for (String l : libPathArray) {
 			System.out.println(l);
@@ -66,7 +66,7 @@ public class Parser {
 		
 		System.out.println("\nLibraries\n######################");
 		
-		String libs = PkgConfigUtil.pkgOutputLibFilesOnly("gtk+-2.0");
+		String libs = PkgConfigUtil.getLibFilesOnly("gtk+-2.0");
 		String[] libArray = parseLibs2(libs);
 		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
 		Collections.sort(sorted);
