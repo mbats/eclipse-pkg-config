@@ -42,12 +42,21 @@ public class PkgConfigUtil {
 	 */
 	private static String getPkgOutput(String command, String pkg) {
 		ProcessBuilder pb = null;
+		String confPath = PreferenceStore.getPkgConfigPath();
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
-			pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
-					Separators.getFileSeparator()+command + pkg); //$NON-NLS-1$ //$NON-NLS-2$
+			if (confPath!=null) {
+				pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
+						Separators.getFileSeparator()+command + pkg); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				pb = new ProcessBuilder("bash", "-c", command + pkg); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		} else if (OSDetector.isWindows()) {
-			pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
-					Separators.getFileSeparator()+command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+			if (confPath!=null) {
+				pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
+						Separators.getFileSeparator()+command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				pb = new ProcessBuilder("cmd", "/c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		Process p = null;
 		try {
@@ -129,17 +138,21 @@ public class PkgConfigUtil {
 	 */
 	public static ArrayList<String> getAllPackages() {
 		ProcessBuilder pb = null;
-		if (OSDetector.isUnix()) {
-			pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
-					Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+		String confPath = PreferenceStore.getPkgConfigPath();
+		if (OSDetector.isUnix() || OSDetector.isMac()) {
+			if (confPath!=null) {
+				pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
+						Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				pb = new ProcessBuilder("bash", "-c", LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		} else if (OSDetector.isWindows()) {
-			pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
-					Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
-			System.out.println(PreferenceStore.getPkgConfigPath()+
-					Separators.getFileSeparator()+LIST_PACKAGES);
-		} else if (OSDetector.isMac()) {
-			pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
-					Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+			if (confPath!=null) {
+				pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
+						Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				pb = new ProcessBuilder("cmd", "/c", LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		try {
 			Process p = pb.start();
