@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
+import org.eclipse.core.runtime.IStatus;
+
 /**
  * Runs pkg-config utility in the command line and outputs necessary
  * options to build the given package.
@@ -44,18 +47,25 @@ public class PkgConfigUtil {
 		} else if (OSDetector.isWindows()) {
 			pb = new ProcessBuilder("cmd", "/c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
 		}
+		Process p = null;
 		try {
-			Process p = pb.start();
+			p = pb.start();
+		} catch (IOException e) {
+			Activator.getDefault().log(e, "Starting a process (executing a command line script) failed.");
+		}
+		if (p != null) {
 			String line;
 			BufferedReader input = new BufferedReader
-			(new InputStreamReader(p.getInputStream()));
-			line = input.readLine();
-			if (line != null) {
-				return line;
+					(new InputStreamReader(p.getInputStream()));
+			try {
+				line = input.readLine();
+				if (line != null) {
+					return line;
+				}
+				input.close();
+			} catch (IOException e) {
+				Activator.getDefault().log(e, "Reading a line from the input failed.");
 			}
-			input.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}

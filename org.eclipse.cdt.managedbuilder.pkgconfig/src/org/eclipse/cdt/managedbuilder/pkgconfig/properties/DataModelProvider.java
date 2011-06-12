@@ -24,6 +24,9 @@ public enum DataModelProvider {
 
 	private List<DataModel> dms;
 
+	/**
+	 * Initialize.
+	 */
 	private DataModelProvider() {
 		dms = new ArrayList<DataModel>();
 
@@ -53,6 +56,11 @@ public enum DataModelProvider {
 		}
 	}
 
+	/**
+	 * Get the DataModel entries
+	 * .
+	 * @return
+	 */
 	public List<DataModel> getEntries() {
 		return dms;
 	}

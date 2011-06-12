@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.net.ssl.SSLEngineResult.Status;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -26,12 +28,14 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -355,23 +359,23 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		ICStorageElement strgElem = null;
 		try {
 			strgElem = desc.getStorage(PACKAGES, true);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		TableItem[] items = pkgCfgViewer.getTable().getItems();
-		String value = null;
-		for(TableItem item : items) {
-			if (item.getText().contains("+")) {
-				String newItemName = item.getText().replace("+", "plus");
-				value = strgElem.getAttribute(newItemName);
-			} else {
-				value = strgElem.getAttribute(item.getText());
-			}
-			if(value!=null) {
-				if(value.equals("true")) {
-					item.setChecked(true);
+			TableItem[] items = pkgCfgViewer.getTable().getItems();
+			String value = null;
+			for(TableItem item : items) {
+				if (item.getText().contains("+")) {
+					String newItemName = item.getText().replace("+", "plus");
+					value = strgElem.getAttribute(newItemName);
+				} else {
+					value = strgElem.getAttribute(item.getText());
+				}
+				if(value!=null) {
+					if(value.equals("true")) {
+						item.setChecked(true);
+					}
 				}
 			}
+		} catch (CoreException e) {
+			Activator.getDefault().log(e, "Initialization of packages failed.");
 		}
 	}
 	
@@ -385,7 +389,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		try {
 			strgElem = desc.getStorage(PACKAGES, true);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Getting packages from the storage failed.");
 		}
 		
 		TableItem[] items = pkgCfgViewer.getTable().getItems();
@@ -412,6 +416,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 						strgElem.setAttribute(pkgName, chkd);
 					}
 				} catch (Exception e) {
+					Activator.getDefault().log(e, "Setting attribute to ICStorageElement failed.");
 					//Seems like ICStorageElement cannot store Strings with +
 					/*
 					 * INVALID_CHARACTER_ERR: An invalid or
@@ -445,7 +450,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		try {
 			CoreModel.getDefault().setProjectDescription(page.getProject(), projDesc);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Setting the project description failed.");
 		}
 	}
 

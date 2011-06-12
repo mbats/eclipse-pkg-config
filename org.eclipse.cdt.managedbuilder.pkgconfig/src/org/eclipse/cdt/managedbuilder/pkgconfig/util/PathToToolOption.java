@@ -20,9 +20,11 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Add include and library search paths and libraries to Tool's (compiler, linker) options.
@@ -476,8 +478,7 @@ public class PathToToolOption {
 			//add a new include path to linker's Include paths option.
 			addInputToToolOption(cf, cfTool, option, newIncludePath, incPaths);
 		} catch (BuildException e) {
-			//show error
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Adding an include path to Tool Option failed.");
 		}
 		return true;
 	}
@@ -495,8 +496,7 @@ public class PathToToolOption {
 			//remove an include path from linker's Include paths option.
 			removeInputFromToolOption(cf, cfTool, option, removeIncludePath, option.getIncludePaths());
 		} catch (BuildException e) {
-			//show error
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Removing an include path from Tool Option failed.");
 		}
 	}
 
@@ -520,8 +520,7 @@ public class PathToToolOption {
 			//add a new library to linker's Libraries option.
 			addInputToToolOption(cf, cfTool, option, newLibrary, libraries);
 		} catch (BuildException e) {
-			//show error
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Adding a library to Tool Option failed.");
 		}
 		return true;
 	}
@@ -539,8 +538,7 @@ public class PathToToolOption {
 			//remove a library from linker's Libraries option.
 			removeInputFromToolOption(cf, cfTool, option, removeLibrary, option.getLibraries());
 		} catch (BuildException e) {
-			//show error
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Removing a library from Tool Option failed.");
 		}
 	}
 
@@ -565,8 +563,7 @@ public class PathToToolOption {
 			//add a new library path to linker's Library search path option.
 			addInputToToolOption(cf, cfTool, option, newLibraryPath, libPaths);
 		} catch (BuildException e) {
-			//show error
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Adding a library search path to Tool Option failed.");
 		}
 		return true;
 	}
@@ -585,8 +582,7 @@ public class PathToToolOption {
 			//remove a library path from linker's Library search path option.
 			removeInputFromToolOption(cf, cfTool, option, removeSearchPath, option.getLibraryPaths());
 		} catch (BuildException e) {
-			//show error
-			e.printStackTrace();
+			Activator.getDefault().log(e, "Removing a library search path from Tool Option failed.");
 		}
 	}
 
@@ -828,7 +824,7 @@ public class PathToToolOption {
 					break;
 				}
 			} catch (BuildException e) {
-				//log error
+				Activator.getDefault().log(e, "Getting Option id by value type failed.");
 			}
 		}	
 		return optionId;
@@ -938,8 +934,7 @@ public class PathToToolOption {
 		try {
 			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
 		} catch (Exception e) { //if not a managed build project
-			//print error
-			e.printStackTrace();
+			Activator.getDefault().log(IStatus.INFO, e, "Not a manged build project.");
 			return conf;
 		}
 		//info can be null for projects without build info. For example, when creating a project
@@ -964,8 +959,7 @@ public class PathToToolOption {
 //		try {
 //			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
 //		} catch (Exception e) { //if not a managed build project
-//			//print error
-//			e.printStackTrace();
+//			Activator.getDefault().log(IStatus.INFO, e, "Not a manged build project.");
 //			return configurations;
 //		}
 //		//info can be null for projects without build info. For example, when creating a project
