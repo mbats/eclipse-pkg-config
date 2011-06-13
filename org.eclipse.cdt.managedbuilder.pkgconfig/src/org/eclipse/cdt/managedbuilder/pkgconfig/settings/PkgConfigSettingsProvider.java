@@ -8,7 +8,7 @@
  * Contributors:
  * Petri Tuononen - Initial implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.pkgconfig;
+package org.eclipse.cdt.managedbuilder.pkgconfig.settings;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IProject;
 
 public class PkgConfigSettingsProvider extends CExternalSettingProvider {
 
-	private static final String ID = "org.eclipse.cdt.managedbuilder.pkgconfig.extSettings"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.managedbuilder.pkgconfig.extSettings"; //$NON-NLS-1$
 	
 	@Override
 	public CExternalSetting[] getSettings(IProject project,

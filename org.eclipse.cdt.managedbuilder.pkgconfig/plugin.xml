@@ -52,7 +52,7 @@
             name="Pkg-config External Setting Provider"
             point="org.eclipse.cdt.core.externalSettingsProvider">
          <provider
-               class="org.eclipse.cdt.managedbuilder.pkgconfig.PkgConfigSettingsProvider">
+               class="org.eclipse.cdt.managedbuilder.pkgconfig.settings.PkgConfigSettingsProvider">
          </provider>
       </extension>
 </plugin>
