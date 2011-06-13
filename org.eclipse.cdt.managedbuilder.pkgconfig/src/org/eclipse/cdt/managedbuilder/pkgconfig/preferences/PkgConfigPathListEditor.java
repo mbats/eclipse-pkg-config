@@ -65,7 +65,6 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 			}
 			//add a new PKG_CONFIG_PATH to the preference store
 			PreferenceStore.appendPkgConfigPath(dir);
-			System.out.println(PreferenceStore.getPkgConfigPath());
 			return dir;
 		}
 		return null;

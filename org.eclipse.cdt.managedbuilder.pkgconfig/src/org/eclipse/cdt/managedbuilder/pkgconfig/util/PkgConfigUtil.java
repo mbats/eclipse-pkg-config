@@ -26,15 +26,17 @@ import org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferenceStore;
 public class PkgConfigUtil {
 
 	//Constant variables
-	private static final String LIST_PACKAGES = "pkg-config --list-all";
-	private static final String OUTPUT_LIBS = "pkg-config --libs ";
-	private static final String OUTPUT_CFLAGS = "pkg-config --cflags ";
-	private static final String OUTPUT_ALL = "pkg-config --cflags --libs ";
-	private static final String OUTPUT_ONLY_LIB_PATHS = "pkg-config --libs-only-L ";
-	private static final String OUTPUT_ONLY_LIB_FILES = "pkg-config --libs-only-l ";
+	private static final String PKG_CONFIG = "pkg-config";
+	private static final String LIST_PACKAGES = "--list-all";
+	private static final String OUTPUT_LIBS = "--libs";
+	private static final String OUTPUT_CFLAGS = "--cflags";
+	private static final String OUTPUT_ALL = "--cflags --libs";
+	private static final String OUTPUT_ONLY_LIB_PATHS = "--libs-only-L";
+	private static final String OUTPUT_ONLY_LIB_FILES = "--libs-only-l";
 
 	/**
 	 * Get options needed to build the given package.
+	 * Does not like spaces on paths except that getAllPackages seem to work.
 	 * 
 	 * @param command
 	 * @param pkg
@@ -46,16 +48,16 @@ public class PkgConfigUtil {
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			if (confPath!=null && !confPath.equals("")) {
 				pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
-						Separators.getFileSeparator()+command + pkg); //$NON-NLS-1$ //$NON-NLS-2$
+						Separators.getFileSeparator()+PKG_CONFIG, command, pkg); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("bash", "-c", command + pkg); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG, command, pkg); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else if (OSDetector.isWindows()) {
 			if (confPath!=null && !confPath.equals("")) {
-				pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
-						Separators.getFileSeparator()+command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("cmd", "/c", "\""+PreferenceStore.getPkgConfigPath()+
+						Separators.getFileSeparator()+PKG_CONFIG+"\"", command, pkg);	//$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("cmd", "/c", command + pkg);	//$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("cmd", "/c", PKG_CONFIG, command, pkg);	//$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		Process p = null;
@@ -142,16 +144,16 @@ public class PkgConfigUtil {
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			if (confPath!=null && !confPath.equals("")) {
 				pb = new ProcessBuilder("bash", "-c", PreferenceStore.getPkgConfigPath()+
-						Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+						Separators.getFileSeparator()+PKG_CONFIG, LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("bash", "-c", LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG, LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else if (OSDetector.isWindows()) {
 			if (confPath!=null && !confPath.equals("")) {
-				pb = new ProcessBuilder("cmd", "/c", PreferenceStore.getPkgConfigPath()+
-						Separators.getFileSeparator()+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("cmd", "/c", "\""+PreferenceStore.getPkgConfigPath()+
+						Separators.getFileSeparator()+PKG_CONFIG+"\"", LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("cmd", "/c", LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("cmd", "/c", PKG_CONFIG, LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		try {

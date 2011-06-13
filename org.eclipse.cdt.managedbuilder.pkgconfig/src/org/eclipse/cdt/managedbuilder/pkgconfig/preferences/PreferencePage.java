@@ -64,7 +64,7 @@ implements IWorkbenchPreferencePage {
      */
 	@Override
     public boolean performOk() {
-		//set PKG_CONFIG_LIBDIR to the preference store
+		//create PKG_CONFIG_LIBDIR environment variable
 		String libEditorValue = libDirEditor.getStringValue();;
 		PreferenceStore.setPkgConfigLibDir(libEditorValue);
 		UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
@@ -72,7 +72,7 @@ implements IWorkbenchPreferencePage {
 		vars.createVariable("PKG_CONFIG_LIBDIR", libEditorValue);
 		fUserSupplier.setWorkspaceEnvironment(vars);
 		
-		//set PKG_CONFIG_PATH to the preference store
+		//create PKG_CONFIG_PATH environment variable
 		fUserSupplier = EnvironmentVariableManager.fUserSupplier;
 		vars = fUserSupplier.getWorkspaceEnvironmentCopy();
 		vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());

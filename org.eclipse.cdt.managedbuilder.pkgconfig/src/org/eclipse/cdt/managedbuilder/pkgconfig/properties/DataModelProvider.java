@@ -30,8 +30,9 @@ public enum DataModelProvider {
 	private DataModelProvider() {
 		dms = new ArrayList<DataModel>();
 
-		ArrayList<String> pkgList = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
-		ArrayList<String> nonSortedPkgList = Parser.parsePackageList(PkgConfigUtil.getAllPackages());
+		ArrayList<String> packages = PkgConfigUtil.getAllPackages();
+		ArrayList<String> pkgList = Parser.parsePackageList(packages);
+		ArrayList<String> nonSortedPkgList = Parser.parsePackageList(packages);
 		HashMap<Integer, Integer> origSortedIdx = new HashMap<Integer, Integer>();
 		Collections.sort(pkgList, String.CASE_INSENSITIVE_ORDER);
 		int sortedIdx;
@@ -42,7 +43,7 @@ public enum DataModelProvider {
 		}
 		
 		//get descriptions and sort according to package names
-		ArrayList<String> descs = Parser.parseDescription(PkgConfigUtil.getAllPackages());
+		ArrayList<String> descs = Parser.parseDescription(packages);
 		int cellPlace;
 		String[] sortedArray = new String[descs.size()];
 		for (int i=0; i<descs.size(); i++) {

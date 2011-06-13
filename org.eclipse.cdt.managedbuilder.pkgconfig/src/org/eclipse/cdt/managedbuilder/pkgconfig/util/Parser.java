@@ -93,7 +93,6 @@ public class Parser {
 		if (s != null) {
 			//find the index where include list starts
 			int end = s.indexOf("-I");
-			System.out.println();
 			if (end != -1) { //includes found
 				if (end != 0) { //options found
 					//truncate include paths
