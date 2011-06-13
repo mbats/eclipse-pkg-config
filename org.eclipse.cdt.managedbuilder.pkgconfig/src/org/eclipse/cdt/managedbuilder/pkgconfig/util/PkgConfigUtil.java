@@ -48,9 +48,9 @@ public class PkgConfigUtil {
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			if (confPath!=null && !confPath.equals("")) {
 				pb = new ProcessBuilder("bash", "-c", confPath+
-						Separators.getFileSeparator()+PKG_CONFIG, command, pkg); //$NON-NLS-1$ //$NON-NLS-2$
+						Separators.getFileSeparator()+PKG_CONFIG+" "+command+" "+pkg); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG, command, pkg); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG+" "+command+" "+pkg); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else if (OSDetector.isWindows()) {
 			if (confPath!=null && !confPath.equals("")) {
@@ -144,9 +144,9 @@ public class PkgConfigUtil {
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			if (confPath!=null && !confPath.equals("")) {
 				pb = new ProcessBuilder("bash", "-c", confPath+
-						Separators.getFileSeparator()+PKG_CONFIG, LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+						Separators.getFileSeparator()+PKG_CONFIG+" "+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG, LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG+" "+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else if (OSDetector.isWindows()) {
 			if (confPath!=null && !confPath.equals("")) {

@@ -186,7 +186,7 @@ public class Parser {
 		if (s != null) {
 			//remove library search path flags
 			String s2 = s.replace("-L", "");
-			//insert lib paths into an ar lray
+			//insert lib paths into an array
 			String[] libPaths = s2.split(" ");
 			return libPaths;
 		} else {
