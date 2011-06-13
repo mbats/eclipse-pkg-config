@@ -47,4 +47,12 @@
             primary="true">
       </toc>
    </extension>
+      <extension
+            id="org.eclipse.cdt.managedbuilder.pkgconfig.extSettings"
+            name="Pkg-config External Setting Provider"
+            point="org.eclipse.cdt.core.externalSettingsProvider">
+         <provider
+               class="org.eclipse.cdt.managedbuilder.pkgconfig.PkgConfigSettingsProvider">
+         </provider>
+      </extension>
 </plugin>
