@@ -32,10 +32,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
-/**
- * 
- * TODO: Settings entries is not working.
- */
 public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 
 	public static final String ID = "org.eclipse.cdt.managedbuilder.pkgconfig.extSettings"; //$NON-NLS-1$
@@ -47,23 +43,14 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
         
 		ICLanguageSettingEntry[] includes = getIncludePaths(proj);
 		
-		//testing
-//		for (ICLanguageSettingEntry entry : includes) {
-//			System.out.println(entry);
-//		}
-		
-//		ArrayList<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
-//		Collections.addAll(settings, includes);
+		ArrayList<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
+		Collections.addAll(settings, includes);
 
 		CExternalSetting setting =
 				new CExternalSetting(new String[] { "org.eclipse.cdt.core.gcc", "org.eclipse.cdt.core.g++" }, new String[] {
 				"org.eclipse.cdt.core.cSource" }, null,
-				includes);
-//				settings.toArray(new ICLanguageSettingEntry[settings.size()]));
-		//test
-		for (ICSettingEntry entry : setting.getEntries()) {
-			System.out.println(entry.getName());
-		}
+				settings.toArray(new ICLanguageSettingEntry[settings.size()]));
+		
 		return new CExternalSetting[] { setting };
 	}
 
@@ -127,7 +114,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	
 	private static String[] getIncludesFromCheckedPackages(IProject proj) {
 		ArrayList<String> includes = new ArrayList<String>();
-		String[] pkgs = getPackageNames(proj);
+		String[] pkgs = getCheckedPackageNames(proj);
 		String cflags = null;
 		String[] incPathArray = null;
 		for (String pkg : pkgs) {
@@ -151,9 +138,20 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		return strgElem;
 	}
 	
-	private static String[] getPackageNames(IProject proj) {
+	private static String[] getCheckedPackageNames(IProject proj) {
 		ICStorageElement pkgStorage = getPackageStorage(proj);
-		return pkgStorage.getAttributeNames();
+		String[] pkgNames = pkgStorage.getAttributeNames();
+		ArrayList<String> pkgs = new ArrayList<String>();
+		String value = null;
+		for(String pkgName : pkgNames) {
+			value = pkgStorage.getAttribute(pkgName);
+			if(value!=null) {
+				if(value.equals("true")) {
+					pkgs.add(pkgName);
+				}
+			}
+		}
+		return (String[]) pkgs.toArray(new String[pkgs.size()]);
 	}
 	
 }

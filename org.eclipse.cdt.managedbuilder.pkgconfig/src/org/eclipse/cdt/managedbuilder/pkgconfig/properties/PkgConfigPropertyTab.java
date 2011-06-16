@@ -173,7 +173,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			reindexToggle = false;
 		}
 		saveChecked();
-		HandleExternalSettings.addUpdateExternalSettings(page.getProject());
+//		HandleExternalSettings.addUpdateExternalSettings(page.getProject());
 		updateData(getResDesc());
 		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
 		newItems.clear();
