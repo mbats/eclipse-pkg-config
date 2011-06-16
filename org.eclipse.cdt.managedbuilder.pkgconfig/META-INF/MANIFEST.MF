@@ -24,5 +24,6 @@ Export-Package: org.eclipse.cdt.managedbuilder.pkgconfig;
    org.eclipse.swt.widgets",
  org.eclipse.cdt.managedbuilder.pkgconfig.properties,
  org.eclipse.cdt.managedbuilder.pkgconfig.util
-Import-Package: org.eclipse.cdt.managedbuilder.core
+Import-Package: org.eclipse.cdt.managedbuilder.core,
+ org.eclipse.ui
 Bundle-Vendor: %providerName

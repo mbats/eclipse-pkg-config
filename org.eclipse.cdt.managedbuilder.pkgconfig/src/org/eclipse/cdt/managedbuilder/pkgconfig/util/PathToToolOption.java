@@ -677,7 +677,7 @@ public class PathToToolOption {
 			//check that list has values
 			if(existingValues.length>0) {
 				//remove value from existing values
-				String[] newValues = removePathFromExistingPathList(existingValues, removeValue);
+				String[] newValues = ArrayUtil.removePathFromExistingPathList(existingValues, removeValue);
 				//set new values array for the option for the given build configuration
 				ManagedBuildManager.setOption(cf, cfTool, option, newValues);
 			}
@@ -886,27 +886,6 @@ public class PathToToolOption {
 			newPathList.add(path);
 		}
 		//creates a new list that includes all existing paths as well as new paths
-		String[] newArray = newPathList.toArray(new String[0]);
-		return newArray;
-	}
-
-	/**
-	 * Removes one path from the list of paths.
-	 * 
-	 * @param existingPaths Existing list of paths to remove from
-	 * @param removePath Path to be removed.
-	 * @return String[] List that includes existing paths without the path that was removed.
-	 */
-	public static String[] removePathFromExistingPathList(String[] existingPaths, String removePath) {
-		List<String> newPathList = new ArrayList<String>();
-		String path;
-		//adds existing paths to new paths list
-		for (int i = 0; i < existingPaths.length; i++) {
-			path = existingPaths[i];
-			newPathList.add(path);
-		}
-		newPathList.remove(removePath);
-		//creates a new list that includes all existing paths except the removed path
 		String[] newArray = newPathList.toArray(new String[0]);
 		return newArray;
 	}
