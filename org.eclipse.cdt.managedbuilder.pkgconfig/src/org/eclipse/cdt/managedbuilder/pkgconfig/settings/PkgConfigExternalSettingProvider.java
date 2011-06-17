@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
+import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICIncludePathEntry;
@@ -176,7 +177,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	private static ICLanguageSettingEntry[] formLibraryPathEntries(String[] libPaths) {
 		ArrayList<ICLanguageSettingEntry> libPathEntries = new ArrayList<ICLanguageSettingEntry>();
 		for(String libPath : libPaths) {
-			CLibraryFileEntry libPathEntry = new CLibraryFileEntry(new Path(libPath),
+			CLibraryPathEntry libPathEntry = new CLibraryPathEntry(new Path(libPath),
 					ICSettingEntry.LIBRARY_PATH);
 			libPathEntries.add(libPathEntry);
 		}
