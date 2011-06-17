@@ -55,19 +55,4 @@
                class="org.eclipse.cdt.managedbuilder.pkgconfig.settings.PkgConfigExternalSettingProvider">
          </provider>
       </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            nameFilter="*"
-            id="oeg.eclipse.cdt.managedbuilder.pkgconfig.setextsettings">
-         <action
-               label="Add / Update external settings"
-               class="org.eclipse.cdt.managedbuilder.pkgconfig.settings.AddExternalSettings"
-               enablesFor="1"
-               id="set_ext_settings">
-         </action>
-      </objectContribution>
-   </extension>
 </plugin>

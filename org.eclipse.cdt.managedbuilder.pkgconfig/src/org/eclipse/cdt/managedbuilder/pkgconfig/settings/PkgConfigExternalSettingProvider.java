@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * 
  * TODO: Get settings for other flags.
+ * TODO: Cache values
  */
 public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 
@@ -166,7 +167,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		ArrayList<ICLanguageSettingEntry> libEntries = new ArrayList<ICLanguageSettingEntry>();
 		for(String lib : libs) {
 			CLibraryFileEntry libFileEntry = new CLibraryFileEntry(new Path(lib),
-					ICSettingEntry.LIBRARY_PATH);
+					ICSettingEntry.LIBRARY_FILE);
 			libEntries.add(libFileEntry);
 		}
 		return libEntries.toArray(new ICLanguageSettingEntry[libEntries.size()]);
