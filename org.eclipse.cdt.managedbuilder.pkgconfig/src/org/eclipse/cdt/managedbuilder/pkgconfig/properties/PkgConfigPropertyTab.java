@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
-import org.eclipse.cdt.managedbuilder.pkgconfig.settings.HandleExternalSettings;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
@@ -173,7 +172,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			reindexToggle = false;
 		}
 		saveChecked();
-//		HandleExternalSettings.addUpdateExternalSettings(page.getProject());
 		updateData(getResDesc());
 		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
 		newItems.clear();
