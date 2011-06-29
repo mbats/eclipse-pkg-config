@@ -27,15 +27,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Add include and library search paths and libraries to Tool's (compiler, linker) options.
+ * Adds includes, libraries and other flags to Tool's (compiler, linker) Options.
  * 
- * TODO: Modify so that the Tool Options are added to the selected build configuration.
- * 		 IF all configurations are selected then add Tool Options to all configurations.
+ * TODO: If all configurations are selected then add Tool Options to all configurations.
  */
 public class PathToToolOption {
 
 	//tool input extensions
-//	private static final String linkerInputType = "o"; //$NON-NLS-1$
 	private static final String[] inputTypes = {"cpp", "c"};  //$NON-NLS-1$ //$NON-NLS-2$
 	
 	//tool option values
@@ -143,29 +141,11 @@ public class PathToToolOption {
 	private static void addPathToToolOption(String path, int var, IProject proj) {
 		//check if the given path exists
 		if (path.length()>0 && (pathExists(path) || var==LIB || var==OTHER_FLAG)) {
-			boolean success = false;
-//			IConfiguration[] configs;
-			//get all build configurations of the IProject
-//			configs = getAllBuildConfigs(proj);
-			//if build configurations found
-//			if (configs.length>0) {
-//				for (IConfiguration cf : configs) {
 			IConfiguration cf = getActiveBuildConf(proj);
 			if (cf != null) {
 				//Add path for the Tool's option
-				if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
-					success = true;
-				} else {
-					success = false;
-				}						
+				addPathToSelectedToolOptionBuildConf(cf, path, var);
 			}
-//				}
-				//if the path was added successfully
-			if (success) {
-				//save project build info
-//				ManagedBuildManager.saveBuildInfo(proj, true); //call moved to property ptab class to reduce overhead
-			}
-//			}
 		}
 	}
 
@@ -178,27 +158,9 @@ public class PathToToolOption {
 	private static void removePathFromToolOption(String path, int var, IProject proj) {
 		//check if the given path exists
 		if (path.length()>0 && pathExists(path) || var==LIB || var==OTHER_FLAG) {
-			boolean success = false;
-//			IConfiguration[] configs;
-			//get all build configurations of the IProject
-//			configs = getAllBuildConfigs(proj);
-			//if build configurations found
-//			if (configs.length>0) {
-//				for (IConfiguration cf : configs) {
 			IConfiguration cf = getActiveBuildConf(proj);
 			//remove a path from the Tool's option
-			if (removePathFromSelectedToolOptionBuildConf(cf, path, var)) {
-				success = true;
-			} else {
-				success = false;
-			}
-//				}
-			//if the path was removed successfully
-			if (success) {
-				//save project build info
-//				ManagedBuildManager.saveBuildInfo(proj, true); //call moved to property ptab class to reduce overhead
-			}
-//			}
+			removePathFromSelectedToolOptionBuildConf(cf, path, var);
 		}
 	}
 
@@ -208,20 +170,23 @@ public class PathToToolOption {
 	 * @param cf Build configuration
 	 * @param value Value to be added (path, file name, flag etc.)
 	 * @param var Value of the option type
-	 * @return boolean True if path was added successfully
 	 */
-	private static boolean addPathToSelectedToolOptionBuildConf(IConfiguration cf, String value, int var) {
+	private static void addPathToSelectedToolOptionBuildConf(IConfiguration cf, String value, int var) {
 		switch (var) {
 		case INCLUDE:
-			return addIncludePathToToolOption(cf, value);
+			addIncludePathToToolOption(cf, value);
+			break;
 		case LIB:
-			return addLibToToolOption(cf, value);
+			addLibToToolOption(cf, value);
+			break;
 		case LIB_PATH:
-			return addLibSearchPathToToolOption(cf, value);
+			addLibSearchPathToToolOption(cf, value);
+			break;
 		case OTHER_FLAG:
-			return addOtherFlagToToolOption(cf, value);
+			addOtherFlagToToolOption(cf, value);
+			break;
 		default:
-			return false;
+			break;
 		}
 	}
 
@@ -231,20 +196,23 @@ public class PathToToolOption {
 	 * @param cf Build configuration
 	 * @param value Value to be removed (path, file name, flag etc.)
 	 * @param var Value of the option type
-	 * @return boolean True if path was removed successfully
 	 */
-	private static boolean removePathFromSelectedToolOptionBuildConf(IConfiguration cf, String value, int var) {
+	private static void removePathFromSelectedToolOptionBuildConf(IConfiguration cf, String value, int var) {
 		switch (var) {
 		case INCLUDE:
-			return removeIncludePathFromToolOption(cf, value);
+			removeIncludePathFromToolOption(cf, value);
+			break;
 		case LIB:
-			return removeLibFromToolOption(cf, value);
+			removeLibFromToolOption(cf, value);
+			break;
 		case LIB_PATH:
-			return removeLibSearchPathFromToolOption(cf, value);
+			removeLibSearchPathFromToolOption(cf, value);
+			break;
 		case OTHER_FLAG:
-			return removeOtherFlagFromToolOption(cf, value);
+			removeOtherFlagFromToolOption(cf, value);
+			break;
 		default:
-			return false;
+			break;
 		}
 	}
 
@@ -266,22 +234,20 @@ public class PathToToolOption {
 	 * @param cf IConfiguration Build configuration
 	 * @param newIncludePath Include path to be added to Compiler's Include path Option
 	 */
-	private static boolean addIncludePathToToolOption(IConfiguration cf, String newIncludePath) {
-		//get compiler
-		ITool compiler = getCompiler(cf);
-		//If the compiler is found from the given build configuration
-		if (compiler != null) {
-			//get compiler's Include paths option.
-			IOption compilerIncPathOption = getCompilerIncludePathOption(cf);
-			if (compilerIncPathOption != null) {
-				//add a new include path to compiler's Include paths option.
-				boolean val = addIncludePathToToolOption(cf, compiler, compilerIncPathOption, newIncludePath);
-				return val;
-			} else {
-				return false;
+	private static void addIncludePathToToolOption(IConfiguration cf, String newIncludePath) {
+		//get compiler(s)
+		ITool[] compilers = getCompiler(cf);
+		for (ITool compiler : compilers) {
+			//If the compiler is found from the given build configuration
+			if (compiler != null) {
+				//get compiler's Include paths option.
+				IOption compilerIncPathOption = getCompilerIncludePathOption(compiler);
+				if (compilerIncPathOption != null) {
+					//add a new include path to compiler's Include paths option.
+					addIncludePathToToolOption(cf, compiler, compilerIncPathOption, newIncludePath);
+				}
 			}
-		} 
-		return false;
+		}
 	}
 
 	/**
@@ -290,22 +256,20 @@ public class PathToToolOption {
 	 * @param cf IConfiguration Build configuration
 	 * @param removeIncludePath Include path to be removed from Compiler's Include path Option
 	 */
-	private static boolean removeIncludePathFromToolOption(IConfiguration cf, String removeIncludePath) {
-		//get compiler
-		ITool compiler = getCompiler(cf);
-		//If the compiler is found from the given build configuration
-		if (compiler != null) {
-			//get compiler's Include paths option.
-			IOption compilerIncPathOption = getCompilerIncludePathOption(cf);
-			if (compilerIncPathOption != null) {
-				//remove an include path from compiler's Include paths option.
-				removeIncludePathFromToolOption(cf, compiler, compilerIncPathOption, removeIncludePath);
-				return true;
-			} else {
-				return false;
-			}
-		} 
-		return false;
+	private static void removeIncludePathFromToolOption(IConfiguration cf, String removeIncludePath) {
+		//get compiler(s)
+		ITool[] compilers = getCompiler(cf);
+		for (ITool compiler : compilers) {
+			//If the compiler is found from the given build configuration
+			if (compiler != null) {
+				//get compiler's Include paths option.
+				IOption compilerIncPathOption = getCompilerIncludePathOption(compiler);
+				if (compilerIncPathOption != null) {
+					//remove an include path from compiler's Include paths option.
+					removeIncludePathFromToolOption(cf, compiler, compilerIncPathOption, removeIncludePath);
+				}
+			} 
+		}
 	}
 
 	/**
@@ -313,25 +277,21 @@ public class PathToToolOption {
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @param lib Library name
-	 * @return boolean Returns true if Library Option was added successfully to the Linker.
 	 */
-	private static boolean addLibToToolOption(IConfiguration cf, String lib) {
-		//get linker
-		ITool linker = getLinker(cf);
-		//If the linker is found from the given build configuration
-		if (linker != null) {
-			//get Linker's Libraries option
-			IOption librariesOption = getLinkerLibrariesOption(cf);
-			if (librariesOption != null) {
-				//add library to Linker's Libraries Option type
-				boolean val = addLibraryToToolOption(cf, linker, librariesOption, lib);
-				return val;
-			} else {
-				return false;
-			}
-		} 
-		//adding the library failed
-		return false;
+	private static void addLibToToolOption(IConfiguration cf, String lib) {
+		//get linker(s)
+		ITool[] linkers = getLinker(cf);
+		for (ITool linker : linkers) {
+			//If the linker is found from the given build configuration
+			if (linker != null) {
+				//get Linker's Libraries option
+				IOption librariesOption = getLinkerLibrariesOption(linker);
+				if (librariesOption != null) {
+					//add library to Linker's Libraries Option type
+					addLibraryToToolOption(cf, linker, librariesOption, lib);
+				}
+			} 
+		}
 	}
 
 	/**
@@ -339,25 +299,21 @@ public class PathToToolOption {
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @param removeLib Library name
-	 * @return boolean Returns true if Library Option was removed successfully from the Linker.
 	 */
-	private static boolean removeLibFromToolOption(IConfiguration cf, String removeLib) {
-		//get linker
-		ITool linker = getLinker(cf);
-		//If the Linker is found from the given build configuration
-		if (linker != null) {
-			//get Linker's Libraries option
-			IOption librariesOption = getLinkerLibrariesOption(cf);
-			if (librariesOption != null) {
-				//remove a library from linker's Libraries Option type
-				removeLibraryFromToolOption(cf, linker, librariesOption, removeLib);
-				return true;
-			} else {
-				return false;
+	private static void removeLibFromToolOption(IConfiguration cf, String removeLib) {
+		//get linker(s)
+		ITool[] linkers = getLinker(cf);
+		for (ITool linker : linkers) {
+			//If the Linker is found from the given build configuration
+			if (linker != null) {
+				//get Linker's Libraries option
+				IOption librariesOption = getLinkerLibrariesOption(linker);
+				if (librariesOption != null) {
+					//remove a library from linker's Libraries Option type
+					removeLibraryFromToolOption(cf, linker, librariesOption, removeLib);
+				}
 			}
-		} 
-		//removing the library failed
-		return false;
+		}
 	}
 
 	/**
@@ -365,23 +321,21 @@ public class PathToToolOption {
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @param libDir Library search path
-	 * @return boolean Returns true if Library search path Option was added successfully to the Linker.
 	 */
-	private static boolean addLibSearchPathToToolOption(IConfiguration cf, String libDir) {
-		//get linker
-		ITool linker = getLinker(cf);
-		//If the linker is found from the given build configuration
-		if (linker != null) {
-			//get Linker's Library search path option
-			IOption libDirOption = getLinkerLibrarySearchPathOption(cf);
-			if (libDirOption != null) {
-				//add library search path to linker's Library Search Path Option type
-				boolean val = addLibrarySearchPathToToolOption(cf, linker, libDirOption, libDir);
-				return val;
-			}
-		} 
-		//adding library failed
-		return false;
+	private static void addLibSearchPathToToolOption(IConfiguration cf, String libDir) {
+		//get linker(s)
+		ITool[] linkers = getLinker(cf);
+		for (ITool linker : linkers) {
+			//If the linker is found from the given build configuration
+			if (linker != null) {
+				//get Linker's Library search path option
+				IOption libDirOption = getLinkerLibrarySearchPathOption(linker);
+				if (libDirOption != null) {
+					//add library search path to linker's Library Search Path Option type
+					addLibrarySearchPathToToolOption(cf, linker, libDirOption, libDir);
+				}
+			} 
+		}
 	}
 
 	/**
@@ -389,23 +343,21 @@ public class PathToToolOption {
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @param removeLibDir Library search path
-	 * @return boolean Returns true if Library search path Option was removed successfully from the Linker.
 	 */
-	private static boolean removeLibSearchPathFromToolOption(IConfiguration cf, String removeLibDir) {
-		//get linker
-		ITool linker = getLinker(cf);
-		//If the linker is found from the given build configuration
-		if (linker != null) {
-			//get Linker's Library search path option
-			IOption libDirOption = getLinkerLibrarySearchPathOption(cf);
-			if (libDirOption != null) {
-				//remove a library search path from linker's Library Search Path Option type
-				removeLibrarySearchPathFromToolOption(cf, linker, libDirOption, removeLibDir);
-				return true;
-			}
-		} 
-		//removing the library search path failed
-		return false;
+	private static void removeLibSearchPathFromToolOption(IConfiguration cf, String removeLibDir) {
+		//get linker(s)
+		ITool[] linkers = getLinker(cf);
+		for (ITool linker : linkers) {
+			//If the linker is found from the given build configuration
+			if (linker != null) {
+				//get Linker's Library search path option
+				IOption libDirOption = getLinkerLibrarySearchPathOption(linker);
+				if (libDirOption != null) {
+					//remove a library search path from linker's Library Search Path Option type
+					removeLibrarySearchPathFromToolOption(cf, linker, libDirOption, removeLibDir);
+				}
+			} 	
+		}
 	}
 
 	/**
@@ -413,25 +365,21 @@ public class PathToToolOption {
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @param otherFlag Other flag
-	 * @return boolean Returns true if Other flags Option was added successfully to the compiler.
 	 */
-	private static boolean addOtherFlagToToolOption(IConfiguration cf, String otherFlag) {
-		//get compiler
-		ITool compiler = getCompiler(cf);
-		//If the compiler is found from the given build configuration
-		if (compiler != null) {
-			//get compiler's Other flags option
-			IOption otherFlagOption = getCompilerOtherFlagsOption(cf);
-			if (otherFlagOption != null) {
-				//add other flag to compiler's Other flags Option type
-				boolean val = addOtherFlagToToolOption(cf, compiler, otherFlagOption, otherFlag);
-				return val;
-			} else {
-				return false;
-			}
-		} 
-		//adding the other flag failed
-		return false;
+	private static void addOtherFlagToToolOption(IConfiguration cf, String otherFlag) {
+		//get compiler(s)
+		ITool[] compilers = getCompiler(cf);
+		for (ITool compiler : compilers) {
+			//If the compiler is found from the given build configuration
+			if (compiler != null) {
+				//get compiler's Other flags option
+				IOption otherFlagOption = getCompilerOtherFlagsOption(compiler);
+				if (otherFlagOption != null) {
+					//add other flag to compiler's Other flags Option type
+					addOtherFlagToToolOption(cf, compiler, otherFlagOption, otherFlag);
+				}
+			} 
+		}
 	}
 	
 	/**
@@ -440,22 +388,20 @@ public class PathToToolOption {
 	 * @param cf IConfiguration Build configuration
 	 * @param removeOtherFlag Include path to be removed from Compiler's Include path Option
 	 */
-	private static boolean removeOtherFlagFromToolOption(IConfiguration cf, String removeOtherFlag) {
-		//get compiler
-		ITool compiler = getCompiler(cf);
-		//If the compiler is found from the given build configuration
-		if (compiler != null) {
-			//get compiler's Other flags option
-			IOption otherFlagOption = getCompilerOtherFlagsOption(cf);
-			if (otherFlagOption != null) {
-				//remove an other flag from compiler's Other flags option.
-				removeOtherFlagFromToolOption(cf, compiler, otherFlagOption, removeOtherFlag);
-				return true;
-			} else {
-				return false;
-			}
-		} 
-		return false;
+	private static void removeOtherFlagFromToolOption(IConfiguration cf, String removeOtherFlag) {
+		//get compiler(s)
+		ITool[] compilers = getCompiler(cf);
+		for (ITool compiler : compilers) {
+			//If the compiler is found from the given build configuration
+			if (compiler != null) {
+				//get compiler's Other flags option
+				IOption otherFlagOption = getCompilerOtherFlagsOption(compiler);
+				if (otherFlagOption != null) {
+					//remove an other flag from compiler's Other flags option.
+					removeOtherFlagFromToolOption(cf, compiler, otherFlagOption, removeOtherFlag);
+				}
+			} 
+		}
 	}
 	
 	/**
@@ -687,53 +633,43 @@ public class PathToToolOption {
 	}
 
 	/**
-	 * Return compiler according to the input type.
+	 * Return compilers according to the input type.
 	 * @param cf IConfiguration Build configuration
-	 * @return ITool Compiler
+	 * @return ITool[] Compilers
 	 */
-	private static ITool getCompiler(IConfiguration cf) {
+	private static ITool[] getCompiler(IConfiguration cf) {
+		ArrayList<ITool> compilerList = new ArrayList<ITool>();
 		//get compiler according to the input type
 		for(int i=0; i<inputTypes.length; i++) {
 			ITool tool = getIToolByInputType(cf, inputTypes[i]);
 			if (tool != null) {
-				return tool;
+				compilerList.add(tool);
 			}
 		}
-		return null;
+		return compilerList.toArray(new ITool[compilerList.size()]);
 	}
 
 	/**
-	 * Returns linker.
+	 * Returns linkers.
 	 * 
 	 * @param cf IConfiguration Build configuration
 	 * @return ITool linker
 	 * TODO: Rewrite
 	 */
-	private static ITool getLinker(IConfiguration cf) {
+	private static ITool[] getLinker(IConfiguration cf) {
+		ArrayList<ITool> linkerList = new ArrayList<ITool>();
 		ITool[] tools = cf.getTools();
 		/*
 		 * Search for the right tool.
-		 * Trying to achieve better support for custom toolchains.
+		 * Trying to achieve better support for custom tool-chains.
 		 */
-		//see if c++ or c project
-		ITool compiler = getIToolByInputType(cf, "cpp");
-		boolean cppProject = false;
-		if (compiler != null) {
-			cppProject = true;
-		}
 		for (ITool tool : tools) {
 			String name = tool.getBaseId();
-			if (cppProject) {
-				if (name.contains("cpp.linker")) {
-					return tool;
-				}
-			} else {
-				if (name.contains("c.linker")) {
-					return tool;
-				}
+			if (name.contains("cpp.linker") || name.contains("c.linker")) {
+				linkerList.add(tool);
 			}
 		}
-		return null;
+		return linkerList.toArray(new ITool[linkerList.size()]);
 	}
 
 	/**
@@ -751,12 +687,10 @@ public class PathToToolOption {
 	/**
 	 * Returns compiler Include path Option type.
 	 * 
-	 * @param cf IConfiguration Project build configuration
+	 * @param cfTool ITool Compiler tool.
 	 * @return IOption Tool option type
 	 */
-	private static IOption getCompilerIncludePathOption(IConfiguration cf) {
-		//get compiler
-		ITool cfTool = getCompiler(cf);
+	private static IOption getCompilerIncludePathOption(ITool cfTool) {
 		//get option id for include paths
 		String includeOptionId = getOptionIdByValueType(cfTool, IOption.INCLUDE_PATH);
 		return getToolOptionType(cfTool, includeOptionId);
@@ -765,12 +699,10 @@ public class PathToToolOption {
 	/**
 	 * Returns Linker Libraries Option type.
 	 * 
-	 * @param cf IConfiguration Project build configuration
+	 * @param cfTool ITool Linker tool.
 	 * @return IOption Tool option type
 	 */
-	private static IOption getLinkerLibrariesOption(IConfiguration cf) {
-		//get linker
-		ITool cfTool = getLinker(cf);
+	private static IOption getLinkerLibrariesOption(ITool cfTool) {
 		//get option id for libraries
 		String libOptionId = getOptionIdByValueType(cfTool, IOption.LIBRARIES);
 		return getToolOptionType(cfTool, libOptionId);
@@ -779,12 +711,10 @@ public class PathToToolOption {
 	/**
 	 * Returns Linker Library search path Option type.
 	 * 
-	 * @param cf IConfiguration Project build configuration
+	 * @param cfTool ITool Linker tool.
 	 * @return IOption Tool option type
 	 */
-	private static IOption getLinkerLibrarySearchPathOption(IConfiguration cf) {
-		//get ITool associated with the input extension
-		ITool cfTool = getLinker(cf);
+	private static IOption getLinkerLibrarySearchPathOption(ITool cfTool) {
 		//get option id for library paths
 		String libDirOptionId = getOptionIdByValueType(cfTool, IOption.LIBRARY_PATHS);
 		return getToolOptionType(cfTool, libDirOptionId);
@@ -793,12 +723,10 @@ public class PathToToolOption {
 	/**
 	 * Returns compiler's Other flags Option type.
 	 * 
-	 * @param cf IConfiguration Project build configuration
+	 * @param cfTool ITool Compiler tool.
 	 * @return IOption Tool option type
 	 */
-	private static IOption getCompilerOtherFlagsOption(IConfiguration cf) {
-		//get ITool associated with the input extension
-		ITool cfTool = getCompiler(cf);
+	private static IOption getCompilerOtherFlagsOption(ITool cfTool) {
 		//get option id for other flags
 		String otherFlagsOptionId = getOptionIdByName(cfTool, OtherFlagsOptionName);
 		return getToolOptionType(cfTool, otherFlagsOptionId);
