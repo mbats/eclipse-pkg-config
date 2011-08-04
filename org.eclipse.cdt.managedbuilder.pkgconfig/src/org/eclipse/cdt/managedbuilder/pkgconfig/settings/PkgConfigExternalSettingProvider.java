@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * 
  * TODO: Get settings for other flags.
+ * TODO: formOtherFlagEntries Bug 349791
  * TODO: Cache values
  */
 public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
@@ -48,92 +49,65 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	public CExternalSetting[] getSettings(IProject proj,
 			ICConfigurationDescription cfg) {
         
-		ICLanguageSettingEntry[] includes = getEntries(proj, ICSettingEntry.INCLUDE_PATH);
-		ICLanguageSettingEntry[] libFiles = getEntries(proj, ICSettingEntry.LIBRARY_FILE); 
-		ICLanguageSettingEntry[] libPaths = getEntries(proj, ICSettingEntry.LIBRARY_PATH); 
+		ICSettingEntry[] includes = getEntries(proj, ICSettingEntry.INCLUDE_PATH);
+		ICSettingEntry[] libFiles = getEntries(proj, ICSettingEntry.LIBRARY_FILE); 
+		ICSettingEntry[] libPaths = getEntries(proj, ICSettingEntry.LIBRARY_PATH); 
 		
-		ArrayList<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
-		Collections.addAll(settings, includes);
-		Collections.addAll(settings, libFiles);
-		Collections.addAll(settings, libPaths);
-
-		CExternalSetting setting =
-				new CExternalSetting(new String[] { "org.eclipse.cdt.core.gcc", "org.eclipse.cdt.core.g++" }, new String[] {
-				"org.eclipse.cdt.core.cSource" }, null,
-				settings.toArray(new ICLanguageSettingEntry[settings.size()]));
+		CExternalSetting includeSettings =
+				new CExternalSetting(null, new String[] {
+				"org.eclipse.cdt.core.cSource" }, null, includes);
 		
-		return new CExternalSetting[] { setting };
+		CExternalSetting libraryFileSettings =
+				new CExternalSetting(null, new String[] {
+				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libFiles);
+		
+		CExternalSetting libraryPathSettings =
+				new CExternalSetting(null, new String[] {
+				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libPaths);
+		
+		return new CExternalSetting[] { includeSettings, libraryFileSettings, libraryPathSettings };
 	}
 
+	/**
+	 * Get language setting entries for given ICSettingEntry.
+	 * @param proj
+	 * @param settingEntry
+	 * @return
+	 */
 	private static ICLanguageSettingEntry[] getEntries(IProject proj, int settingEntry) {
 		String[] values = null;
 		ICLanguageSettingEntry[] newEntries = null;
-		switch (settingEntry) {
-		case ICSettingEntry.INCLUDE_PATH:
-			values = getIncludePathsFromCheckedPackages(proj);
-			newEntries = formIncludePathEntries(values);
-			break;
-		case ICSettingEntry.LIBRARY_FILE:
-			values = getLibraryFilesFromCheckedPackages(proj);
-			newEntries = formLibraryFileEntries(values);
-			break;
-		case ICSettingEntry.LIBRARY_PATH:
-			values = getLibraryPathsFromCheckedPackages(proj);
-			newEntries = formLibraryPathEntries(values);
-			break;
-		default:
-			break;
-		}
-		ArrayList<ICLanguageSettingEntry> newEntryList = new ArrayList<ICLanguageSettingEntry>();
 		ICLanguageSetting lang = getGCCLanguageSetting(proj);
-		ICLanguageSettingEntry[] entries = null;
 		if (lang!=null) {
-			ICLanguageSettingEntry[] currentEntries = null;
 			switch (settingEntry) {
 			case ICSettingEntry.INCLUDE_PATH:
-				currentEntries = lang.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+				values = getIncludePathsFromCheckedPackages(proj);
+				newEntries = formIncludePathEntries(values);
+				lang.setSettingEntries(ICSettingEntry.INCLUDE_PATH, newEntries);
 				break;
 			case ICSettingEntry.LIBRARY_FILE:
-				currentEntries = lang.getSettingEntries(ICSettingEntry.LIBRARY_FILE);
+				values = getLibraryFilesFromCheckedPackages(proj);
+				newEntries = formLibraryFileEntries(values);
+				lang.setSettingEntries(ICSettingEntry.LIBRARY_FILE, newEntries);
 				break;
 			case ICSettingEntry.LIBRARY_PATH:
-				currentEntries = lang.getSettingEntries(ICSettingEntry.LIBRARY_PATH);
-				break;
-			default:
-				break;
-			}
-			Collections.addAll(newEntryList, currentEntries);
-			for (ICLanguageSettingEntry entry : newEntries) {
-				if(!newEntryList.contains(entry) && !entry.getName().equalsIgnoreCase("")) {
-					newEntryList.add(entry);
-				}
-			}
-			entries = (ICLanguageSettingEntry[]) newEntryList.toArray(new ICLanguageSettingEntry[newEntryList.size()]);
-			switch (settingEntry) {
-			case ICSettingEntry.INCLUDE_PATH:
-				lang.setSettingEntries(ICSettingEntry.INCLUDE_PATH, entries);
-				break;
-			case ICSettingEntry.LIBRARY_FILE:
-				lang.setSettingEntries(ICSettingEntry.LIBRARY_FILE, entries);
-				break;
-			case ICSettingEntry.LIBRARY_PATH:
-				lang.setSettingEntries(ICSettingEntry.LIBRARY_PATH, entries);
+				values = getLibraryPathsFromCheckedPackages(proj);
+				newEntries = formLibraryPathEntries(values);
+				lang.setSettingEntries(ICSettingEntry.LIBRARY_PATH, newEntries);
 				break;
 			default:
 				break;
 			}
 		}
-		return entries;
+		return newEntries;
 	}
 	
-	private static ICLanguageSetting[] getLanguageSettings(IProject proj) {
-		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
-		ICConfigurationDescription activeConf = projectDescription.getActiveConfiguration();
-		ICFolderDescription folderDesc = activeConf.getRootFolderDescription(); 
-		ICLanguageSetting[] langSettings = folderDesc.getLanguageSettings();
-		return langSettings;
-	}
-	
+	/**
+	 * Get language settings for given project and language id.
+	 * @param proj
+	 * @param languageId
+	 * @return
+	 */
 	private static ICLanguageSetting getLanguageSetting(IProject proj, String languageId) {
 		ICLanguageSetting[] langSettings = getLanguageSettings(proj);
 		ICLanguageSetting lang = null;
@@ -146,14 +120,42 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		return null;
 	}
 	
+	/**
+	 * Get language settings for the given project.
+	 * @param proj
+	 * @return
+	 */
+	private static ICLanguageSetting[] getLanguageSettings(IProject proj) {
+		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
+		ICConfigurationDescription activeConf = projectDescription.getActiveConfiguration();
+		ICFolderDescription folderDesc = activeConf.getRootFolderDescription(); 
+		ICLanguageSetting[] langSettings = folderDesc.getLanguageSettings();
+		return langSettings;
+	}
+	
+	/**
+	 * Get language settings for C projects.
+	 * @param proj
+	 * @return
+	 */
 	private static ICLanguageSetting getGCCLanguageSetting(IProject proj) {
 		return getLanguageSetting(proj, "org.eclipse.cdt.core.gcc");
 	}
 	
+	/**
+	 * Get language settings for C++ projects.
+	 * @param proj
+	 * @return
+	 */
 	private static ICLanguageSetting getGPPLanguageSetting(IProject proj) {
 		return getLanguageSetting(proj, "org.eclipse.cdt.core.g++");
 	}
 	
+	/**
+	 * Form ICIncludePathEntry array from include path String array.
+	 * @param includes
+	 * @return
+	 */
 	private static ICLanguageSettingEntry[] formIncludePathEntries(String[] includes) {
 		ArrayList<ICLanguageSettingEntry> incPathEntries = new ArrayList<ICLanguageSettingEntry>();
 		for(String inc : includes) {
@@ -164,16 +166,26 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		return incPathEntries.toArray(new ICLanguageSettingEntry[incPathEntries.size()]);
 	}
 	
+	/**
+	 * Form CLibraryFileEntry array from library file String array.
+	 * @param libs
+	 * @return
+	 */
 	private static ICLanguageSettingEntry[] formLibraryFileEntries(String[] libs) {
 		ArrayList<ICLanguageSettingEntry> libEntries = new ArrayList<ICLanguageSettingEntry>();
 		for(String lib : libs) {
-			CLibraryFileEntry libFileEntry = new CLibraryFileEntry(new Path(lib),
+			CLibraryFileEntry libFileEntry = new CLibraryFileEntry(lib,
 					ICSettingEntry.LIBRARY_FILE);
 			libEntries.add(libFileEntry);
 		}
 		return libEntries.toArray(new ICLanguageSettingEntry[libEntries.size()]);
 	}
 	
+	/**
+	 * Form CLibraryPathEntry array from library path String array.
+	 * @param libPaths
+	 * @return
+	 */
 	private static ICLanguageSettingEntry[] formLibraryPathEntries(String[] libPaths) {
 		ArrayList<ICLanguageSettingEntry> libPathEntries = new ArrayList<ICLanguageSettingEntry>();
 		for(String libPath : libPaths) {
@@ -184,6 +196,11 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		return libPathEntries.toArray(new ICLanguageSettingEntry[libPathEntries.size()]);
 	}
 	
+	/**
+	 * Get other flags from the checked packages.
+	 * @param proj
+	 * @return
+	 */
 	private static String[] getOtherFlagsFromCheckedPackages(IProject proj) {
 		ArrayList<String> otherFlagList = new ArrayList<String>();
 		String[] pkgs = getCheckedPackageNames(proj);
@@ -192,11 +209,18 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		for (String pkg : pkgs) {
 			cflags = PkgConfigUtil.getCflags(pkg);
 			otherFlagArray = Parser.parseCflagOptions(cflags);
-			Collections.addAll(otherFlagList, otherFlagArray);
+			if (otherFlagArray!=null) {
+				Collections.addAll(otherFlagList, otherFlagArray);
+			}
 		}
 		return otherFlagList.toArray(new String[otherFlagList.size()]);
 	}
 	
+	/**
+	 * Get include paths from the checked packages.
+	 * @param proj
+	 * @return
+	 */
 	private static String[] getIncludePathsFromCheckedPackages(IProject proj) {
 		ArrayList<String> includeList = new ArrayList<String>();
 		String[] pkgs = getCheckedPackageNames(proj);
@@ -205,11 +229,18 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		for (String pkg : pkgs) {
 			cflags = PkgConfigUtil.getCflags(pkg);
 			includeArray = Parser.parseIncPaths(cflags);
-			Collections.addAll(includeList, includeArray);
+			if (includeArray!=null) {
+				Collections.addAll(includeList, includeArray);
+			}
 		}
 		return includeList.toArray(new String[includeList.size()]);
 	}
 	
+	/**
+	 * Get library files from the checked packages.
+	 * @param proj
+	 * @return
+	 */
 	private static String[] getLibraryFilesFromCheckedPackages(IProject proj) {
 		ArrayList<String> libList = new ArrayList<String>();
 		String[] pkgs = getCheckedPackageNames(proj);
@@ -218,11 +249,18 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		for (String pkg : pkgs) {
 			libs = PkgConfigUtil.getLibFilesOnly(pkg);
 			libArray = Parser.parseLibs2(libs);
-			Collections.addAll(libList, libArray);
+			if (libArray!=null) {
+				Collections.addAll(libList, libArray);
+			}
 		}
 		return libList.toArray(new String[libList.size()]);
 	}
 	
+	/**
+	 * Get library paths from the checked packages.
+	 * @param proj
+	 * @return
+	 */
 	private static String[] getLibraryPathsFromCheckedPackages(IProject proj) {
 		ArrayList<String> libPathList = new ArrayList<String>();
 		String[] pkgs = getCheckedPackageNames(proj);
@@ -231,11 +269,18 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		for (String pkg : pkgs) {
 			libPaths = PkgConfigUtil.getLibPathsOnly(pkg);
 			libPathArray = Parser.parseLibPaths2(libPaths);
-			Collections.addAll(libPathList, libPathArray);
+			if (libPathArray!=null) {
+				Collections.addAll(libPathList, libPathArray);
+			}
 		}
 		return libPathList.toArray(new String[libPathList.size()]);
 	}
 	
+	/**
+	 * Get a storage element which stores the checked packages.
+	 * @param proj
+	 * @return
+	 */
 	private static ICStorageElement getPackageStorage(IProject proj) {
 		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
 		ICConfigurationDescription activeConf = projectDescription.getActiveConfiguration();
@@ -249,6 +294,11 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		return strgElem;
 	}
 	
+	/**
+	 * Get names of the checked packages.
+	 * @param proj
+	 * @return
+	 */
 	private static String[] getCheckedPackageNames(IProject proj) {
 		ICStorageElement pkgStorage = getPackageStorage(proj);
 		String[] pkgNames = pkgStorage.getAttributeNames();
@@ -258,6 +308,14 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 			value = pkgStorage.getAttribute(pkgName);
 			if(value!=null) {
 				if(value.equals("true")) {
+					/*
+					 * replace + symbols, because + symbols in package names
+					 * had to be replaced when storing them to
+					 * ICStorageElement to prevent error
+					 */
+					if (pkgName.contains("plus")) {
+						pkgName = pkgName.replace("plus", "+");
+					}
 					pkgs.add(pkgName);
 				}
 			}

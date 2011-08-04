@@ -37,7 +37,7 @@ public class PkgConfigPathListEditor extends PkgConfigListEditor {
 	@Override
 	/**
 	 * Functionality for New button.
-	 * Shows a browser dialog to select a directory and returns that directory path.
+	 * Shows a browse dialog to select a directory and returns that directory path.
 	 */
 	protected String getNewInputObject() {
 		DirectoryDialog dlg = new DirectoryDialog(getShell());

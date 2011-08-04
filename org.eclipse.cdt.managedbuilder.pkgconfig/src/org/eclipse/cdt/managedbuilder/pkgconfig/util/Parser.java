@@ -89,7 +89,7 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseCflagOptions(String s) {
+	public static String[] parseCflagOptions(String s) throws NullPointerException {
 		if (s != null) {
 			//find the index where include list starts
 			int end = s.indexOf("-I");
@@ -101,8 +101,7 @@ public class Parser {
 					String[] options = s.split(" ");
 					return options;
 				} else if (end == 0) { //no options found
-					String[] emptyList = {""};
-					return emptyList;
+					return null;
 				}
 			} else { //if no includes found
 				//check if any flags found
@@ -113,14 +112,12 @@ public class Parser {
 					String[] options = s.split(" ");
 					return options;
 				} else {
-					String[] emptyList = {""};
-					return emptyList;
+					return null;
 				}
 			}
 		}
 		//should not reach here
-		String[] emptyList = {""};
-		return emptyList;
+		return null;
 	}
 	
 	/**
@@ -129,7 +126,7 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseIncPaths(String s) {
+	public static String[] parseIncPaths(String s) throws NullPointerException {
 		if (s != null) {
 			//find the index where include list starts
 			int start = s.indexOf("-I");
@@ -142,12 +139,10 @@ public class Parser {
 				String[] incPaths = s2.split(" ");
 				return incPaths;
 			} else {
-				String[] emptyList = {""};
-				return emptyList;
+				return null;
 			}
 		} else {
-			String[] emptyList = {""};
-			return emptyList;
+			return null;
 		}
 	}
 	
@@ -157,7 +152,7 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseLibPaths(String s) {
+	public static String[] parseLibPaths(String s) throws NullPointerException {
 		//find the index where library path list starts
 		int start = s.indexOf("-L");
 		if (start != -1) { //if library paths found
@@ -171,8 +166,7 @@ public class Parser {
 			String[] libPaths = s2.split(" ");
 			return libPaths;
 		} else {
-			String[] emptyList = {""};
-			return emptyList;
+			return null;
 		}
 	}
 	
@@ -182,7 +176,7 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseLibPaths2(String s) {
+	public static String[] parseLibPaths2(String s) throws NullPointerException{
 		if (s != null) {
 			//remove library search path flags
 			String s2 = s.replace("-L", "");
@@ -190,8 +184,7 @@ public class Parser {
 			String[] libPaths = s2.split(" ");
 			return libPaths;
 		} else {
-			String[] emptyList  = {""};
-			return emptyList;
+			return null;
 		}
 	}
 	
@@ -201,7 +194,7 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseLibs(String s) {
+	public static String[] parseLibs(String s) throws NullPointerException {
 		if (s != null) {
 			//special case if pkg-config --libs output starts with -l
 			int start = s.indexOf("-l");
@@ -217,12 +210,10 @@ public class Parser {
 				String[] libs = s2.split(" ");
 				return libs;
 			} else {
-				String[] emptyList = {""};
-				return emptyList;
+				return null;
 			}			
 		} else {
-			String[] emptyList = {""};
-			return emptyList;
+			return null;
 		}	
 	}
 	
@@ -232,7 +223,7 @@ public class Parser {
 	 * @param s Output from pkg-config.
 	 * @return Parsed String array.
 	 */
-	public static String[] parseLibs2(String s) {
+	public static String[] parseLibs2(String s) throws NullPointerException {
 		if (s != null) {
 			//remove lib flags
 			String s2 = s.replace("-l", "");
@@ -240,8 +231,7 @@ public class Parser {
 			String[] libs = s2.split(" ");
 			return libs;
 		} else  {
-			String[] emptyList = {""};
-			return emptyList;
+			return null;
 		}
 	}
 	

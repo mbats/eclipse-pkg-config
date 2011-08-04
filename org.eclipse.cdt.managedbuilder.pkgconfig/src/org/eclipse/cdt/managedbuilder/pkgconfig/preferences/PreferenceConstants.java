@@ -15,6 +15,7 @@ public class PreferenceConstants {
 	public static final String PKG_CONFIG_PATH = "A colon-separated" +
 			" (on Windows, semicolon-separated) list of directories" +
 			" to search for .pc files."; //$NON-NLS-1$
+	
 	public static final String PKG_CONFIG_LIBDIR = "Replaces the" +
 			" default pkg-config search directory."; //$NON-NLS-1$
 	
