@@ -143,15 +143,6 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	}
 	
 	/**
-	 * Get language settings for C++ projects.
-	 * @param proj
-	 * @return
-	 */
-	private static ICLanguageSetting getGPPLanguageSetting(IProject proj) {
-		return getLanguageSetting(proj, "org.eclipse.cdt.core.g++");
-	}
-	
-	/**
 	 * Form ICIncludePathEntry array from include path String array.
 	 * @param includes
 	 * @return
