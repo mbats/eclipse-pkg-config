@@ -60,15 +60,15 @@
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.preferences{PreferenceStore.java[PreferenceStore"/>
       <height="-1"/>
       <width="-1"/>
-      <x="25"/>
-      <y="381"/>
+      <x="27"/>
+      <y="338"/>
    </type>
    <type>
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
       <height="-1"/>
       <width="-1"/>
-      <x="53"/>
-      <y="211"/>
+      <x="49"/>
+      <y="186"/>
    </type>
    <type>
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
@@ -81,22 +81,22 @@
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{PkgConfigPropertyTab.java[PkgConfigPropertyTab"/>
       <height="-1"/>
       <width="-1"/>
-      <x="27"/>
-      <y="1069"/>
+      <x="29"/>
+      <y="999"/>
    </type>
    <type>
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{PkgConfigPropertyTab.java[PkgConfigPropertyTab[PkgListener"/>
       <height="-1"/>
       <width="-1"/>
-      <x="26"/>
-      <y="1644"/>
+      <x="6"/>
+      <y="1607"/>
    </type>
    <type>
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.settings{PkgConfigExternalSettingProvider.java[PkgConfigExternalSettingProvider"/>
       <height="-1"/>
       <width="-1"/>
-      <x="26"/>
-      <y="717"/>
+      <x="29"/>
+      <y="650"/>
    </type>
    <type>
       <name="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.util{ArrayUtil.java[ArrayUtil"/>
@@ -141,23 +141,23 @@
       <y="1166"/>
    </type>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
-      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
-      <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
-      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
-      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
       <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
       <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{PkgConfigPropertyTab.java[PkgConfigPropertyTab"/>
       <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{PkgConfigPropertyTab.java[PkgConfigPropertyTab[PkgListener"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.dependency.DependencyIPart"/>
+      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
+      <sourceType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModelProvider.java[DataModelProvider"/>
+      <targetType="=org.eclipse.cdt.managedbuilder.pkgconfig/src<org.eclipse.cdt.managedbuilder.pkgconfig.properties{DataModel.java[DataModel"/>
       <bendpoints>
       </bendpoints>
    </relationship>
