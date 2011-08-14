@@ -79,7 +79,7 @@ implements IWorkbenchPreferencePage {
 		vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
 		fUserSupplier.setWorkspaceEnvironment(vars);
 		
-		restartWorkspace();
+		restartWorkspaceDialog();
 		
         return true;
     }
@@ -88,7 +88,7 @@ implements IWorkbenchPreferencePage {
 	 * Shows a dialog asking to restart workspace if pkg-config
 	 * preferences have been changed.
 	 */
-	private void restartWorkspace() {
+	private void restartWorkspaceDialog() {
 		MessageDialog dialog = new MessageDialog(
 				null, "Restart workspace?", null, "Changes made to pkg-config" +
 						" preferences need workspace restart in order to" +
