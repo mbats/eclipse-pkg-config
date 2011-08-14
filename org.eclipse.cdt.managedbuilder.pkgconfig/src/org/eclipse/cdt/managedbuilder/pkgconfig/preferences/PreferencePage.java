@@ -14,9 +14,12 @@ import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This class represents a preference page that
@@ -73,14 +76,37 @@ implements IWorkbenchPreferencePage {
 		fUserSupplier.setWorkspaceEnvironment(vars);
 		
 		//create PKG_CONFIG_PATH environment variable
-		fUserSupplier = EnvironmentVariableManager.fUserSupplier;
-		vars = fUserSupplier.getWorkspaceEnvironmentCopy();
 		vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
 		fUserSupplier.setWorkspaceEnvironment(vars);
+		
+		restartWorkspace();
 		
         return true;
     }
     
+	/**
+	 * Shows a dialog asking to restart workspace if pkg-config
+	 * preferences have been changed.
+	 */
+	private void restartWorkspace() {
+		MessageDialog dialog = new MessageDialog(
+				null, "Restart workspace?", null, "Changes made to pkg-config" +
+						" preferences need workspace restart in order to" +
+						" take effect.\n\n" +
+						"Would you like to restart the workspace now?",
+				MessageDialog.QUESTION,
+				new String[] {"Yes", "No"},
+				0);
+		int result = dialog.open();
+		if (result==0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					PlatformUI.getWorkbench().restart();
+				}
+			});
+		}
+	}
+	
     @Override
     protected void performApply() {
         performOk();
