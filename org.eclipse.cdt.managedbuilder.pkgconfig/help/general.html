@@ -1,16 +1,36 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<title>General information</title>
 </head>
-
 <body>
 <h1>General information</h1>
-<h2>What is PKG-CONFIG?</h2>
-Pkg-config utility outputs the necessary options needed to build a given package that can be passed as compiler options. 
+<h2>What is Pkg-config?</h2>
+<p>
+Pkg-config utility outputs the necessary compiler and linker flags needed to
+build a given package. 
+</p>
 <h2>Features</h2>
-The plug-in will set options and switches automatically that gcc needs to add in the selected packages - specifically the header file paths, the libraries, and some other gcc switches.
+<p>
+The plug-in will set compiler and linker flags automatically that GCC needs in
+order to build the selected packages - specifically include paths, libraries
+and their paths, and some other GCC flags.
+</p>
+<h3>Property page</h3>
+<p>
+Selecting packages happens through Pkg-config property tab where all packages
+found by pkg-config utility are shown along their descriptions. One can find
+project specific pkg-config property tab by navigating Properties -> C/C++
+Build -> Settings -> Pkg-config.
+</p>
+<h3>Preference page</h3>
+<p>
+Pkg-config preference page can be used to change environment variables for
+PKG_CONFIG_PATH and PKG_CONFIG_LIBDIR. These environment variables are only
+visible to Eclipse. One shall remember that the pkg-config path cannot contain
+white spaces (a feature of pkg-config utility). One can find pkg-config
+preference page by navigating Window -> Preferences -> Pkg-config.
+</p>
 </body>
 </html>
