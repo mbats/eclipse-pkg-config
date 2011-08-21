@@ -29,10 +29,15 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CExternalSettingProvider;
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
+import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PkgConfigUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * 
@@ -64,6 +69,8 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		CExternalSetting libraryPathSettings =
 				new CExternalSetting(null, new String[] {
 				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libPaths);
+		
+		addOtherFlagsToTools(proj);
 		
 		return new CExternalSetting[] { includeSettings, libraryFileSettings, libraryPathSettings };
 	}
@@ -188,26 +195,6 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	}
 	
 	/**
-	 * Get other flags from the checked packages.
-	 * @param proj
-	 * @return
-	 */
-	private static String[] getOtherFlagsFromCheckedPackages(IProject proj) {
-		ArrayList<String> otherFlagList = new ArrayList<String>();
-		String[] pkgs = getCheckedPackageNames(proj);
-		String cflags = null;
-		String[] otherFlagArray = null;
-		for (String pkg : pkgs) {
-			cflags = PkgConfigUtil.getCflags(pkg);
-			otherFlagArray = Parser.parseCflagOptions(cflags);
-			if (otherFlagArray!=null) {
-				Collections.addAll(otherFlagList, otherFlagArray);
-			}
-		}
-		return otherFlagList.toArray(new String[otherFlagList.size()]);
-	}
-	
-	/**
 	 * Get include paths from the checked packages.
 	 * @param proj
 	 * @return
@@ -267,6 +254,45 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		return libPathList.toArray(new String[libPathList.size()]);
 	}
 	
+	/**
+	 * Get other flags from the checked packages.
+	 * @param proj
+	 * @return
+	 */
+	private static String[] getOtherFlagsFromCheckedPackages(IProject proj) {
+		ArrayList<String> otherFlagList = new ArrayList<String>();
+		String[] pkgs = getCheckedPackageNames(proj);
+		String cflags = null;
+		String[] otherFlagArray = null;
+		for (String pkg : pkgs) {
+			cflags = PkgConfigUtil.getCflags(pkg);
+			otherFlagArray = Parser.parseCflagOptions(cflags);
+			if (otherFlagArray!=null) {
+				Collections.addAll(otherFlagList, otherFlagArray);
+			}
+		}
+		return otherFlagList.toArray(new String[otherFlagList.size()]);
+	}
+	
+	/**
+	 * Add other flags to Tool's Option.
+	 * @param proj
+	 */
+	private void addOtherFlagsToTools(final IProject proj) {
+		Job j = new Job("Add other flags") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				String[] flags = getOtherFlagsFromCheckedPackages(proj);
+				for (String flag : flags) {
+					PathToToolOption.addOtherFlag(flag, proj);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		j.setPriority(Job.INTERACTIVE);
+		j.schedule();
+	}
+
 	/**
 	 * Get a storage element which stores the checked packages.
 	 * @param proj
