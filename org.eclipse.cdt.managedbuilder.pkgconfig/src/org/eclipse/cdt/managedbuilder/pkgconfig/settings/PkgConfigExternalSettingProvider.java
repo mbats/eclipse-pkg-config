@@ -311,7 +311,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 				}
 			}
 		}
-		return (String[]) pkgs.toArray(new String[pkgs.size()]);
+		return pkgs.toArray(new String[pkgs.size()]);
 	}
 	
 }

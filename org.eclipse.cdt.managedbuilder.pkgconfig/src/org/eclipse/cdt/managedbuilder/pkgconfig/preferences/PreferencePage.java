@@ -100,6 +100,7 @@ implements IWorkbenchPreferencePage {
 		int result = dialog.open();
 		if (result==0) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					PlatformUI.getWorkbench().restart();
 				}
