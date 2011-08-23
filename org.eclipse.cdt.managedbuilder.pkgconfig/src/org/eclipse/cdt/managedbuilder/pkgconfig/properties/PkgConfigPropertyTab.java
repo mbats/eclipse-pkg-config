@@ -185,7 +185,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	}
 
 	/**
-	 * Add new flags that the packages need to Tools' Options
+	 * Add new flags that the packages need to Tools' Options.
+	 * Only for other flags.
 	 * 
 	 * @param addedItems Object[]
 	 * @param proj IProject
@@ -207,6 +208,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	/**
 	 * Makes sure that only the flags that are not needed by other packages 
 	 * are removed.
+	 * Only for other flags.
 	 * 
 	 * @param removedItems Object[]
 	 */
@@ -314,7 +316,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		} catch (CoreException e) {
 			Activator.getDefault().log(e, "Getting packages from the storage failed.");
 		}
-
 		TableItem[] items = pkgCfgViewer.getTable().getItems();
 		for(TableItem item : items) {
 			if(item != null) {

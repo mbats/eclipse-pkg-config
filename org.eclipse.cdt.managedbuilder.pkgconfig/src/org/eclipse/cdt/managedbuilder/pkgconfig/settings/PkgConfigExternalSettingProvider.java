@@ -40,10 +40,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * 
- * TODO: Get settings for other flags.
  * TODO: formOtherFlagEntries Bug 349791
- * TODO: Cache values
  */
 public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 
@@ -299,16 +296,21 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	 * @return
 	 */
 	private static ICStorageElement getPackageStorage(IProject proj) {
-		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
-		ICConfigurationDescription activeConf = projectDescription.getActiveConfiguration();
-		ICConfigurationDescription desc = activeConf.getConfiguration();
-		ICStorageElement strgElem = null;
 		try {
-			strgElem = desc.getStorage(PACKAGES, true);
-		} catch (CoreException e) {
-			Activator.getDefault().log(e, "Getting packages from the storage failed.");
+			ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
+			ICConfigurationDescription activeConf = projectDescription.getActiveConfiguration();
+			ICConfigurationDescription desc = activeConf.getConfiguration();
+			ICStorageElement strgElem = null;
+			try {
+				strgElem = desc.getStorage(PACKAGES, true);
+				return strgElem;
+			} catch (CoreException e) {
+				Activator.getDefault().log(e, "Getting packages from the storage failed.");
+			}
+		} catch (NullPointerException e) {
+			Activator.getDefault().log(e, "Getting project description failed.");
 		}
-		return strgElem;
+		return null;
 	}
 	
 	/**
