@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 
 	public static final String ID = "org.eclipse.cdt.managedbuilder.pkgconfig.extSettings"; //$NON-NLS-1$
-	private final static String PACKAGES = "packages";
+	private final static String PACKAGES = "packages"; //$NON-NLS-1$
 	
 	@Override
 	public CExternalSetting[] getSettings(IProject proj,
@@ -57,15 +57,15 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		
 		CExternalSetting includeSettings =
 				new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.core.cSource" }, null, includes);
+				"org.eclipse.cdt.core.cSource" }, null, includes); //$NON-NLS-1$
 		
 		CExternalSetting libraryFileSettings =
 				new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libFiles);
+				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libFiles); //$NON-NLS-1$
 		
 		CExternalSetting libraryPathSettings =
 				new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libPaths);
+				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libPaths); //$NON-NLS-1$
 		
 		addOtherFlagsToTools(proj);
 		
@@ -143,7 +143,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	 * @return
 	 */
 	private static ICLanguageSetting getGCCLanguageSetting(IProject proj) {
-		return getLanguageSetting(proj, "org.eclipse.cdt.core.gcc");
+		return getLanguageSetting(proj, "org.eclipse.cdt.core.gcc"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -256,7 +256,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	 * @param proj
 	 * @return
 	 */
-	private static String[] getOtherFlagsFromCheckedPackages(IProject proj) {
+	static String[] getOtherFlagsFromCheckedPackages(IProject proj) {
 		ArrayList<String> otherFlagList = new ArrayList<String>();
 		String[] pkgs = getCheckedPackageNames(proj);
 		String cflags = null;
@@ -275,8 +275,8 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	 * Add other flags to Tool's Option.
 	 * @param proj
 	 */
-	private void addOtherFlagsToTools(final IProject proj) {
-		Job j = new Job("Add other flags") {
+	private static void addOtherFlagsToTools(final IProject proj) {
+		Job j = new Job("Add other flags") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				String[] flags = getOtherFlagsFromCheckedPackages(proj);
@@ -305,10 +305,10 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 				strgElem = desc.getStorage(PACKAGES, true);
 				return strgElem;
 			} catch (CoreException e) {
-				Activator.getDefault().log(e, "Getting packages from the storage failed.");
+				Activator.getDefault().log(e, "Getting packages from the storage failed."); //$NON-NLS-1$
 			}
 		} catch (NullPointerException e) {
-			Activator.getDefault().log(e, "Getting project description failed.");
+			Activator.getDefault().log(e, "Getting project description failed."); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -326,14 +326,14 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		for(String pkgName : pkgNames) {
 			value = pkgStorage.getAttribute(pkgName);
 			if(value!=null) {
-				if(value.equals("true")) {
+				if(value.equals("true")) { //$NON-NLS-1$
 					/*
 					 * replace + symbols, because + symbols in package names
 					 * had to be replaced when storing them to
 					 * ICStorageElement to prevent error
 					 */
-					if (pkgName.contains("plus")) {
-						pkgName = pkgName.replace("plus", "+");
+					if (pkgName.contains("plus")) { //$NON-NLS-1$
+						pkgName = pkgName.replace("plus", "+"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					pkgs.add(pkgName);
 				}

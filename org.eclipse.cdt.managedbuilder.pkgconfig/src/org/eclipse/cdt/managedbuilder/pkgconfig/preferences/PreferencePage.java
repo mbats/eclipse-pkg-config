@@ -50,6 +50,7 @@ implements IWorkbenchPreferencePage {
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
+		//nothing here
 	}
 
 	@Override
@@ -68,15 +69,15 @@ implements IWorkbenchPreferencePage {
 	@Override
     public boolean performOk() {
 		//create PKG_CONFIG_LIBDIR environment variable
-		String libEditorValue = libDirEditor.getStringValue();;
+		String libEditorValue = this.libDirEditor.getStringValue();
 		PreferenceStore.setPkgConfigLibDir(libEditorValue);
 		UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
 		StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
-		vars.createVariable("PKG_CONFIG_LIBDIR", libEditorValue);
+		vars.createVariable("PKG_CONFIG_LIBDIR", libEditorValue); //$NON-NLS-1$
 		fUserSupplier.setWorkspaceEnvironment(vars);
 		
 		//create PKG_CONFIG_PATH environment variable
-		vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath());
+		vars.createVariable("PKG_CONFIG_PATH", PreferenceStore.getPkgConfigPath()); //$NON-NLS-1$
 		fUserSupplier.setWorkspaceEnvironment(vars);
 		
 		restartWorkspaceDialog();
@@ -88,14 +89,14 @@ implements IWorkbenchPreferencePage {
 	 * Shows a dialog asking to restart workspace if pkg-config
 	 * preferences have been changed.
 	 */
-	private void restartWorkspaceDialog() {
+	private static void restartWorkspaceDialog() {
 		MessageDialog dialog = new MessageDialog(
-				null, "Restart workspace?", null, "Changes made to pkg-config" +
-						" preferences need workspace restart in order to" +
-						" take effect.\n\n" +
-						"Would you like to restart the workspace now?",
+				null, "Restart workspace?", null, "Changes made to pkg-config" + //$NON-NLS-1$ //$NON-NLS-2$
+						" preferences need workspace restart in order to" + //$NON-NLS-1$
+						" take effect.\n\n" + //$NON-NLS-1$
+						"Would you like to restart the workspace now?", //$NON-NLS-1$
 				MessageDialog.QUESTION,
-				new String[] {"Yes", "No"},
+				new String[] {"Yes", "No"}, //$NON-NLS-1$ //$NON-NLS-2$
 				0);
 		int result = dialog.open();
 		if (result==0) {
@@ -119,14 +120,14 @@ implements IWorkbenchPreferencePage {
 	 */
 	protected void createFieldEditors() {
 		//list editor for PKG_CONFIG_PATH values
-		configPathListEditor = new PkgConfigPathListEditor(
+		this.configPathListEditor = new PkgConfigPathListEditor(
 				PreferenceConstants.PKG_CONFIG_PATH, Messages.PreferencePage_1, 
 				getFieldEditorParent());
-		addField(configPathListEditor);
+		addField(this.configPathListEditor);
 		//field PKG_CONFIG_LIBDIR
-		libDirEditor = new LibDirFieldEditor(PreferenceConstants.PKG_CONFIG_LIBDIR, 
+		this.libDirEditor = new LibDirFieldEditor(PreferenceConstants.PKG_CONFIG_LIBDIR, 
 				Messages.PreferencePage_2, getFieldEditorParent());
-		addField(libDirEditor); 
+		addField(this.libDirEditor); 
 	}
 
 }

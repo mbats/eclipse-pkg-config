@@ -22,17 +22,17 @@ public class Parser {
 	
 	//for testing only
 	public static void main(String[] args) {
-		System.out.println("Options\n######################");
+		System.out.println("Options\n######################"); //$NON-NLS-1$
 		
-		String options = PkgConfigUtil.getCflags("gtk+-2.0");
+		String options = PkgConfigUtil.getCflags("gtk+-2.0"); //$NON-NLS-1$
 		String[] optionsArray = parseCflagOptions(options);
 		for (String l : optionsArray) {
 			System.out.println(l);
 		}
 		
-		System.out.println("\nInclude paths\n######################");
+		System.out.println("\nInclude paths\n######################"); //$NON-NLS-1$
 		
-		String incPaths = PkgConfigUtil.getCflags("gtk+-2.0");
+		String incPaths = PkgConfigUtil.getCflags("gtk+-2.0"); //$NON-NLS-1$
 		String[] incPathArray = parseIncPaths(incPaths);
 		for (String l : incPathArray) {
 			System.out.println(l);
@@ -56,17 +56,17 @@ public class Parser {
 //			System.out.println(l);
 //		}
 		
-		System.out.println("\nLibrary search paths\n######################");
+		System.out.println("\nLibrary search paths\n######################"); //$NON-NLS-1$
 		
-		String libsPaths = PkgConfigUtil.getLibPathsOnly("gtk+-2.0");
+		String libsPaths = PkgConfigUtil.getLibPathsOnly("gtk+-2.0"); //$NON-NLS-1$
 		String[] libPathArray = parseLibPaths2(libsPaths);
 		for (String l : libPathArray) {
 			System.out.println(l);
 		}
 		
-		System.out.println("\nLibraries\n######################");
+		System.out.println("\nLibraries\n######################"); //$NON-NLS-1$
 		
-		String libs = PkgConfigUtil.getLibFilesOnly("gtk+-2.0");
+		String libs = PkgConfigUtil.getLibFilesOnly("gtk+-2.0"); //$NON-NLS-1$
 		String[] libArray = parseLibs2(libs);
 		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
 		Collections.sort(sorted);
@@ -74,7 +74,7 @@ public class Parser {
 			System.out.println(l);
 		}
 		
-		System.out.println("\nDescriptions\n######################");
+		System.out.println("\nDescriptions\n######################"); //$NON-NLS-1$
 		
 		ArrayList<String> pkgs = PkgConfigUtil.getAllPackages();
 		ArrayList<String> parsedDesc = parseDescription(pkgs);
@@ -91,29 +91,29 @@ public class Parser {
 	 */
 	public static String[] parseCflagOptions(String s) throws NullPointerException {
 		if (s != null) {
+			String str;
 			//find the index where include list starts
-			int end = s.indexOf("-I");
+			int end = s.indexOf("-I"); //$NON-NLS-1$
 			if (end != -1) { //includes found
 				if (end != 0) { //options found
 					//truncate include paths
-					s = s.substring(0, end-1);
+					str = s.substring(0, end-1);
 					//insert options to an array
-					String[] options = s.split(" ");
+					String[] options = str.split(" "); //$NON-NLS-1$
 					return options;
 				} else if (end == 0) { //no options found
 					return null;
 				}
 			} else { //if no includes found
 				//check if any flags found
-				int flagStart = s.indexOf("-");
+				int flagStart = s.indexOf("-"); //$NON-NLS-1$
 				if (flagStart != -1) { //options found
-					s = s.substring(flagStart, s.length()-1);
+					str = s.substring(flagStart, s.length()-1);
 					//insert options into an array
-					String[] options = s.split(" ");
+					String[] options = str.split(" "); //$NON-NLS-1$
 					return options;
-				} else {
-					return null;
 				}
+				return null;
 			}
 		}
 		//should not reach here
@@ -128,22 +128,21 @@ public class Parser {
 	 */
 	public static String[] parseIncPaths(String s) throws NullPointerException {
 		if (s != null) {
+			String str;
 			//find the index where include list starts
-			int start = s.indexOf("-I");
+			int start = s.indexOf("-I"); //$NON-NLS-1$
 			if (start != -1) { //if include paths found
 				//truncate other than include paths
-				s = s.substring(start, s.length()-1);
+				str = s.substring(start, s.length()-1);
 				//remove library search path flags
-				String s2 = s.replace("-I", "");
+				str = str.replace("-I", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				//insert include paths into an array
-				String[] incPaths = s2.split(" ");
+				String[] incPaths = str.split(" "); //$NON-NLS-1$
 				return incPaths;
-			} else {
-				return null;
 			}
-		} else {
 			return null;
 		}
+		return null;
 	}
 	
 	/**
@@ -154,20 +153,20 @@ public class Parser {
 	 */
 	public static String[] parseLibPaths(String s) throws NullPointerException {
 		//find the index where library path list starts
-		int start = s.indexOf("-L");
+		int start = s.indexOf("-L"); //$NON-NLS-1$
+		String str;
 		if (start != -1) { //if library paths found
 			//find the index where library list starts
-			int end = s.indexOf(" -l");
+			int end = s.indexOf(" -l"); //$NON-NLS-1$
 			//truncate other than library paths
-			s = s.substring(start, end);
+			str = s.substring(start, end);
 			//remove library search path flags
-			String s2 = s.replace("-L", "");
+			str = str.replace("-L", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			//insert lib paths into an array
-			String[] libPaths = s2.split(" ");
+			String[] libPaths = str.split(" "); //$NON-NLS-1$
 			return libPaths;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**
@@ -179,13 +178,12 @@ public class Parser {
 	public static String[] parseLibPaths2(String s) throws NullPointerException{
 		if (s != null) {
 			//remove library search path flags
-			String s2 = s.replace("-L", "");
+			String s2 = s.replace("-L", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			//insert lib paths into an array
-			String[] libPaths = s2.split(" ");
+			String[] libPaths = s2.split(" "); //$NON-NLS-1$
 			return libPaths;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**
@@ -196,25 +194,24 @@ public class Parser {
 	 */
 	public static String[] parseLibs(String s) throws NullPointerException {
 		if (s != null) {
+			String str;
 			//special case if pkg-config --libs output starts with -l
-			int start = s.indexOf("-l");
+			int start = s.indexOf("-l"); //$NON-NLS-1$
 			if (start != 0) {
-				start = s.indexOf(" -l");
+				start = s.indexOf(" -l"); //$NON-NLS-1$
 			}
 			if (start != -1) { //if libraries found
 				//truncate library search paths
-				s = s.substring(start+1, s.length()-1);
+				str = s.substring(start+1, s.length()-1);
 				//remove lib flags
-				String s2 = s.replace("-l", "");
+				str = str.replace("-l", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				//insert libs into an array
-				String[] libs = s2.split(" ");
+				String[] libs = str.split(" "); //$NON-NLS-1$
 				return libs;
-			} else {
-				return null;
-			}			
-		} else {
-			return null;
-		}	
+			}
+			return null;			
+		}
+		return null;	
 	}
 	
 	/**
@@ -226,13 +223,12 @@ public class Parser {
 	public static String[] parseLibs2(String s) throws NullPointerException {
 		if (s != null) {
 			//remove lib flags
-			String s2 = s.replace("-l", "");
+			String s2 = s.replace("-l", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			//insert libs into an array
-			String[] libs = s2.split(" ");
+			String[] libs = s2.split(" "); //$NON-NLS-1$
 			return libs;
-		} else  {
-			return null;
 		}
+		return null;
 	}
 	
 	/**
@@ -245,7 +241,7 @@ public class Parser {
 		ArrayList<String> operated = new ArrayList<String>();
 		for (String s : packages) {
 			//cut the string after the first white space
-			int end = s.indexOf(" ");
+			int end = s.indexOf(" "); //$NON-NLS-1$
 			operated.add(s.substring(0, end));
 		}
 		return operated;
@@ -261,7 +257,7 @@ public class Parser {
 		ArrayList<String> operated = new ArrayList<String>();
 		int ws, start = 0;
 		for (String s : packages) {
-			ws = s.indexOf(" ");
+			ws = s.indexOf(" "); //$NON-NLS-1$
 			//read as many characters forward that non white space is found
 			find: for (int i=1; i+ws<s.length(); i++) {
 				if (s.charAt(ws+i) != ' ') {

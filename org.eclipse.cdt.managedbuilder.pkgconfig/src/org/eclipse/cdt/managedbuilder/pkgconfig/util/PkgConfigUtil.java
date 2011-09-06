@@ -26,13 +26,13 @@ import org.eclipse.cdt.managedbuilder.pkgconfig.preferences.PreferenceStore;
 public class PkgConfigUtil {
 
 	//Constant variables
-	private static final String PKG_CONFIG = "pkg-config";
-	private static final String LIST_PACKAGES = "--list-all";
-	private static final String OUTPUT_LIBS = "--libs";
-	private static final String OUTPUT_CFLAGS = "--cflags";
-	private static final String OUTPUT_ALL = "--cflags --libs";
-	private static final String OUTPUT_ONLY_LIB_PATHS = "--libs-only-L";
-	private static final String OUTPUT_ONLY_LIB_FILES = "--libs-only-l";
+	private static final String PKG_CONFIG = "pkg-config"; //$NON-NLS-1$
+	private static final String LIST_PACKAGES = "--list-all"; //$NON-NLS-1$
+	private static final String OUTPUT_LIBS = "--libs"; //$NON-NLS-1$
+	private static final String OUTPUT_CFLAGS = "--cflags"; //$NON-NLS-1$
+	private static final String OUTPUT_ALL = "--cflags --libs"; //$NON-NLS-1$
+	private static final String OUTPUT_ONLY_LIB_PATHS = "--libs-only-L"; //$NON-NLS-1$
+	private static final String OUTPUT_ONLY_LIB_FILES = "--libs-only-l"; //$NON-NLS-1$
 
 	/**
 	 * Get options needed to build the given package.
@@ -46,15 +46,15 @@ public class PkgConfigUtil {
 		ProcessBuilder pb = null;
 		String confPath = PreferenceStore.getPkgConfigPath();
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
-			if (confPath!=null && !confPath.equals("")) {
-				pb = new ProcessBuilder("bash", "-c", confPath+
+			if (confPath!=null && !confPath.equals("")) { //$NON-NLS-1$
+				pb = new ProcessBuilder("bash", "-c", confPath+ //$NON-NLS-1$ //$NON-NLS-2$
 						Separators.getFileSeparator()+PKG_CONFIG+" "+command+" "+pkg); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG+" "+command+" "+pkg); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG+" "+command+" "+pkg); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 		} else if (OSDetector.isWindows()) {
-			if (confPath!=null && !confPath.equals("")) {
-				pb = new ProcessBuilder("cmd", "/c", "\""+confPath+
+			if (confPath!=null && !confPath.equals("")) { //$NON-NLS-1$
+				pb = new ProcessBuilder("cmd", "/c", "\""+confPath+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						Separators.getFileSeparator()+PKG_CONFIG+"\"", command, pkg);	//$NON-NLS-1$ 
 			} else {
 				pb = new ProcessBuilder("cmd", "/c", PKG_CONFIG, command, pkg);	//$NON-NLS-1$ //$NON-NLS-2$
@@ -62,9 +62,11 @@ public class PkgConfigUtil {
 		}
 		Process p = null;
 		try {
-			p = pb.start();
+			if (pb != null) {
+				p = pb.start();
+			}
 		} catch (IOException e) {
-			Activator.getDefault().log(e, "Starting a process (executing a command line script) failed.");
+			Activator.getDefault().log(e, "Starting a process (executing a command line script) failed."); //$NON-NLS-1$
 		}
 		if (p != null) {
 			String line;
@@ -77,7 +79,7 @@ public class PkgConfigUtil {
 				}
 				input.close();
 			} catch (IOException e) {
-				Activator.getDefault().log(e, "Reading a line from the input failed.");
+				Activator.getDefault().log(e, "Reading a line from the input failed."); //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -142,34 +144,36 @@ public class PkgConfigUtil {
 		ProcessBuilder pb = null;
 		String confPath = PreferenceStore.getPkgConfigPath();
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
-			if (confPath!=null && !confPath.equals("")) {
-				pb = new ProcessBuilder("bash", "-c", confPath+
+			if (confPath!=null && !confPath.equals("")) { //$NON-NLS-1$
+				pb = new ProcessBuilder("bash", "-c", confPath+ //$NON-NLS-1$ //$NON-NLS-2$
 						Separators.getFileSeparator()+PKG_CONFIG+" "+LIST_PACKAGES); //$NON-NLS-1$ 
 			} else {
-				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG+" "+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
+				pb = new ProcessBuilder("bash", "-c", PKG_CONFIG+" "+LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		} else if (OSDetector.isWindows()) {
-			if (confPath!=null && !confPath.equals("")) {
-				pb = new ProcessBuilder("cmd", "/c", "\""+confPath+
+			if (confPath!=null && !confPath.equals("")) { //$NON-NLS-1$
+				pb = new ProcessBuilder("cmd", "/c", "\""+confPath+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						Separators.getFileSeparator()+PKG_CONFIG+"\"", LIST_PACKAGES); //$NON-NLS-1$ 
 			} else {
 				pb = new ProcessBuilder("cmd", "/c", PKG_CONFIG, LIST_PACKAGES); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		try {
-			Process p = pb.start();
-			String line;
-			BufferedReader input = new BufferedReader
-					(new InputStreamReader(p.getInputStream()));
-			ArrayList<String> packageList = new ArrayList<String>();
-			do {
-				line = input.readLine();
-				if (line != null) {
-					packageList.add(line);
-				}
-			} while(line != null);
-			input.close();
-			return packageList;
+			if (pb !=null) {
+				Process p = pb.start();
+				String line;
+				BufferedReader input = new BufferedReader
+						(new InputStreamReader(p.getInputStream()));
+				ArrayList<String> packageList = new ArrayList<String>();
+				do {
+					line = input.readLine();
+					if (line != null) {
+						packageList.add(line);
+					}
+				} while(line != null);
+				input.close();
+				return packageList;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

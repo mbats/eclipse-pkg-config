@@ -22,16 +22,16 @@ public class DataModel {
 	}
 
 	public String getPackage() {
-		return pkg;
+		return this.pkg;
 	}
 
 	public String getDescription() {
-		return desc;
+		return this.desc;
 	}
 	
 	@Override
 	public String toString() {
-		return pkg;
+		return this.pkg;
 	}
 
 }

@@ -70,14 +70,14 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private ArrayList<Object> removedItems = new ArrayList<Object>();
 	private static final int BUTTON_SELECT = 0;
 	private static final int BUTTON_DESELECT = 1;
-	private final String PACKAGES = "packages";
+	private final String PACKAGES = "packages"; //$NON-NLS-1$
 	private boolean reindexToggle = false;
 
 	private SashForm sashForm;
 
 	private static final String[] BUTTONS = new String[] {
-		"Select",
-		"Deselect"
+		"Select", //$NON-NLS-1$
+		"Deselect" //$NON-NLS-1$
 	};
 
 	/* (non-Javadoc)
@@ -86,23 +86,23 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		usercomp.setLayout(new GridLayout(1, false));
+		this.usercomp.setLayout(new GridLayout(1, false));
 
-		sashForm = new SashForm(usercomp, SWT.NONE);
-		sashForm.setBackground(sashForm.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		this.sashForm = new SashForm(this.usercomp, SWT.NONE);
+		this.sashForm.setBackground(this.sashForm.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		this.sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 5;
-		sashForm.setLayout(layout);
+		this.sashForm.setLayout(layout);
 
-		Composite c1 = new Composite(sashForm, SWT.NONE);
+		Composite c1 = new Composite(this.sashForm, SWT.NONE);
 		GridLayout layout2 = new GridLayout(3, false);
 		c1.setLayout(layout2);
 
-		pkgCfgViewer = CheckboxTableViewer.newCheckList(c1, SWT.MULTI | SWT.H_SCROLL
+		this.pkgCfgViewer = CheckboxTableViewer.newCheckList(c1, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		final Table tbl = pkgCfgViewer.getTable();
+		final Table tbl = this.pkgCfgViewer.getTable();
 		tbl.setHeaderVisible(true);
 		tbl.setLinesVisible(true);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -110,13 +110,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		gd.horizontalSpan = 2;
 		tbl.setLayoutData(gd);
 
-		createColumns(c1, pkgCfgViewer);
-		pkgCfgViewer.setContentProvider(new ArrayContentProvider());
-		pkgCfgViewer.setInput(DataModelProvider.INSTANCE.getEntries());
+		createColumns(c1, this.pkgCfgViewer);
+		this.pkgCfgViewer.setContentProvider(new ArrayContentProvider());
+		this.pkgCfgViewer.setInput(DataModelProvider.INSTANCE.getEntries());
 
-		pkgCfgViewer.addCheckStateListener(new PkgListener());
+		this.pkgCfgViewer.addCheckStateListener(new PkgListener());
 
-		pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
+		this.pkgCfgViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				TableItem itm = tbl.getSelection()[0];
@@ -134,7 +134,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		initButtons(compositeButtons, BUTTONS);
 
 		initializePackageStates();
-		previouslyChecked = new HashSet<Object>(Arrays.asList(getCheckedItems()));
+		this.previouslyChecked = new HashSet<Object>(Arrays.asList(getCheckedItems()));
 	}
 
 	/**
@@ -142,46 +142,46 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * @return
 	 */
 	private Object[] getCheckedItems() {
-		return pkgCfgViewer.getCheckedElements();
+		return this.pkgCfgViewer.getCheckedElements();
 	}
 
 	/**
 	 * Action for the check state change.
 	 */
-	private void handleCheckStateChange() {
+	void handleCheckStateChange() {
 		Object[] checkedItems = getCheckedItems();
 
 		//check if new items checked
-		if(checkedItems.length > previouslyChecked.size()) {
+		if(checkedItems.length > this.previouslyChecked.size()) {
 			//add checked items to an array list
 			for (Object o : checkedItems) {
 				//if new item
-				if (!previouslyChecked.contains(o)) {
-					newItems.add(o);
+				if (!this.previouslyChecked.contains(o)) {
+					this.newItems.add(o);
 				}
 			}
-			addPackageValues(newItems.toArray(), page.getProject());
-			reindexToggle = true;
-		} else if (checkedItems.length < previouslyChecked.size()) { //check if new items removed
+			addPackageValues(this.newItems.toArray(), this.page.getProject());
+			this.reindexToggle = true;
+		} else if (checkedItems.length < this.previouslyChecked.size()) { //check if new items removed
 			Set<Object> checkedItemsSet;
 			//add removed items to an array list
-			for (Object o : previouslyChecked) {
+			for (Object o : this.previouslyChecked) {
 				//convert array to a set
 				checkedItemsSet = new HashSet<Object>(Arrays.asList(checkedItems));
 				//if item removed
 				if (!checkedItemsSet.contains(o)) {
-					removedItems.add(o);
+					this.removedItems.add(o);
 				}
 			}
-			removePackageValues(removedItems.toArray(), page.getProject());
-			reindexToggle = false;
+			removePackageValues(this.removedItems.toArray(), this.page.getProject());
+			this.reindexToggle = false;
 		}
 
 		saveChecked();
 		updateData(getResDesc());
-		previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
-		newItems.clear();
-		removedItems.clear();
+		this.previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
+		this.newItems.clear();
+		this.removedItems.clear();
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * @param addedItems Object[]
 	 * @param proj IProject
 	 */
-	private void addPackageValues(Object[] addedItems, IProject proj) {
+	private static void addPackageValues(Object[] addedItems, IProject proj) {
 		for (Object item : addedItems) {
 			//handle options
 			String cflags = PkgConfigUtil.getCflags(item.toString());
@@ -210,9 +210,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * are removed.
 	 * Only for other flags.
 	 * 
-	 * @param removedItems Object[]
+	 * @param removed Object[]
 	 */
-	private void removePackageValues(Object[] removedItems, IProject proj) {
+	private void removePackageValues(Object[] removed, IProject proj) {
 		String rCflags;
 		String cCflags;
 		String[] rOptionArray;
@@ -222,13 +222,13 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		Object[] checkedItems = getCheckedItems();
 		//make sure that the checked items don't contain removed items
 		List<Object> checkedList = Arrays.asList(checkedItems);
-		for (Object removedItem : removedItems) {
+		for (Object removedItem : removed) {
 			if (checkedList.contains(removedItem)) {
 				checkedList.remove(removedItem);
 			}
 		}
 
-		for (Object removedPkg : removedItems) {
+		for (Object removedPkg : removed) {
 			//get arrays of removed package flags
 			rCflags = PkgConfigUtil.getCflags(removedPkg.toString());
 			rOptionArray = Parser.parseCflagOptions(rCflags);
@@ -237,7 +237,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				//load HashMaps
 				optionMap = new HashMap<String, Boolean>();
 				for (String rO : rOptionArray) {
-					optionMap.put(rO, true);
+					optionMap.put(rO, new Boolean(true));
 				}
 
 				/*
@@ -253,16 +253,16 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 					List<String> optionsList = Arrays.asList(cOptionArray);
 					for (String option : rOptionArray) {
 						if (optionsList.contains(option)) {
-							optionMap.put(option, false);
+							optionMap.put(option, new Boolean(false));
 						} else {
-							optionMap.put(option, true);
+							optionMap.put(option, new Boolean(true));
 						}
 					}
 
 				} //end of checked items loop
 				//remove unneeded options
 				for (Entry<String, Boolean> entry : optionMap.entrySet()) {
-					if (entry.getValue() == true) {
+					if (entry.getValue() == Boolean.TRUE) {
 						PathToToolOption.removeOtherFlag(entry.getKey(), proj);
 					}
 				}
@@ -278,8 +278,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		ICConfigurationDescription desc = getResDesc().getConfiguration();
 		ICStorageElement strgElem = null;
 		try {
-			strgElem = desc.getStorage(PACKAGES, true);
-			TableItem[] items = pkgCfgViewer.getTable().getItems();
+			strgElem = desc.getStorage(this.PACKAGES, true);
+			TableItem[] items = this.pkgCfgViewer.getTable().getItems();
 			String value = null;
 			for(TableItem item : items) {
 				/*
@@ -287,20 +287,20 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				 * + -> plus in order to prevent an error when saving to
 				 * ICStorageElement.
 				 */
-				if (item.getText().contains("+")) {
-					String newItemName = item.getText().replace("+", "plus");
+				if (item.getText().contains("+")) { //$NON-NLS-1$
+					String newItemName = item.getText().replace("+", "plus"); //$NON-NLS-1$ //$NON-NLS-2$
 					value = strgElem.getAttribute(newItemName);
 				} else {
 					value = strgElem.getAttribute(item.getText());
 				}
 				if(value!=null) {
-					if(value.equals("true")) {
+					if(value.equals("true")) { //$NON-NLS-1$
 						item.setChecked(true);
 					}
 				}
 			}
 		} catch (CoreException e) {
-			Activator.getDefault().log(e, "Initialization of packages failed.");
+			Activator.getDefault().log(e, "Initialization of packages failed."); //$NON-NLS-1$
 		}
 	}
 
@@ -312,19 +312,19 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		ICStorageElement strgElem = null;
 		//get storage or create one if it doesn't exist
 		try {
-			strgElem = desc.getStorage(PACKAGES, true);
+			strgElem = desc.getStorage(this.PACKAGES, true);
 		} catch (CoreException e) {
-			Activator.getDefault().log(e, "Getting packages from the storage failed.");
+			Activator.getDefault().log(e, "Getting packages from the storage failed."); //$NON-NLS-1$
 		}
-		TableItem[] items = pkgCfgViewer.getTable().getItems();
+		TableItem[] items = this.pkgCfgViewer.getTable().getItems();
 		for(TableItem item : items) {
 			if(item != null) {
 				String chkd;
 				//form literal form of boolean state
 				if(item.getChecked()) {
-					chkd = "true";
+					chkd = "true"; //$NON-NLS-1$
 				} else {
-					chkd = "false";
+					chkd = "false"; //$NON-NLS-1$
 				}
 				/*
 				 * add package name and the checkbox state
@@ -333,14 +333,18 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				try {  
 					String pkgName = item.getText();
 					//need to convert + symbols to "plus"
-					if (pkgName.contains("+")) {
-						String newPkgName = pkgName.replace("+", "plus");
-						strgElem.setAttribute(newPkgName, chkd);
+					if (pkgName.contains("+")) { //$NON-NLS-1$
+						String newPkgName = pkgName.replace("+", "plus"); //$NON-NLS-1$ //$NON-NLS-2$
+						if (strgElem!=null) {
+							strgElem.setAttribute(newPkgName, chkd);
+						}
 					} else {
-						strgElem.setAttribute(pkgName, chkd);
+						if (strgElem!=null) {
+							strgElem.setAttribute(pkgName, chkd);
+						}
 					}
 				} catch (Exception e) {
-					Activator.getDefault().log(e, "Setting attribute to ICStorageElement failed.");
+					Activator.getDefault().log(e, "Setting attribute to ICStorageElement failed."); //$NON-NLS-1$
 					//Seems like ICStorageElement cannot store Strings with +
 					/*
 					 * INVALID_CHARACTER_ERR: An invalid or
@@ -360,7 +364,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	@Override
 	protected void performDefaults() {
 		//uncheck every checkbox
-		pkgCfgViewer.setCheckedElements(new Object[] {});
+		this.pkgCfgViewer.setCheckedElements(new Object[] {});
 
 		//remove values from Tools Options
 		handleCheckStateChange();
@@ -369,14 +373,15 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	@Override
 	protected void performOK() {
 		//freshen index if new packages have been selected
-		if (reindexToggle) {
+		if (this.reindexToggle) {
 			rebuiltIndex();
 		}
-		reindexToggle = false;
+		this.reindexToggle = false;
 	}
 
 	@Override
 	protected void updateButtons() {
+		//nothing here
 	}
 
 	@Override
@@ -384,7 +389,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		final ICConfigurationDescription confDesc = cfg.getConfiguration();
 		ICProjectDescription projDesc = confDesc.getProjectDescription();
 
-		Job j = new Job("Update Pkg-config exernal settings provider") {
+		Job j = new Job("Update Pkg-config exernal settings provider") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				//a set holding external setting providers
@@ -410,9 +415,9 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 		j.schedule();
 
 		try {
-			CoreModel.getDefault().setProjectDescription(page.getProject(), projDesc);
+			CoreModel.getDefault().setProjectDescription(this.page.getProject(), projDesc);
 		} catch (CoreException e) {
-			Activator.getDefault().log(e, "Setting/updating the project description failed.");
+			Activator.getDefault().log(e, "Setting/updating the project description failed."); //$NON-NLS-1$
 		}
 	}
 
@@ -435,7 +440,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * @param viewer
 	 */
 	private void createColumns(final Composite parent, final TableViewer viewer) {
-		String[] titles = { "Packages", "Description" };
+		String[] titles = { "Packages", "Description" }; //$NON-NLS-1$ //$NON-NLS-2$
 		int[] bounds = { 200, 450 };
 
 		//first column is for the package
@@ -468,7 +473,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 */
 	private TableViewerColumn createTableViewerColumn(String title, int bound) {
 
-		final TableViewerColumn viewerColumn = new TableViewerColumn(pkgCfgViewer,
+		final TableViewerColumn viewerColumn = new TableViewerColumn(this.pkgCfgViewer,
 				SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
 
@@ -485,7 +490,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * @return
 	 */
 	private TableItem[] getSelected() {
-		TableItem[] selected = pkgCfgViewer.getTable().getSelection();
+		TableItem[] selected = this.pkgCfgViewer.getTable().getSelection();
 		return selected;
 	}
 
@@ -533,7 +538,7 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * Rebuilts the index of the selected project in the workspace.
 	 */
 	private void rebuiltIndex() {
-		ICProject cproject = CoreModel.getDefault().getCModel().getCProject(page.getProject().getName());
+		ICProject cproject = CoreModel.getDefault().getCModel().getCProject(this.page.getProject().getName());
 		CCorePlugin.getIndexManager().reindex(cproject);
 	}
 

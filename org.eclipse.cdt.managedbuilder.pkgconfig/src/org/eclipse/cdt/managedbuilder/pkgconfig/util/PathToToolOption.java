@@ -225,9 +225,8 @@ public class PathToToolOption {
 				//add a new include path to compiler's Include paths option.
 				boolean val = addIncludePathToToolOption(cf, compiler, compilerIncPathOption, newIncludePath);
 				return val;
-			} else {
-				return false;
 			}
+			return false;
 		} 
 		return false;
 	}
@@ -248,9 +247,8 @@ public class PathToToolOption {
 				//remove an include path from compiler's Include paths option.
 				removeIncludePathFromToolOption(cf, compiler, compilerIncPathOption, removeIncludePath);
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} 
 		return false;
 	}
@@ -272,9 +270,8 @@ public class PathToToolOption {
 				//add library to Linker's Libraries Option type
 				boolean val = addLibraryToToolOption(cf, linker, librariesOption, lib);
 				return val;
-			} else {
-				return false;
 			}
+			return false;
 		} 
 		//adding the library failed
 		return false;
@@ -297,9 +294,8 @@ public class PathToToolOption {
 				//remove a library from linker's Libraries Option type
 				removeLibraryFromToolOption(cf, linker, librariesOption, removeLib);
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} 
 		//removing the library failed
 		return false;
@@ -368,9 +364,8 @@ public class PathToToolOption {
 				//add other flag to compiler's Other flags Option type
 				boolean val = addOtherFlagToToolOption(cf, compiler, otherFlagOption, otherFlag);
 				return val;
-			} else {
-				return false;
 			}
+			return false;
 		} 
 		//adding the other flag failed
 		return false;
@@ -392,9 +387,8 @@ public class PathToToolOption {
 				//remove an other flag from compiler's Other flags option.
 				removeOtherFlagFromToolOption(cf, compiler, otherFlagOption, removeOtherFlag);
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} 
 		return false;
 	}
@@ -419,7 +413,7 @@ public class PathToToolOption {
 			//add a new include path to linker's Include paths option.
 			addInputToToolOption(cf, cfTool, option, newIncludePath, incPaths);
 		} catch (BuildException e) {
-			Activator.getDefault().log(e, "Adding an include path to Tool Option failed.");
+			Activator.getDefault().log(e, "Adding an include path to Tool Option failed."); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -437,7 +431,7 @@ public class PathToToolOption {
 			//remove an include path from linker's Include paths option.
 			removeInputFromToolOption(cf, cfTool, option, removeIncludePath, option.getIncludePaths());
 		} catch (BuildException e) {
-			Activator.getDefault().log(e, "Removing an include path from Tool Option failed.");
+			Activator.getDefault().log(e, "Removing an include path from Tool Option failed."); //$NON-NLS-1$
 		}
 	}
 
@@ -461,7 +455,7 @@ public class PathToToolOption {
 			//add a new library to linker's Libraries option.
 			addInputToToolOption(cf, cfTool, option, newLibrary, libraries);
 		} catch (BuildException e) {
-			Activator.getDefault().log(e, "Adding a library to Tool Option failed.");
+			Activator.getDefault().log(e, "Adding a library to Tool Option failed."); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -479,7 +473,7 @@ public class PathToToolOption {
 			//remove a library from linker's Libraries option.
 			removeInputFromToolOption(cf, cfTool, option, removeLibrary, option.getLibraries());
 		} catch (BuildException e) {
-			Activator.getDefault().log(e, "Removing a library from Tool Option failed.");
+			Activator.getDefault().log(e, "Removing a library from Tool Option failed."); //$NON-NLS-1$
 		}
 	}
 
@@ -504,7 +498,7 @@ public class PathToToolOption {
 			//add a new library path to linker's Library search path option.
 			addInputToToolOption(cf, cfTool, option, newLibraryPath, libPaths);
 		} catch (BuildException e) {
-			Activator.getDefault().log(e, "Adding a library search path to Tool Option failed.");
+			Activator.getDefault().log(e, "Adding a library search path to Tool Option failed."); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -523,7 +517,7 @@ public class PathToToolOption {
 			//remove a library path from linker's Library search path option.
 			removeInputFromToolOption(cf, cfTool, option, removeSearchPath, option.getLibraryPaths());
 		} catch (BuildException e) {
-			Activator.getDefault().log(e, "Removing a library search path from Tool Option failed.");
+			Activator.getDefault().log(e, "Removing a library search path from Tool Option failed."); //$NON-NLS-1$
 		}
 	}
 
@@ -539,17 +533,15 @@ public class PathToToolOption {
 	private static boolean addOtherFlagToToolOption(IConfiguration cf, ITool cfTool, IOption option, String newOtherFlag) {
 		String flags = option.getValue().toString();
 		if (flags == null) {
-			flags = "";
+			flags = ""; //$NON-NLS-1$
 		}
 
 		if (!flags.contains(newOtherFlag)) {
 			//append the new flag to existing flags
-			flags = flags+" "+newOtherFlag;
+			flags = flags+" "+newOtherFlag; //$NON-NLS-1$
 
 			//add a new other flag to compiler's other flags option.
-			if (option != null) {
 				ManagedBuildManager.setOption(cf, cfTool, option, flags);
-			}
 		} else {
 			return false;
 		}
@@ -574,7 +566,7 @@ public class PathToToolOption {
 
 			if (flags.contains(removeOtherFlag)) {
 				//remove from existing flags
-				flags = flags.replace(" "+removeOtherFlag, "");
+				flags = flags.replace(" "+removeOtherFlag, ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 				//set other flags to compiler's other flags option.
 				ManagedBuildManager.setOption(cf, cfTool, option, flags);
@@ -655,7 +647,7 @@ public class PathToToolOption {
 		 * Trying to achieve better support for custom toolchains.
 		 */
 		//see if c++ or c project
-		ITool compiler = getIToolByInputType(cf, "cpp");
+		ITool compiler = getIToolByInputType(cf, "cpp"); //$NON-NLS-1$
 		boolean cppProject = false;
 		if (compiler != null) {
 			cppProject = true;
@@ -663,11 +655,11 @@ public class PathToToolOption {
 		for (ITool tool : tools) {
 			String name = tool.getBaseId();
 			if (cppProject) {
-				if (name.contains("cpp.linker")) {
+				if (name.contains("cpp.linker")) { //$NON-NLS-1$
 					return tool;
 				}
 			} else {
-				if (name.contains("c.linker")) {
+				if (name.contains("c.linker")) { //$NON-NLS-1$
 					return tool;
 				}
 			}
@@ -761,7 +753,7 @@ public class PathToToolOption {
 					break;
 				}
 			} catch (BuildException e) {
-				Activator.getDefault().log(e, "Getting Option id by value type failed.");
+				Activator.getDefault().log(e, "Getting Option id by value type failed."); //$NON-NLS-1$
 			}
 		}	
 		return optionId;
@@ -850,7 +842,7 @@ public class PathToToolOption {
 		try {
 			info = ManagedBuildManager.getBuildInfo(proj); //null if doesn't exists
 		} catch (Exception e) { //if not a managed build project
-			Activator.getDefault().log(IStatus.INFO, e, "Not a managed build project.");
+			Activator.getDefault().log(IStatus.INFO, e, "Not a managed build project."); //$NON-NLS-1$
 			return conf;
 		}
 		//info can be null for projects without build info. For example, when creating a project

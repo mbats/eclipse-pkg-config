@@ -58,8 +58,8 @@ public class LibDirFieldEditor extends StringButtonFieldEditor {
         
         if (startingDirectory != null) {
 			fileDialog.setFilterPath(startingDirectory.getPath());
-		} else if (filterPath != null) {
-        	fileDialog.setFilterPath(filterPath.getPath());
+		} else if (this.filterPath != null) {
+        	fileDialog.setFilterPath(this.filterPath.getPath());
         }
         
         String dir = fileDialog.open();
@@ -111,7 +111,7 @@ public class LibDirFieldEditor extends StringButtonFieldEditor {
      * @since 3.6
      */
     public void setFilterPath(File path) {
-    	filterPath = path;
+    	this.filterPath = path;
     }
     
 }

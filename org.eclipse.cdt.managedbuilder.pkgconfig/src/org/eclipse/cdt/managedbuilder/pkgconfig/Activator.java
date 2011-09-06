@@ -98,7 +98,7 @@ public class Activator extends AbstractUIPlugin {
 						FileLocator.openStream(this.getBundle(),
 								new Path(PROPERTIES),false));
 			} catch (IOException e) {
-				Activator.getDefault().log(e, "Creating a PropertyResourceBundle failed.");
+				Activator.getDefault().log(e, "Creating a PropertyResourceBundle failed."); //$NON-NLS-1$
 			}
 		}
 		return this.properties;

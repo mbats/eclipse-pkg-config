@@ -12,11 +12,11 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.preferences;
 
 public class PreferenceConstants {
 
-	public static final String PKG_CONFIG_PATH = "A colon-separated" +
-			" (on Windows, semicolon-separated) list of directories" +
+	public static final String PKG_CONFIG_PATH = "A colon-separated" + //$NON-NLS-1$
+			" (on Windows, semicolon-separated) list of directories" + //$NON-NLS-1$
 			" to search for .pc files."; //$NON-NLS-1$
 	
-	public static final String PKG_CONFIG_LIBDIR = "Replaces the" +
+	public static final String PKG_CONFIG_LIBDIR = "Replaces the" + //$NON-NLS-1$
 			" default pkg-config search directory."; //$NON-NLS-1$
 	
 }

@@ -28,7 +28,7 @@ public enum DataModelProvider {
 	 * Initialize.
 	 */
 	private DataModelProvider() {
-		dms = new ArrayList<DataModel>();
+		this.dms = new ArrayList<DataModel>();
 
 		ArrayList<String> packages = PkgConfigUtil.getAllPackages();
 		ArrayList<String> pkgList = Parser.parsePackageList(packages);
@@ -39,7 +39,7 @@ public enum DataModelProvider {
 		for (int i=0; i<pkgList.size(); i++) {
 			//get the index of sorted value
 			sortedIdx = pkgList.indexOf(nonSortedPkgList.get(i));
-			origSortedIdx.put(i, sortedIdx); //map sorting
+			origSortedIdx.put(new Integer(i), new Integer(sortedIdx)); //map sorting
 		}
 		
 		//get descriptions and sort according to package names
@@ -47,13 +47,13 @@ public enum DataModelProvider {
 		int cellPlace;
 		String[] sortedArray = new String[descs.size()];
 		for (int i=0; i<descs.size(); i++) {
-			cellPlace = origSortedIdx.get(i);
+			cellPlace = origSortedIdx.get(new Integer(i)).intValue();
 			sortedArray[cellPlace] = descs.get(i);
 		}
 		
 		List<String> descList = Arrays.asList(sortedArray);  
 		for (int i=0; i<descList.size(); i++) {
-			dms.add(new DataModel(pkgList.get(i), descList.get(i)));
+			this.dms.add(new DataModel(pkgList.get(i), descList.get(i)));
 		}
 	}
 
@@ -63,7 +63,7 @@ public enum DataModelProvider {
 	 * @return
 	 */
 	public List<DataModel> getEntries() {
-		return dms;
+		return this.dms;
 	}
 
 }
