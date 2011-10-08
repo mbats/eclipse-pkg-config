@@ -27,8 +27,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CExternalSettingProvider;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.pkgconfig.Activator;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.Parser;
 import org.eclipse.cdt.managedbuilder.pkgconfig.util.PathToToolOption;
@@ -57,15 +55,11 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		ICSettingEntry[] libFiles = getEntries(proj, ICSettingEntry.LIBRARY_FILE); 
 		ICSettingEntry[] libPaths = getEntries(proj, ICSettingEntry.LIBRARY_PATH); 
 		
-		IConfiguration conf = ManagedBuildManager.getConfigurationForDescription(cfg);
-		CExternalSetting includeSettings;
-		if (conf.getToolFromInputExtension("cpp") != null) {//$NON-NLS-1$
-			includeSettings = new CExternalSetting(null, new String[] {
-					"org.eclipse.cdt.core.cxxSource" }, null, includes); //$NON-NLS-1$
-		} else {
-			includeSettings = new CExternalSetting(null, new String[] {
-					"org.eclipse.cdt.core.cSource" }, null, includes); //$NON-NLS-1$
-		}
+		CExternalSetting includeCSettings = new CExternalSetting(null, new String[] {
+				"org.eclipse.cdt.core.cSource" }, null, includes); //$NON-NLS-1$
+		
+		CExternalSetting includeCxxSettings = new CExternalSetting(null, new String[] {
+				"org.eclipse.cdt.core.cxxSource" }, null, includes); //$NON-NLS-1$
 		
 		CExternalSetting libraryFileSettings =
 				new CExternalSetting(null, new String[] {
@@ -77,7 +71,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		
 		addOtherFlagsToTools(proj);
 		
-		return new CExternalSetting[] { includeSettings, libraryFileSettings, libraryPathSettings };
+		return new CExternalSetting[] { includeCSettings, includeCxxSettings, libraryFileSettings, libraryPathSettings };
 	}
 
 	/**
