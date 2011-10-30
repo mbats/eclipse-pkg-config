@@ -11,77 +11,12 @@
 package org.eclipse.cdt.managedbuilder.pkgconfig.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Parses pkg-config utility output.
  *
  */
 public class Parser {
-	
-	//for testing only
-	public static void main(String[] args) {
-		System.out.println("Options\n######################"); //$NON-NLS-1$
-		
-		String options = PkgConfigUtil.getCflags("gtk+-2.0"); //$NON-NLS-1$
-		String[] optionsArray = parseCflagOptions(options);
-		for (String l : optionsArray) {
-			System.out.println(l);
-		}
-		
-		System.out.println("\nInclude paths\n######################"); //$NON-NLS-1$
-		
-		String incPaths = PkgConfigUtil.getCflags("gtk+-2.0"); //$NON-NLS-1$
-		String[] incPathArray = parseIncPaths(incPaths);
-		for (String l : incPathArray) {
-			System.out.println(l);
-		}
-		
-//		System.out.println("\nLibrary search paths\n######################");
-//		
-//		String libsPaths = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
-//		String[] libPathArray = parseLibPaths(libsPaths);
-//		for (String l : libPathArray) {
-//			System.out.println(l);
-//		}
-//		
-//		System.out.println("\nLibraries\n######################");
-//		
-//		String libs = PkgConfigUtil.pkgOutputLibs("gtk+-2.0");
-//		String[] libArray = parseLibs(libs);
-//		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
-//		Collections.sort(sorted);
-//		for (String l : sorted) {
-//			System.out.println(l);
-//		}
-		
-		System.out.println("\nLibrary search paths\n######################"); //$NON-NLS-1$
-		
-		String libsPaths = PkgConfigUtil.getLibPathsOnly("gtk+-2.0"); //$NON-NLS-1$
-		String[] libPathArray = parseLibPaths2(libsPaths);
-		for (String l : libPathArray) {
-			System.out.println(l);
-		}
-		
-		System.out.println("\nLibraries\n######################"); //$NON-NLS-1$
-		
-		String libs = PkgConfigUtil.getLibFilesOnly("gtk+-2.0"); //$NON-NLS-1$
-		String[] libArray = parseLibs2(libs);
-		ArrayList<String> sorted = new ArrayList<String>(Arrays.asList(libArray)); 
-		Collections.sort(sorted);
-		for (String l : sorted) {
-			System.out.println(l);
-		}
-		
-		System.out.println("\nDescriptions\n######################"); //$NON-NLS-1$
-		
-		ArrayList<String> pkgs = PkgConfigUtil.getAllPackages();
-		ArrayList<String> parsedDesc = parseDescription(pkgs);
-		for (String s : parsedDesc) {
-			System.out.println(s);
-		}
-	}
 	
 	/**
 	 * Parses options from "pkg-config --cflags" input.
