@@ -55,11 +55,8 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		ICSettingEntry[] libFiles = getEntries(proj, ICSettingEntry.LIBRARY_FILE); 
 		ICSettingEntry[] libPaths = getEntries(proj, ICSettingEntry.LIBRARY_PATH); 
 		
-		CExternalSetting includeCSettings = new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.core.cSource" }, null, includes); //$NON-NLS-1$
-		
-		CExternalSetting includeCxxSettings = new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.core.cxxSource" }, null, includes); //$NON-NLS-1$
+		CExternalSetting includeSettings = new CExternalSetting(null, new String[] {
+				"org.eclipse.cdt.core.cSource", "org.eclipse.cdt.core.cxxSource" }, null, includes); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		CExternalSetting libraryFileSettings =
 				new CExternalSetting(null, new String[] {
@@ -71,7 +68,7 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		
 		addOtherFlagsToTools(proj);
 		
-		return new CExternalSetting[] { includeCSettings, includeCxxSettings, libraryFileSettings, libraryPathSettings };
+		return new CExternalSetting[] { includeSettings, libraryFileSettings, libraryPathSettings };
 	}
 
 	/**

@@ -12,11 +12,8 @@ package org.eclipse.cdt.managedbuilder.pkgconfig.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -67,7 +64,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	private CheckboxTableViewer pkgCfgViewer;
 	private Set<Object> previouslyChecked;
 	private ArrayList<Object> newItems = new ArrayList<Object>();
-	private ArrayList<Object> removedItems = new ArrayList<Object>();
 	private static final int BUTTON_SELECT = 0;
 	private static final int BUTTON_DESELECT = 1;
 	private final String PACKAGES = "packages"; //$NON-NLS-1$
@@ -162,26 +158,12 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 			}
 			addPackageValues(this.newItems.toArray(), this.page.getProject());
 			this.reindexToggle = true;
-		} else if (checkedItems.length < this.previouslyChecked.size()) { //check if new items removed
-			Set<Object> checkedItemsSet;
-			//add removed items to an array list
-			for (Object o : this.previouslyChecked) {
-				//convert array to a set
-				checkedItemsSet = new HashSet<Object>(Arrays.asList(checkedItems));
-				//if item removed
-				if (!checkedItemsSet.contains(o)) {
-					this.removedItems.add(o);
-				}
-			}
-			removePackageValues(this.removedItems.toArray(), this.page.getProject());
-			this.reindexToggle = false;
 		}
 
 		saveChecked();
 		updateData(getResDesc());
 		this.previouslyChecked = new HashSet<Object>(Arrays.asList(checkedItems));
 		this.newItems.clear();
-		this.removedItems.clear();
 	}
 
 	/**
@@ -202,72 +184,6 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 				}
 			}
 		}
-		ManagedBuildManager.saveBuildInfo(proj, true);
-	}
-
-	/**
-	 * Makes sure that only the flags that are not needed by other packages 
-	 * are removed.
-	 * Only for other flags.
-	 * 
-	 * @param removed Object[]
-	 */
-	private void removePackageValues(Object[] removed, IProject proj) {
-		String rCflags;
-		String cCflags;
-		String[] rOptionArray;
-		String[] cOptionArray;
-		HashMap<String, Boolean> optionMap;
-
-		Object[] checkedItems = getCheckedItems();
-		//make sure that the checked items don't contain removed items
-		List<Object> checkedList = Arrays.asList(checkedItems);
-		for (Object removedItem : removed) {
-			if (checkedList.contains(removedItem)) {
-				checkedList.remove(removedItem);
-			}
-		}
-
-		for (Object removedPkg : removed) {
-			//get arrays of removed package flags
-			rCflags = PkgConfigUtil.getCflags(removedPkg.toString());
-			rOptionArray = Parser.parseCflagOptions(rCflags);
-
-			if (rOptionArray!=null) {
-				//load HashMaps
-				optionMap = new HashMap<String, Boolean>();
-				for (String rO : rOptionArray) {
-					optionMap.put(rO, new Boolean(true));
-				}
-
-				/*
-				 * flag is free to be removed only if none of the remaining
-				 * checked packages have the flag.
-				 */
-				for (Object checked : checkedList) {
-					//get arrays of checked package flags
-					cCflags = PkgConfigUtil.getCflags(checked.toString());
-					cOptionArray = Parser.parseCflagOptions(cCflags);
-
-					//check options 
-					List<String> optionsList = Arrays.asList(cOptionArray);
-					for (String option : rOptionArray) {
-						if (optionsList.contains(option)) {
-							optionMap.put(option, new Boolean(false));
-						} else {
-							optionMap.put(option, new Boolean(true));
-						}
-					}
-
-				} //end of checked items loop
-				//remove unneeded options
-				for (Entry<String, Boolean> entry : optionMap.entrySet()) {
-					if (entry.getValue() == Boolean.TRUE) {
-						PathToToolOption.removeOtherFlag(entry.getKey(), proj);
-					}
-				}
-			}
-		} //end of removed items loop
 		ManagedBuildManager.saveBuildInfo(proj, true);
 	}
 
@@ -439,7 +355,8 @@ public class PkgConfigPropertyTab extends AbstractCPropertyTab {
 	 * @param parent
 	 * @param viewer
 	 */
-	private void createColumns(final Composite parent, final TableViewer viewer) {
+	private void createColumns(@SuppressWarnings("unused") final Composite parent,
+			@SuppressWarnings("unused") final TableViewer viewer) {
 		String[] titles = { "Packages", "Description" }; //$NON-NLS-1$ //$NON-NLS-2$
 		int[] bounds = { 200, 450 };
 
