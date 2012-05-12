@@ -115,9 +115,12 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 		ICLanguageSetting[] langSettings = getLanguageSettings(proj);
 		ICLanguageSetting lang = null;
 		for (ICLanguageSetting langSetting : langSettings) {
-			if (langSetting.getLanguageId().equalsIgnoreCase(languageId)) {
-				lang = langSetting;
-				return lang;
+			String id = langSetting.getLanguageId();
+			if(id != null) {
+				if (id.equalsIgnoreCase(languageId)) {
+					lang = langSetting;
+					return lang;
+				}
 			}
 		}
 		return null;

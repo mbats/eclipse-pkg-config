@@ -153,11 +153,13 @@ public class PathToToolOption {
 		//get all Tool options.
 		IOption[] options = cfTool.getOptions();
 		for (IOption opt : options) {
-			//try to match option name
-			if(opt.getName()==name) {
-				//get option id
-				optionId = opt.getId();
-				break;
+			if(opt != null) {
+				//try to match option name
+				if(opt.getName().equalsIgnoreCase(name)) {
+					//get option id
+					optionId = opt.getId();
+					break;
+				}
 			}
 		}	
 		return optionId;

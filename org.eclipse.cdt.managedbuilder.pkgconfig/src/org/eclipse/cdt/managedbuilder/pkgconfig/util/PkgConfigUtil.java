@@ -47,6 +47,7 @@ public class PkgConfigUtil {
 		String confPath = PreferenceStore.getPkgConfigPath();
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			if (confPath!=null && !confPath.equals("")) { //$NON-NLS-1$
+				confPath = confPath.replace(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 				pb = new ProcessBuilder("bash", "-c", confPath+ //$NON-NLS-1$ //$NON-NLS-2$
 						Separators.getFileSeparator()+PKG_CONFIG+" "+command+" "+pkg); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -145,6 +146,7 @@ public class PkgConfigUtil {
 		String confPath = PreferenceStore.getPkgConfigPath();
 		if (OSDetector.isUnix() || OSDetector.isMac()) {
 			if (confPath!=null && !confPath.equals("")) { //$NON-NLS-1$
+				confPath = confPath.replace(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 				pb = new ProcessBuilder("bash", "-c", confPath+ //$NON-NLS-1$ //$NON-NLS-2$
 						Separators.getFileSeparator()+PKG_CONFIG+" "+LIST_PACKAGES); //$NON-NLS-1$ 
 			} else {
