@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Petri Tuononen and others.
+ * Copyright (c) 2011, 2012 Petri Tuononen and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,24 +51,27 @@ public class PkgConfigExternalSettingProvider extends CExternalSettingProvider {
 	public CExternalSetting[] getSettings(IProject proj,
 			ICConfigurationDescription cfg) {
         
-		ICSettingEntry[] includes = getEntries(proj, ICSettingEntry.INCLUDE_PATH);
-		ICSettingEntry[] libFiles = getEntries(proj, ICSettingEntry.LIBRARY_FILE); 
-		ICSettingEntry[] libPaths = getEntries(proj, ICSettingEntry.LIBRARY_PATH); 
-		
-		CExternalSetting includeSettings = new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.core.cSource", "org.eclipse.cdt.core.cxxSource" }, null, includes); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		CExternalSetting libraryFileSettings =
-				new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libFiles); //$NON-NLS-1$
-		
-		CExternalSetting libraryPathSettings =
-				new CExternalSetting(null, new String[] {
-				"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libPaths); //$NON-NLS-1$
-		
-		addOtherFlagsToTools(proj);
-		
-		return new CExternalSetting[] { includeSettings, libraryFileSettings, libraryPathSettings };
+		if (proj != null) {
+			ICSettingEntry[] includes = getEntries(proj, ICSettingEntry.INCLUDE_PATH);
+			ICSettingEntry[] libFiles = getEntries(proj, ICSettingEntry.LIBRARY_FILE); 
+			ICSettingEntry[] libPaths = getEntries(proj, ICSettingEntry.LIBRARY_PATH); 
+			
+			CExternalSetting includeSettings = new CExternalSetting(null, new String[] {
+					"org.eclipse.cdt.core.cSource", "org.eclipse.cdt.core.cxxSource" }, null, includes); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			CExternalSetting libraryFileSettings =
+					new CExternalSetting(null, new String[] {
+					"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libFiles); //$NON-NLS-1$
+			
+			CExternalSetting libraryPathSettings =
+					new CExternalSetting(null, new String[] {
+					"org.eclipse.cdt.managedbuilder.core.compiledObjectFile" }, null, libPaths); //$NON-NLS-1$
+			
+			addOtherFlagsToTools(proj);
+			
+			return new CExternalSetting[] { includeSettings, libraryFileSettings, libraryPathSettings };
+		}
+		return new CExternalSetting[] { };
 	}
 
 	/**
